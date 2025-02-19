@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250218050248_Update AppUser")]
+    partial class UpdateAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +62,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.HasIndex("AppUserId")
                         .IsUnique();
 
-                    b.ToTable("Addresss", (string)null);
+                    b.ToTable("Addresss");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.AppUser", b =>
@@ -92,18 +95,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -153,8 +147,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -290,59 +282,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.AgriculturalExpert", b =>
-                {
-                    b.HasBaseType("AgroMind.GP.Core.Entities.Identity.AppUser");
-
-                    b.Property<string>("AvailableHours")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ExperienceYears")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExpertRating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PreferedCrops")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RegionCovered")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Specialization")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("AgriculturalExpert", (string)null);
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
-                {
-                    b.HasBaseType("AgroMind.GP.Core.Entities.Identity.AppUser");
-
-                    b.ToTable("Farmer", (string)null);
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>
-                {
-                    b.HasBaseType("AgroMind.GP.Core.Entities.Identity.AppUser");
-
-                    b.Property<int>("inventoryCount")
-                        .HasColumnType("int");
-
-                    b.ToTable("Supplier", (string)null);
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.SystemAdministrator", b =>
-                {
-                    b.HasBaseType("AgroMind.GP.Core.Entities.Identity.AppUser");
-
-                    b.ToTable("SystemAdministrator", (string)null);
-                });
-
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Address", b =>
                 {
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", "user")
@@ -401,42 +340,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.AgriculturalExpert", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
-                        .WithOne()
-                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.AgriculturalExpert", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
-                        .WithOne()
-                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.Farmer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
-                        .WithOne()
-                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.Supplier", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.SystemAdministrator", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
-                        .WithOne()
-                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.SystemAdministrator", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

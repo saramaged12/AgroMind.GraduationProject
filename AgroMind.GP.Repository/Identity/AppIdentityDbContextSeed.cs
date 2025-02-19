@@ -31,17 +31,17 @@ namespace AgroMind.GP.Repository.Identity
 		public static async Task SeedUserAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager , ILogger logger)
 		{
 			string adminRole = "Expert";
-			var roleExists = await roleManager.RoleExistsAsync(adminRole);
-			if (!roleExists)
+			// Ensure the role exists before creating the user
+			if (!await roleManager.RoleExistsAsync(adminRole))
 			{
 				logger.LogError($"Role '{adminRole}' does not exist. Make sure roles are seeded first.");
 				return;
 			}
 
-
-			// Check if any users exist
-			if (!userManager.Users.Any())
-			{
+			// Check if user already exists
+			var existingUser = await userManager.FindByEmailAsync("saramaged660@gmail.com");
+			if (existingUser == null)  // Only create if user doesn't exist
+			{ 
 				var AdminUser = new AppUser()
 				{
 					FName = "Sara",
@@ -51,18 +51,16 @@ namespace AgroMind.GP.Repository.Identity
 					PhoneNumber = "01027910496",
 					Gender = "Female",
 					Age = 22,
-					//Address = "Cairo",
 					Role = "Expert",
-					//password = "SMaed12.44",
-					//confirmpassword = "SMaed12.44"
+					
 
 				};
 				//Create Admin
-				var result = await userManager.CreateAsync(AdminUser, "SMaed12.44"); //User,Password
+				var result = await userManager.CreateAsync(AdminUser,"SMaed12.44@"); //User,Password
 
 				if (result.Succeeded)
 				{
-					await userManager.AddToRoleAsync(AdminUser, AdminUser.Role);
+					await userManager.AddToRoleAsync(AdminUser,adminRole);
 					logger.LogInformation("Admin user created successfully.");
 				}
 				logger.LogError($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");

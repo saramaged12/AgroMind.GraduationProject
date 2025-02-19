@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities.Identity
 {
-	public class AppUser :IdentityUser
+	public class AppUser : IdentityUser
 	{
-
-
 
 		public string FName { get; set; }
 		public string LName {  get; set; }
@@ -22,8 +20,10 @@ namespace AgroMind.GP.Core.Entities.Identity
 
 		public string Role {  get; set; }
 
+		public bool IsActive { get; set; }
+		public bool IsBlocked { get; set; }
+		public DateTime? LastLogin { get; set; }
 
-	    //public string password {  get; set; }
-		//public string confirmpassword {  get; set; }
-    }
+
+	}
 }
