@@ -82,7 +82,7 @@ namespace AgroMind.GP.APIs
 			{
 				logger.LogError(ex, "There Are Problems during Apply Migrations !");// What Message Act => LogError -> red and Message of error
 			}
-
+		
 			//builder.Logging.AddConsole();
 			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
