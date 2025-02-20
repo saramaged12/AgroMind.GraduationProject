@@ -9,9 +9,9 @@ namespace AgroMind.GP.Core.Repositories.Contract
 {
 	public interface ICartRepository
 	{
-		Task<Cart?> GetCartAsync(string CartId);
-		Task<Cart?> UpdateCarttAsync(Cart cart);
-		Task<bool> DeleteCartAsync(string CartId);
-		Task<Cart?> RemoveFromCart(string CartId,int ItemId);
+		Task<Cart?> GetCartAsync(string id);
+		Task<Cart?> UpdateCartAsync(Cart cart);
+		Task<bool> DeleteCartAsync(string Id);
+		Task<Cart?> RemoveFromCart(string Id,int ItemId);
 	}
 }

@@ -15,11 +15,7 @@ namespace AgroMind.GP.Core.Entities.Identity
 
 		public string Gender { get; set; }
 		public int Age {get; set; }
-
 		public Address Address { get; set; }
-
-		public string Role {  get; set; }
-
 		public bool IsActive { get; set; }
 		public bool IsBlocked { get; set; }
 		public DateTime? LastLogin { get; set; }

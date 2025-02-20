@@ -51,7 +51,7 @@ namespace AgroMind.GP.Repository.Identity
 					PhoneNumber = "01027910496",
 					Gender = "Female",
 					Age = 22,
-					Role = "Expert",
+					
 					
 
 				};

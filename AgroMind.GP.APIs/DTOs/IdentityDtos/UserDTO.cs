@@ -10,5 +10,7 @@ namespace AgroMind.GP.APIs.DTOs.IdentityDtos
 
         public string token { get; set; }
 
+        public string role {  get; set; } 
+
     }
 }
