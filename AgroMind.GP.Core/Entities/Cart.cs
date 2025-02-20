@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities
 {
-	public class Cart
-	{
-		
+    public class Cart
+    {
 
-		public string id { get; set; } //Guid
+
+        public string id { get; set; } //Guid
 
         public List<CartItem> items { get; set; }
 
-		public Cart(string id)
-		{
-			this.id = id;
-		}
+        public Cart(string id)
+        {
+            this.id = id;
+        }
 
-	}
+    }
 }
