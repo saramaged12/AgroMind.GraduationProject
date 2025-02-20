@@ -31,13 +31,15 @@ namespace AgroMind.GP.Service.Services
 			//PayLoad
 			//1.Private Claims [Name]
 
+			var roles=await userManager.GetRolesAsync(user);
+
 			var AutClaim=new List<Claim>() //Claim : Propertoes For User ..Name , Email ,...
 			{
 				new Claim(ClaimTypes.NameIdentifier, user.Id),
 				new Claim(ClaimTypes.Email,user.Email),
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
 				new Claim(ClaimTypes.GivenName,user.UserName),
-				
+				new Claim(ClaimTypes.Role, roles.FirstOrDefault()) // Add the user's role to the token
 
 			};
 			var userRoles= await userManager.GetRolesAsync(user); //Take User and Return El Role

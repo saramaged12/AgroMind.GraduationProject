@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace AgroMind.GP.APIs.Controllers.AccountController
@@ -48,23 +49,65 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 			var existingUser = await _userManager.FindByEmailAsync(model.email);
 			if (existingUser != null)
 				return BadRequest(new { Message = "Email is already registered." });
-
-			var User = new AppUser()
+			AppUser User;
+			switch (model.role)
 			{
+				case "Farmer":
+			 User = new Farmer()
+			 {
 
-				FName = model.fname,
-				LName = model.lname,
-				UserName = model.email.Split('@')[0],
-				Email = model.email,
-				PhoneNumber = model.phoneNumber,
-				Gender = model.gender,
-				Age = model.age,
-				//Address = model.Address,
-				Role = model.role,
-				//password = model.password,
-				//confirmpassword = model.confirmPassword
+				 FName = model.fname,
+				 LName = model.lname,
+				 UserName = model.email.Split('@')[0],
+				 Email = model.email,
+				 PhoneNumber = model.phoneNumber,
+				 Gender = model.gender,
+				 Age = model.age,
 
-			};
+
+			 };
+			break;
+				case "SystemAdministrator":
+					User = new SystemAdministrator()
+					{
+						FName = model.fname,
+						LName = model.lname,
+						UserName = model.email.Split('@')[0],
+						Email = model.email,
+						PhoneNumber = model.phoneNumber,
+						Gender = model.gender,
+						Age = model.age,
+					};
+			break;
+				case "Supplier":
+					User = new Supplier()
+					{
+						FName = model.fname,
+						LName = model.lname,
+						UserName = model.email.Split('@')[0],
+						Email = model.email,
+						PhoneNumber = model.phoneNumber,
+						Gender = model.gender,
+						Age = model.age,
+					//	inventoryCount = 
+					};
+			break;
+				case "AgriculturalExpert":
+					User = new AgriculturalExpert()
+					{
+						FName = model.fname,
+						LName = model.lname,
+						UserName = model.email.Split('@')[0],
+						Email = model.email,
+						PhoneNumber = model.phoneNumber,
+						Gender = model.gender,
+						Age = model.age,
+						
+					};
+			break ;
+				default:
+				  return BadRequest(new { Message = "Invalid role specified." });
+		}
 			var Result = await _userManager.CreateAsync(User, model.password);
 
 			if (!Result.Succeeded)
@@ -81,7 +124,7 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 				if (!roleExists)
 					return BadRequest(new { Message = "Invalid role specified." });
 
-				await _userManager.AddToRoleAsync(User, User.Role);
+				await _userManager.AddToRoleAsync(User,model.role);
 
 			}
 			var returneduser = new UserDTO()
@@ -115,11 +158,17 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 			if (!result.Succeeded)
 				return Unauthorized("Invalid email or password.");
 
+			//Get the user's roles
+
+			var roles= await _userManager.GetRolesAsync(user);
+
+
 			// Return user data if login is successful
 			return Ok(new UserDTO
 			{
 				email = user.Email,
-				token = await _tokenService.CreateTokenAsync(user, _userManager)
+				token = await _tokenService.CreateTokenAsync(user, _userManager),
+				role = roles.FirstOrDefault() // Return the user's role
 			});
 		}
 
