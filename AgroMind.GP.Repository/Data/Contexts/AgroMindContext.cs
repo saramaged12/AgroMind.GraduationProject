@@ -1,5 +1,6 @@
 ﻿using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
+using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Repository.Data.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			//modelBuilder.ApplyConfiguration(new ProductConfigration()); // for one class configuration
-			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());//will aplly of all configurations
+			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());//will aplly of all configurations Classes That implement IEntityTypeConfigurations
 
 			//Identity Default Configurations
 			base.OnModelCreating(modelBuilder);
@@ -56,56 +57,6 @@ namespace AgroMind.GP.Repository.Data.Contexts
 				.Metadata.SetValueComparer(timeSpanComparer);
 		}
 
-		////Table-Per-Type (TPT) Mapping
-		//modelBuilder.Entity<Farmer>().ToTable(nameof(Farmer)).HasBaseType<AppUser>();
-		//	modelBuilder.Entity<AgriculturalExpert>().ToTable(nameof(AgriculturalExpert)).HasBaseType<AppUser>();
-		//	modelBuilder.Entity<SystemAdministrator>().ToTable(nameof(SystemAdministrator)).HasBaseType<AppUser>();
-		//	modelBuilder.Entity<Supplier>().ToTable(nameof(Supplier)).HasBaseType<AppUser>();
-
-		//	//Handle List<TimeSpan> for AvailableHours in Expert
-		//	var timeSpanConverter = new ValueConverter<List<TimeSpan>, string>(
-		//		v => string.Join(',', v.Select(ts => ts.ToString())),  // Convert List<TimeSpan> -> string
-		//		v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-		//			  .Select(TimeSpan.Parse)
-		//			  .ToList() // Convert string -> List<TimeSpan>
-		//	);
-		//	var timeSpanComparer = new ValueComparer<List<TimeSpan>>(
-		//		(c1, c2) => c1.SequenceEqual(c2),  // Compare two lists for equality
-		//		c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())), // Generate hash
-		//		c => c.ToList()  // Create a snapshot copy for EF Core tracking
-		//	);
-
-		//	modelBuilder.Entity<AgriculturalExpert>()
-		//		.Property(e => e.AvailableHours)
-		//		.HasConversion(timeSpanConverter)
-		//		.Metadata.SetValueComparer(timeSpanComparer);
-
-		//AvailableHours : EF Core will store AvailableHours as a string in SQL ("09:00:00,15:00:00")
-		//and convert it back to List<TimeSpan> when queried
-
-
-
-		// Configure relationships
-		//modelBuilder.Entity<Farmer>()
-  //          .HasMany(f => f.Crops)
-  //          .WithOne() // Assuming Crop has a Farmer navigation property
-  //          .HasForeignKey(c => c.FarmerId);
-
-		//modelBuilder.Entity<Farmer>()
-  //          .HasMany(f => f.Lands)
-  //          .WithOne() // Assuming Land has a Farmer navigation property
-  //          .HasForeignKey(l => l.FarmerId);
-
-		//modelBuilder.Entity<Supplier>()
-  //          .HasMany(s => s.Products)
-  //          .WithOne() // Assuming Product has a Supplier navigation property
-  //          .HasForeignKey(p => p.SupplierId);
-
-		//modelBuilder.Entity<AgriculturalExpert>()
-  //          .HasMany(e => e.Consultations)
-  //          .WithOne() // Assuming Consultation has an Expert navigation property
-  //          .HasForeignKey(c => c.ExpertId);
-
 
 
 		public DbSet<Address> Addresss { get; set; }
@@ -113,6 +64,12 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		public DbSet<AgriculturalExpert> AgriculturalExperts { get; set; }
 		public DbSet<SystemAdministrator> SystemAdministrators { get; set; }
 		public DbSet<Supplier> Suppliers { get; set; }
+
+		public DbSet<Brand> Brands { get; set; }
+
+		public DbSet<Product> Products { get; set; }
+
+		public DbSet<Category> Categories { get; set; }
 
 	}
 }
