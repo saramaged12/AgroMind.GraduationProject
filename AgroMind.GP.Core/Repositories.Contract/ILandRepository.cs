@@ -9,17 +9,28 @@ namespace AgroMind.GP.Core.Repositories.Contract
 {
 	public interface ILandRepository
 	{
-        Task<Land> CreateLandAsync(Land land);
+        //Task<Land> CreateLandAsync(Land land);
 
-        Task<Land?> UpdateLandtAsync(Land land);
+        Task<Land> CreateOrUpdateLandtAsync(Land land);
 
-        Task<bool> DeleteLandByIdAsync(int LandId);
+        Task<bool> DeleteLandByIdAsync(int landId);
 
-        //Task<Land?> GetAllLandsAsync(int farmerId);
+        //Task<List<Land>> GetAllLandsAsync(int farmerId);
 
-        Task<Land?> GetLandByIdAsync(int LandId);
+        Task<Land?> GetLandByIdAsync(int landId);
 
-        
+        Task<double> CalculateUsableAreaAsync(double areaSize, int landId);
+
+        Task<bool> AddCropToHistoryAsync(string cropName);
+
+        //Task<bool> UpdateStatusAsync(string newStatus, int landId);   ??????????
+
+        //Task<string> UpdateWeatherConditionAsync(string weatherCondition, int landId);  ??????
+
+        Task ConvertToM2Async(int landId);   // void ---> return type
+
+
+
 
     }
 }

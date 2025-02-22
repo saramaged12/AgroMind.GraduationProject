@@ -24,7 +24,6 @@ namespace AgroMind.GP.Core.Entities
         public string location { get; set; }
 
         public double areaSize { get; set; }
-
         public string unitOfMeasurement { get; set; }
 
         public string soilType { get; set; }

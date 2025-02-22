@@ -28,10 +28,10 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Update or Create New Cart
-		[HttpPost("UpdateLand")]
-		public async Task<ActionResult<Land>>UpdateCart(Land land) 
+		[HttpPost("CreateLand")]
+		public async Task<ActionResult<Land>>UpdateLand(Land land) 
 		{
-		    var CreatedOrUpdatedLand= await _landRepository.UpdateLandtAsync(land);
+		    var CreatedOrUpdatedLand= await _landRepository.CreateOrUpdateLandtAsync(land);
 			//if (CreatedOrUpdatedCart is null) return BadRequest(new BadRequestObjectResult(400)); //Frontend Problem /not create and not update
 																								  //Return BadRequest() for frontend not User 		    
 			return Ok(CreatedOrUpdatedLand);
@@ -39,7 +39,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Delete Land
 		[HttpDelete("{LandId}") ]
-		public async Task<ActionResult<bool>> DeleteCart(int LandId) //Deleted or No
+		public async Task<ActionResult<bool>> DeleteLand(int LandId) //Deleted or No
 		{ 
 		   return await _landRepository.DeleteLandByIdAsync(LandId);
 		}
