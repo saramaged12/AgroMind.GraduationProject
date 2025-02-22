@@ -10,6 +10,10 @@ namespace AgroMind.GP.Core.Entities
 {
 	public class Land
 	{
+        public Land(int id)
+        {
+            Id = id;
+        }
 
         //[Key]
         public int Id { get; set; }

@@ -28,9 +28,9 @@ namespace AgroMind.GP.Repository.Repositories
             return land;
         }
 
-        public async Task<Land?> GetLandByIdAsync(int landId)
+        public async Task<Land?> GetLandByIdAsync(int LandId)
         {
-            return await _context.FindAsync<Land>(landId);
+            return await _context.FindAsync<Land>(LandId);
         }
 
         public async Task<Land?> UpdateLandtAsync(Land land)
@@ -47,9 +47,9 @@ namespace AgroMind.GP.Repository.Repositories
             return existingLand;
         }
 
-        public async Task<bool> DeleteLandByIdAsync(int landId)
+        public async Task<bool> DeleteLandByIdAsync(int LandId)
         {
-            var land = await _context.FindAsync<Land>(landId);
+            var land = await _context.FindAsync<Land>(LandId);
             if (land == null)
                 return false;
 

@@ -13,7 +13,7 @@ namespace AgroMind.GP.Core.Repositories.Contract
 
         Task<Land?> UpdateLandtAsync(Land land);
 
-        Task<bool> DeleteLandByIdAsync(int landId);
+        Task<bool> DeleteLandByIdAsync(int LandId);
 
         //Task<Land?> GetAllLandsAsync(int farmerId);
 
