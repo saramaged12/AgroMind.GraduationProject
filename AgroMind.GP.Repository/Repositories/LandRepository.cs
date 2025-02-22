@@ -58,13 +58,13 @@ namespace AgroMind.GP.Repository.Repositories
             return true;
         }
 
-        public async Task<double> CalculateUsableAreaAsync(double areaSize, int landId)
+        public async Task<double> CalculateUsableAreaAsync(double areaSize, int landId)//??????
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> AddCropToHistoryAsync(string cropName)
-        {
+        public async Task<bool> AddCropToHistoryAsync(string cropName)   //relation
+        { 
             throw new NotImplementedException();
         }
 
