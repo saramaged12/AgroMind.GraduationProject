@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers.AccountController
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class SystemAdministratorController : ControllerBase
+	
+	public class SystemAdministratorController : APIbaseController
 	{
 
 	}

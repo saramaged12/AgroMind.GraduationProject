@@ -1,6 +1,7 @@
 
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.Core.Entities.Identity;
+using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Repository.Data.SeedingData;
@@ -49,7 +50,11 @@ namespace AgroMind.GP.APIs
 				var connection = builder.Configuration.GetConnectionString("RedisConnection");
 				return ConnectionMultiplexer.Connect(connection);
 			});
-			
+			 
+			//builder.Services.AddScoped<IGenericRepositories<Product, int>, GenericRepository<Product, int>>();
+
+			//This AddScoped For Generic to didn't Add Service for each Repository
+			builder.Services.AddScoped(typeof(IGenericRepositories<,>),typeof(GenericRepository<,>));
 			var app = builder.Build();
 
 

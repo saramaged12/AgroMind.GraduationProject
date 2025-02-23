@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers.AccountController
 {
-	[Route("api/[controller]")]
+	
 	[Authorize (Roles ="Farmer")]
-	[ApiController]
-	public class FarmerController : ControllerBase
+	public class FarmerController : APIbaseController
 	{
 		private readonly ICartRepository _cartRepository;
 		public FarmerController(ICartRepository cartRepository)
@@ -54,6 +53,7 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 				return NotFound();
 			return Ok(cart);
 		}
+
 
 	}
 }
