@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250223185037_UpdateRemoveCrop")]
+    partial class UpdateRemoveCrop
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,55 +24,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Crop", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AreaPlanted")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CropDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CropHealthStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CropName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CropType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FarmerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("LandPlantedType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PictureUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("plantingDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FarmerId");
-
-                    b.ToTable("Crop");
-                });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Address", b =>
                 {
@@ -467,16 +421,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.ToTable("SystemAdministrator", (string)null);
                 });
 
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Crop", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.Farmer", "Farmer")
-                        .WithMany("Crops")
-                        .HasForeignKey("FarmerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Farmer");
-                });
-
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Address", b =>
                 {
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", "user")
@@ -603,11 +547,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                 {
                     b.Navigation("Address")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
-                {
-                    b.Navigation("Crops");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>

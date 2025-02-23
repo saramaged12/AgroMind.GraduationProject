@@ -71,5 +71,9 @@ namespace AgroMind.GP.Repository.Data.Contexts
 
 		public DbSet<Category> Categories { get; set; }
 
+		public DbSet<Crop> Crop { get; set; }
+
+
+
 	}
 }

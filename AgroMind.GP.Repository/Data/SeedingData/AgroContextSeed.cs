@@ -1,4 +1,5 @@
-﻿using AgroMind.GP.Core.Entities.ProductModule;
+﻿using AgroMind.GP.Core.Entities;
+using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Repository.Data.Contexts;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace AgroMind.GP.Repository.Data.SeedingData
             if (!dbcontext.Products.Any()) //If Not there data
             {
                 var ProductsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/products.json");
+
                 var Products = JsonSerializer.Deserialize<List<Product>>(ProductsData);
 
                 if (Products?.Count > 0)
@@ -56,6 +58,21 @@ namespace AgroMind.GP.Repository.Data.SeedingData
                     foreach (var product in Products)
                     {
                         await dbcontext.Set<Product>().AddAsync(product);
+                    }
+                    await dbcontext.SaveChangesAsync();
+                }
+            }
+
+            //Crops
+            if (!dbcontext.Crop.Any())
+            {
+                var CropsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/Crops.json");
+                var crops=JsonSerializer.Deserialize<List<Crop>>(CropsData);
+                if (crops?.Count>0)
+                {
+                    foreach(var crop in crops)
+                    {
+                       await dbcontext.Set<Crop>().AddAsync(crop);
                     }
                     await dbcontext.SaveChangesAsync();
                 }

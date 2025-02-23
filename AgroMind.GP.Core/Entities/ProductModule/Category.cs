@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities.ProductModule
 {
-	public class Category
+	public class Category :BaseEntity<int>
 	{
-		public int Id { get; set; }
+		//public int Id { get; set; }
 
 		public string CategoryName { get; set; }
 

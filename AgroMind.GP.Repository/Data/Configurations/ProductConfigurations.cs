@@ -13,7 +13,7 @@ namespace AgroMind.GP.Repository.Data.Configurations
 	{
 		public void Configure(EntityTypeBuilder<Product> builder)
 		{
-			builder.HasOne<Brand>(p => p.Brand) //(Brand Refer to the Name of Navigation Property that in Product)
+			builder.HasOne(p => p.Brand) //(Brand Refer to the Name of Navigation Property that in Product)
 				.WithMany()
 				.HasForeignKey(p=>p.BrandId)  // if i Changed The Name of Foreign Key
 				.OnDelete(DeleteBehavior.SetNull); // if Brand is deleted Not Delete Product and set The Foreign Key Null
@@ -22,9 +22,9 @@ namespace AgroMind.GP.Repository.Data.Configurations
 				.WithMany()
 				.HasForeignKey(C=>C.CategoryId)
 				.OnDelete(DeleteBehavior.SetNull);
-			builder.HasOne(S => S.Supplier)
-				.WithMany()
-				.HasForeignKey(S => S.SupplierId)
+			builder.HasOne(P=>P.Supplier)
+				.WithMany(S=>S.Products)
+				.HasForeignKey(p =>p.SupplierId)
 				.OnDelete(DeleteBehavior.SetNull);
 		}
 	}

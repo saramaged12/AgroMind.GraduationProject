@@ -1,0 +1,35 @@
+[
+  {
+    "CropName": "Wheat",
+    "CropType": "Cereal",
+    "plantingDate": "2024-02-01T00:00:00",
+    "LandPlantedType": "Loamy Soil",
+    "AreaPlanted": "5 acres",
+    "CropHealthStatus": "Healthy",
+    "PictureUrl": "https://example.com/images/wheat.jpg",
+    "FarmerId": "ea768028-fed7-40ea-a998-5bd12344a675",
+    "CropDescription": "A high-yield wheat crop suitable for bread production."
+  },
+  {
+    "CropName": "Tomato",
+    "CropType": "Vegetable",
+    "plantingDate": "2024-03-10T00:00:00",
+    "LandPlantedType": "Sandy Soil",
+    "AreaPlanted": "2 acres",
+    "CropHealthStatus": "Moderate",
+    "PictureUrl": "https://example.com/images/tomato.jpg",
+    "FarmerId": "ea768028-fed7-40ea-a998-5bd12344a675",
+    "CropDescription": "Fresh organic tomatoes grown with minimal pesticide use."
+  },
+  {
+    "CropName": "Corn",
+    "CropType": "Grain",
+    "plantingDate": "2024-04-05T00:00:00",
+    "LandPlantedType": "Clay Soil",
+    "AreaPlanted": "10 acres",
+    "CropHealthStatus": "Excellent",
+    "PictureUrl": "https://example.com/images/corn.jpg",
+    "FarmerId": "ea768028-fed7-40ea-a998-5bd12344a675",
+    "CropDescription": "Hybrid corn with high resistance to pests."
+  }
+]

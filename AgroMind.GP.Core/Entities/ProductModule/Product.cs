@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities.ProductModule
 {
-	public class Product
+	public class Product : BaseEntity<int>
 	{
-		public int Id { get; set; }
+		//public int Id { get; set; }
 
 
 		public string Name { get; set; }
@@ -32,6 +32,6 @@ namespace AgroMind.GP.Core.Entities.ProductModule
 		public Supplier Supplier { get; set; } //1
 		public string? SupplierId { get; set; }
 
-		//public int StockQuantity { get; set; }
+		public int? StockQuantity { get; set; }
 	}
 }
