@@ -1,9 +1,10 @@
 
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.Core.Entities.Identity;
+using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
-using AgroMind.GP.Repository.Identity;
+using AgroMind.GP.Repository.Data.SeedingData;
 using AgroMind.GP.Repository.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ using StackExchange.Redis;
 
 namespace AgroMind.GP.APIs
 {
-	public class Program
+    public class Program
 	{
 		public static async Task Main(string[] args)
 		{
@@ -49,16 +50,21 @@ namespace AgroMind.GP.APIs
 				var connection = builder.Configuration.GetConnectionString("RedisConnection");
 				return ConnectionMultiplexer.Connect(connection);
 			});
-			
+			 
+			//builder.Services.AddScoped<IGenericRepositories<Product, int>, GenericRepository<Product, int>>();
+
+			//This AddScoped For Generic to didn't Add Service for each Repository
+			builder.Services.AddScoped(typeof(IGenericRepositories<,>),typeof(GenericRepository<,>));
 			var app = builder.Build();
 
-			
-			//To Allow CLR To Inject Object From AppIdentityDbContext
+
+			#region Update DB
+			//To Allow CLR To Inject Object From AgroMindDbContext
 			using var Scope = app.Services.CreateScope(); //Cretae Scope : is Container has Servises Of LifeTime Type :Scoped
-														  //Like :StoreDbContext() "Act Db"
+														  //Like :AgroMindDbContext() "Act Db"
 
 
-			 var Services = Scope.ServiceProvider;
+			var Services = Scope.ServiceProvider;
 
 
 			var context = Services.GetRequiredService<AgroMindContext>();
@@ -72,17 +78,20 @@ namespace AgroMind.GP.APIs
 
 			try // if DB kant Mawgoda
 			{
-				
+
 				await context.Database.MigrateAsync(); //Update-Database
-				
+
 				await AppIdentityDbContextSeed.SeedRolesAsync(roleManager, logger);
 				await AppIdentityDbContextSeed.SeedUserAsync(userManager, roleManager, logger);
+				await AgroContextSeed.SeedAsync(context); //Seeding Data
 			}
 			catch (Exception ex)
 			{
 				logger.LogError(ex, "There Are Problems during Apply Migrations !");// What Message Act => LogError -> red and Message of error
-			}
-		
+			} 
+			#endregion
+
+			
 			//builder.Logging.AddConsole();
 			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
 

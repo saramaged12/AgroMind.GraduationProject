@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250223062816_AddCrop&FarmerRelation2")]
+    partial class AddCropFarmerRelation2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,6 +54,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FarmerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LandPlantedType")
@@ -264,9 +268,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int?>("StockQuantity")
-                        .HasColumnType("int");
-
                     b.Property<string>("SupplierId")
                         .HasColumnType("nvarchar(450)");
 
@@ -472,7 +473,8 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.Farmer", "Farmer")
                         .WithMany("Crops")
                         .HasForeignKey("FarmerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Farmer");
                 });
@@ -501,7 +503,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.Supplier", "Supplier")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -608,11 +610,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
                 {
                     b.Navigation("Crops");
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
