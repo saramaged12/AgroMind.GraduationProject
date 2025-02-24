@@ -32,16 +32,16 @@ namespace AgroMind.GP.Repository.Repositories
 
 		public async  Task<IEnumerable<TEntity>> GetAllAsync()
 		{
-			return await _context.Set<TEntity>().ToListAsync(); //Set<> // b t return DBSet of Any Type
+			//IF there is NavigationProperty  should be use Include 
+			if (typeof(TEntity) == typeof(Product))
+			
+				return (IEnumerable<TEntity>) await _context.Products.Include(p=>p.Brand).Include(p=>p.Category).Include(s=>s.Supplier).ToListAsync();
+			
+			return  await _context.Set<TEntity>().ToListAsync(); //Set<> // b t return DBSet of Any Type
 		}
-		public async Task<TEntity> GetByIdAsyn(int id)
+		public async Task<TEntity> GetByIdAsync(Tkey id)
 		{
 			return await _context.Set<TEntity>().FindAsync(id);
-		}
-
-		public Task<TEntity> GetByIdAsyn(Tkey id)
-		{
-			throw new NotImplementedException();
 		}
 
 		public void Update(TEntity entity)

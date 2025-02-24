@@ -12,7 +12,7 @@ namespace AgroMind.GP.Core.Repositories.Contract
 		//To Mathc Any Type of Key(String or Int)
 	{
 		Task<IEnumerable<TEntity>>GetAllAsync();
-		Task<TEntity>GetByIdAsyn(Tkey id);
+		Task<TEntity>GetByIdAsync(Tkey id);
 		Task AddAsync(TEntity entity);
 		void Update(TEntity entity); //Update and Delete Not Work Async
 		void Delete(TEntity entity);
