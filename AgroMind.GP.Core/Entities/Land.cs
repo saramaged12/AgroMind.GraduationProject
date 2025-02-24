@@ -15,16 +15,15 @@ namespace AgroMind.GP.Core.Entities
             Id = id;
         }
 
-        //[Key]
         public int Id { get; set; }
 
-        //[Required]
         public string name { get; set; }
 
         public string location { get; set; }
 
         public double areaSize { get; set; }
         public string unitOfMeasurement { get; set; }
+
 
         public string soilType { get; set; }
 
@@ -57,14 +56,12 @@ namespace AgroMind.GP.Core.Entities
 
     public class Crop
     {
-        //[Key]
         public int Id { get; set; }   //id of crop
         public string name { get; set; }
     }
 
     public class Farmer
     {
-        //[Key]
         public int Id { get; set; }  //id of farmer
         public string name { get; set; }
     }
