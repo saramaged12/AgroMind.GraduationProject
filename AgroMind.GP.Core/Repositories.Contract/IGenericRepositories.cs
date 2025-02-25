@@ -22,7 +22,9 @@ namespace AgroMind.GP.Core.Repositories.Contract
 
 		Task<TEntity> GetByIdAWithSpecAsync(ISpecification<TEntity,Tkey> spec);
 
-	    Task DeleteWithSpecAsync(ISpecification<TEntity, Tkey> spec);
+	 //   Task DeleteWithSpecAsync(ISpecification<TEntity, Tkey> spec);
+
+		//Task UpdateWithSpecAsync(ISpecification<TEntity, Tkey> spec ,Action<TEntity> action);
 
 		#endregion
 		Task AddAsync(TEntity entity);

@@ -24,21 +24,76 @@ namespace AgroMind.GP.APIs.Controllers
 			return Ok(brands);
 		}
 
+		//Get By Id
+		[HttpGet("{id}")]
+		public async Task<ActionResult<Brand>> GetBrandById(int id)
+		{
+			var Brand = await _brandsRepo.GetByIdAsync(id);
+			if (Brand == null)
+			{
+				return NotFound();
+			}
+			return Ok(Brand);
+		}
+
 		//Add
+
+		[HttpPost("AddBrand")]
+		public async Task<ActionResult<Brand>> AddBrand(Brand brand)
+		{
+			if (brand == null)
+			{
+				return BadRequest("brand is null.");
+			}
+			await _brandsRepo.AddAsync(brand);
+			return CreatedAtAction(nameof(GetBrandById), new { id = brand.Id }, brand);
+
+			
+		}
+
+
+		//Update
+
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateBrand(int id, Brand brand)
+		{
+			if (id != brand.Id)
+			{
+				return BadRequest();
+			}
+
+
+			var existingbrand = await _brandsRepo.GetByIdAsync(id);
+
+			if (existingbrand == null)
+			{
+				return NotFound();
+			}
+
+
+			_brandsRepo.Update(existingbrand);
+
+			return NoContent(); // 204 No Content
+		}
+
 
 
 		//Delete
 
-		//[HttpDelete("{id}")]
-		//public async Task<IActionResult> DeleteProduct(Brand brand)
-		//{
-			
-		//	await _brandsRepo.Delete(brand);
-		//	return NoContent();
-		//}
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteBrand(int id)
+		{
 
-		//Update
+			var brand = await _brandsRepo.GetByIdAsync(id);
 
+			if (brand == null)
+			{
+				return NotFound();
+			}
+
+			_brandsRepo.Delete(brand);
+			return NoContent(); // 204 No Content
+		}
 
 	}
 }

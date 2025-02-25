@@ -1,16 +1,11 @@
 ﻿using AgroMind.GP.Core.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace AgroMind.GP.Core.Entities
+namespace AgroMind.GP.APIs.DTOs
 {
-	public class Crop : BaseEntity<int>
+	public class CropDto
 	{
-
+		public int Id { get; set; }
 		public string CropName { get; set; }
 
 		public string CropType { get; set; }
@@ -26,13 +21,9 @@ namespace AgroMind.GP.Core.Entities
 		public string PictureUrl { get; set; }
 
 		public string? FarmerId { get; set; }
-		[JsonIgnore] // Prevents infinite loop
-		public Farmer Farmer { get; set; } //Navigation Property
 
-
-		//public string LandId {  get; set; }
+		public string? FarmerName { get; set; }
 
 		public string CropDescription { get; set; }
-
 	}
 }
