@@ -1,5 +1,6 @@
 
 using AgroMind.GP.APIs.Extensions;
+using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Repositories.Contract;
@@ -55,6 +56,9 @@ namespace AgroMind.GP.APIs
 
 			//This AddScoped For Generic to didn't Add Service for each Repository
 			builder.Services.AddScoped(typeof(IGenericRepositories<,>),typeof(GenericRepository<,>));
+			//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+			builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
 			var app = builder.Build();
 
 
