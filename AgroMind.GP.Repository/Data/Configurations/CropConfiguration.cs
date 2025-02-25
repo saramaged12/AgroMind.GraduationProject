@@ -16,7 +16,13 @@ namespace AgroMind.GP.Repository.Data.Configurations
 			builder.HasOne(c => c.Farmer)
 				   .WithMany(f=>f.Crops)
 				   .HasForeignKey(c => c.FarmerId)
-				   .OnDelete(DeleteBehavior.Cascade); // If Farmer is deleted delete Crops
+				   .OnDelete(DeleteBehavior.Restrict);  // If Farmer is deleted, keep Crops
+
+			builder.HasOne(c=>c.Land)
+				.WithMany(l=>l.Crops)
+				.HasForeignKey(c=>c.LandId)
+				.OnDelete(DeleteBehavior.Restrict);
+			// .OnDelete(DeleteBehavior.Cascade);  // If Land is deleted, delete Crops
 
 		}
 	}
