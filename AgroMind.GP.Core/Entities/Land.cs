@@ -28,7 +28,7 @@ namespace AgroMind.GP.Core.Entities
 
 		public ICollection<Crop> Crops { get; set; } = new HashSet<Crop>();
         
-		public Farmer Farmer { get; set; }
+		public Farmer? Farmer { get; set; }
 
 		public string? FarmerId { get; set; }
 

@@ -31,7 +31,7 @@ namespace AgroMind.GP.Core.Entities
 
 		//retreive to not non nullable
 		public int? LandId {  get; set; }
-		public Land? Land { get; set; }
+		public Land Land { get; set; }
 
 		public string CropDescription { get; set; }
 

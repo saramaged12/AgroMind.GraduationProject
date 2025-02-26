@@ -7,19 +7,18 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Specification
 {
-	public class CropSpecification :BaseSpecifications<Crop,int>
+	public class LandSpecification :BaseSpecifications<Land, int>
 	{
 		//For Get All Crops
-		public CropSpecification() : base()
+		public LandSpecification() : base()
 		{
-			Includes.Add(c => c.Farmer);
-			Includes.Add(c => c.Land);
-			
-			
+			Includes.Add(L=> L.Farmer);
+			Includes.Add(L=>L.Crops);
+
 		}
 
 		//Get Crop By Id
-		public CropSpecification(int id) : base(c => c.Id == id)
+		public LandSpecification(int id) : base(c => c.Id == id)
 		{
 		}
 	}

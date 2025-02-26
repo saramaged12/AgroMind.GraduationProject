@@ -24,5 +24,7 @@ namespace AgroMind.GP.Core.Entities.Identity
 
 		// Navigation properties
 		//public ICollection<Consultation> Consultations { get; set; } = new HashSet<Consultation>();
+	     
+	     
 	}
 }
