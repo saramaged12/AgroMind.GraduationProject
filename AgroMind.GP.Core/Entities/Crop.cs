@@ -29,8 +29,9 @@ namespace AgroMind.GP.Core.Entities
 		[JsonIgnore] // Prevents infinite loop
 		public Farmer Farmer { get; set; } //Navigation Property
 
-
-		//public string LandId {  get; set; }
+		//retreive to not non nullable
+		public int? LandId {  get; set; }
+		public Land Land { get; set; }
 
 		public string CropDescription { get; set; }
 
