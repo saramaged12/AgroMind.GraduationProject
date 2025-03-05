@@ -15,6 +15,8 @@ namespace AgroMind.GP.Core.Entities.Identity
 		public ICollection<Crop>? Crops { get; set; } = new HashSet<Crop>();
 		
 		public ICollection<Land>? Lands { get; set; } = new HashSet<Land>();
-		//public ICollection<Order>? Orders { get; set; } = new HashSet<Order>();
-	}
+        //public ICollection<Order>? Orders { get; set; } = new HashSet<Order>();
+
+        public ICollection<Message>? Messages { get; set; } = new HashSet<Message>();
+    }
 }

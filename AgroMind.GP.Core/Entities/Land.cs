@@ -42,7 +42,6 @@ namespace AgroMind.GP.Core.Entities
 
 		public bool isDeleted { get; set; }
 
-		//areaSizeInM2 ----> mean????? and difference between areaSize and areaSizeInM2?????
 		public double areaSizeInM2 { get; set; }
 	}
 
