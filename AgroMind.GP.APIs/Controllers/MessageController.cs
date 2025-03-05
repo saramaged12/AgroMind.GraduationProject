@@ -29,7 +29,7 @@ namespace AgroMind.GP.APIs.Controllers
         public async Task<IActionResult> AddMessage([FromBody] Message message)
         {
             await _messageRepository.AddMessageAsync(message);
-            return CreatedAtAction(nameof(GetMessageById), new { id = message.MessageId }, message);
+            return CreatedAtAction(nameof(GetMessageById), new { id = message.Id }, message);
         }
 
         //Delete Message

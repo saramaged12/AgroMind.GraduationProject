@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Repositories.Contract
 {
-    interface IMessageRepository
+    public interface IMessageRepository
     {
         //IEnumerable ---> returns a collection of Message objects (a list, array, or any enumerable type)
         Task<IEnumerable<Message>> GetAllMessagesAsync();
         Task<Message> GetMessageByIdAsync(int messageId);
         Task AddMessageAsync(Message message);
-        Task DeleteMessageAsync(int messageId);
+        Task<bool> DeleteMessageAsync(int messageId);
 
     }
 }

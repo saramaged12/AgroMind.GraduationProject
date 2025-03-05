@@ -18,31 +18,36 @@ namespace AgroMind.GP.Repository.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Message>> GetMessagesAsync()
-        {
-            return await _context.Messages.ToListAsync();
-        }
-
         public async Task<Message> GetMessageByIdAsync(int messageId)
         {
-            return await _context.Messages.FindAsync(messageId);
+            return await _context.FindAsync<Message>(messageId);
         }
 
         public async Task AddMessageAsync(Message message)
         {
-            await _context.Messages.AddAsync(message);
+            if (message == null)
+                throw new ArgumentNullException(nameof(message), "Message can not null or empty");
+
+            var existingMessage = await _context.FindAsync<Message>(message.Id);
+
+            _context.Entry(existingMessage).CurrentValues.SetValues(message);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteMessageAsync(int messageId)
+        public async Task<bool> DeleteMessageAsync(int messageId)
         {
-            var message = await _context.Messages.FindAsync(messageId);
-            if (message != null)
-            {
-                _context.Messages.Remove(message);
-                await _context.SaveChangesAsync();
-            }
+            var message = await _context.FindAsync<Message>(messageId);
+            if (message == null)
+                return false;
+
+            _context.Remove(message);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
+        public Task<IEnumerable<Message>> GetAllMessagesAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

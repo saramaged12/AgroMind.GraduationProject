@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities
 {
-    class Message
+    public class Message
     {
         public int Id { get; set; }
 
@@ -29,6 +30,7 @@ namespace AgroMind.GP.Core.Entities
             ReceiverId = receiverId;
             Content = content;
             Type = "text";      // Default type
+            TimeStamp = DateTime.UtcNow;
         }
 
 
