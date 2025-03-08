@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AgroMind.GP.Core.Entities.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,9 +13,11 @@ namespace AgroMind.GP.Core.Entities
 
         [ForeignKey("Sender")]
         public int SenderId { get; set; }
+        public AppUser Sender { get; set; }
 
         [ForeignKey("Receiver")]
         public int ReceiverId { get; set; }
+        public AppUser Receiver { get; set; }
 
         public string Content { get; set; }
 
