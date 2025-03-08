@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Specification
 {
-	public class MessageSpecification : BaseSpecifications<Message, int>
+	public class MessageSpecification : BaseSpecifications<Message, string>
 	{
         // Get all messages with related Sender and Receiver
         public MessageSpecification() : base()
@@ -17,8 +17,10 @@ namespace AgroMind.GP.Core.Specification
         }
 
         // Get a specific message by ID
-        public MessageSpecification(int id) : base(m => m.Id == id)
+        public MessageSpecification(string id) : base(m => m.Id.Equals(id))
         {
+            Includes.Add(m => m.SenderId);
+            Includes.Add(m => m.ReceiverId);
         }
     }
 }
