@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250308171653_AddCropStage")]
+    partial class AddCropStage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,9 +34,14 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AreaPlanted")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CropDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CropHealthStatus")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CropName")
@@ -41,9 +49,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CropType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FarmerId")
@@ -53,13 +59,14 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LandPlantedType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("plantingDate")
+                    b.Property<DateTime>("plantingDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -82,7 +89,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<int?>("CropId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Duration")
+                    b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<string>("Stage")
@@ -90,6 +97,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

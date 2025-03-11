@@ -1,16 +1,10 @@
 ﻿using AgroMind.GP.Core.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities
 {
-	public class Land :BaseEntity<int>
+	public class Land : BaseEntity<int>
 	{
-		
+
 		public string Name { get; set; }
 
 		public string? Location { get; set; }
@@ -27,7 +21,7 @@ namespace AgroMind.GP.Core.Entities
 		public string? PictureUrl { get; set; }
 
 		public ICollection<Crop> Crops { get; set; } = new HashSet<Crop>();
-        
+
 		public Farmer? Farmer { get; set; }
 
 		public string? FarmerId { get; set; }

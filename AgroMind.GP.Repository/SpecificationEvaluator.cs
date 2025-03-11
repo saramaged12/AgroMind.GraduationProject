@@ -1,16 +1,11 @@
 ﻿using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Specifications.Contract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgroMind.GP.Repository
 {
-	
-	public  static class SpecificationEvaluator<TEntity,TKey> where TEntity : BaseEntity<TKey>
+
+	public static class SpecificationEvaluator<TEntity, TKey> where TEntity : BaseEntity<TKey>
 	{
 		//Function Will Build Dynamic Query
 

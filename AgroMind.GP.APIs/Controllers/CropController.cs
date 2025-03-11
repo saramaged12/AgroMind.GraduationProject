@@ -1,21 +1,20 @@
 ﻿using AgroMind.GP.APIs.DTOs;
 using AgroMind.GP.Core.Entities;
-using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	
+	[Authorize(Roles = "AgriculturalExpert")]
 	public class CropController : APIbaseController
 	{
 		private readonly IGenericRepositories<Crop, int> _croprepo;
 		private readonly IMapper _mapper;
 
-		public CropController(IGenericRepositories<Crop, int> croprepo ,IMapper mapper)
+		public CropController(IGenericRepositories<Crop, int> croprepo, IMapper mapper)
 		{
 			_croprepo = croprepo;
 			_mapper = mapper;
@@ -78,7 +77,7 @@ namespace AgroMind.GP.APIs.Controllers
 			return NoContent(); // 204 No Content
 		}
 
-		
+
 
 		//Delete
 

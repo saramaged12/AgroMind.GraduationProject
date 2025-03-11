@@ -10,10 +10,10 @@ namespace AgroMind.GP.APIs.Helpers
 		public MappingProfiles()
 		{
 			//Mapping From Product to ProductDTO
-			CreateMap<Product,ProductDTO>()
-				.ForMember(d=>d.BrandName,o=>o.MapFrom(s=>s.Brand))
-				.ForMember(d=>d.CategoryName,o=>o.MapFrom(s=>s.Category))
-				.ForMember(d=>d.SupplierName,o=>o.MapFrom(s=>s.Supplier));
+			CreateMap<Product, ProductDTO>()
+				.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand))
+				.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category))
+				.ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier));
 
 			// Mapping from ProductDTO to Product
 			CreateMap<ProductDTO, Product>()
@@ -21,12 +21,16 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(d => d.Category, o => o.Ignore()) // Ignore Category navigation property
 				.ForMember(d => d.Supplier, o => o.Ignore()); // Ignore Supplier navigation property
 
-			
+
 			CreateMap<Crop, CropDto>()
-				.ForMember(d => d.FarmerName, o => o.MapFrom(s => s.Farmer));
+				.ForMember(d => d.FarmerName, o => o.MapFrom(s => s.Farmer))
+				.ForMember(d => d.StageName, o => o.MapFrom(s => s.Stages));
+
+
 
 			CreateMap<CropDto, Crop>()
-				.ForMember(d => d.Farmer, o => o.Ignore());
+				.ForMember(d => d.Farmer, o => o.Ignore())
+				.ForMember(d => d.Stages, o => o.Ignore());
 		}
 	}
 }

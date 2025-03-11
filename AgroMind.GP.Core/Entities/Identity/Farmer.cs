@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace AgroMind.GP.Core.Entities.Identity
 {
@@ -13,7 +8,7 @@ namespace AgroMind.GP.Core.Entities.Identity
 
 		[JsonIgnore] // Prevents infinite loop
 		public ICollection<Crop>? Crops { get; set; } = new HashSet<Crop>();
-		
+
 		public ICollection<Land>? Lands { get; set; } = new HashSet<Land>();
 		//public ICollection<Order>? Orders { get; set; } = new HashSet<Order>();
 	}

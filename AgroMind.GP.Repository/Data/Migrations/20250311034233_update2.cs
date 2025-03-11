@@ -5,7 +5,7 @@
 namespace AgroMind.GP.Repository.Data.Migrations
 {
 	/// <inheritdoc />
-	public partial class FixCropfarmerRelation : Migration
+	public partial class update2 : Migration
 	{
 		/// <inheritdoc />
 		protected override void Up(MigrationBuilder migrationBuilder)

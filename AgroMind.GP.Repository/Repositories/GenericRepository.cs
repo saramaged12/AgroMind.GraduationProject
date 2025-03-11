@@ -4,15 +4,10 @@ using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Core.Specifications.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgroMind.GP.Repository.Repositories
 {
-	public class GenericRepository<TEntity,Tkey> : IGenericRepositories <TEntity,Tkey> where TEntity : BaseEntity<Tkey>
+	public class GenericRepository<TEntity, Tkey> : IGenericRepositories<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
 	{
 		private readonly AgroMindContext _context;
 
@@ -23,7 +18,7 @@ namespace AgroMind.GP.Repository.Repositories
 
 		public async Task AddAsync(TEntity entity)
 		{
-			 await _context.Set<TEntity>().AddAsync(entity);
+			await _context.Set<TEntity>().AddAsync(entity);
 			_context.SaveChanges();
 		}
 		public void Update(TEntity entity)
@@ -51,7 +46,7 @@ namespace AgroMind.GP.Repository.Repositories
 		public async Task<TEntity> GetByIdAsync(Tkey id)
 		{
 			return await _context.Set<TEntity>().FindAsync(id);
-		} 
+		}
 		#endregion
 
 		#region withSpec >- Open for Extension Closed for Modification

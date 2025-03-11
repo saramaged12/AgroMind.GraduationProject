@@ -1,17 +1,11 @@
 ﻿using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Repository.Data.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgroMind.GP.Repository.Data.Contexts
 {
@@ -72,7 +66,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		public DbSet<Category> Categories { get; set; }
 
 		public DbSet<Crop> Crop { get; set; }
-
+		public DbSet<CropStage> CropStage { get; set; }
 		public DbSet<Land> Land { get; set; }
 
 

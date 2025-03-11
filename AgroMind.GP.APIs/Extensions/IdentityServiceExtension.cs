@@ -2,12 +2,9 @@
 using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Core.Services.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
-using AgroMind.GP.Repository.Identity;
 using AgroMind.GP.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -21,7 +18,7 @@ namespace AgroMind.GP.APIs.Extensions
 
 			services.AddIdentity<AppUser, IdentityRole>(options =>
 			{
-			
+
 				options.Password.RequireNonAlphanumeric = true; //@ # $
 				options.Password.RequireDigit = true;  //123
 				options.Password.RequireLowercase = true; //abc
