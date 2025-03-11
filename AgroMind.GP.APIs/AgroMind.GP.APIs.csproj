@@ -19,4 +19,8 @@
     <ProjectReference Include="..\AgroMind.GP.Service\AgroMind.GP.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
 </Project>

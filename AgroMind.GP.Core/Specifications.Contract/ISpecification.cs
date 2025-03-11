@@ -1,14 +1,9 @@
 ﻿using AgroMind.GP.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Specifications.Contract
 {
-	public interface ISpecification<TEntity,Tkey> where TEntity:BaseEntity<Tkey>
+	public interface ISpecification<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
 	{
 
 		//dbContext.Products.Where(P=>P.id==id).Include(P=>P.ProductBrand).Include(P=>P.ProductType)

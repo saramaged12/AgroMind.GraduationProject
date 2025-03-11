@@ -2,20 +2,17 @@
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Repository.Data.SeedingData;
 using AgroMind.GP.Repository.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 namespace AgroMind.GP.APIs
 {
-    public class Program
+	public class Program
 	{
 		public static async Task Main(string[] args)
 		{
@@ -28,11 +25,11 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
-			builder.Services.AddDbContext<AgroMindContext>(Options=>
+			builder.Services.AddDbContext<AgroMindContext>(Options =>
 			{
 				//Configuration >- el property el maska el file el appsetting
 				Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-				
+
 			});
 
 
@@ -45,17 +42,17 @@ namespace AgroMind.GP.APIs
 			//});
 			builder.Services.AddIdentityServices(builder.Configuration); //Extension Method have Services of Identity
 			#endregion
-			builder.Services.AddScoped<ICartRepository,CartRepository>();
+			builder.Services.AddScoped<ICartRepository, CartRepository>();
 			builder.Services.AddSingleton<IConnectionMultiplexer>(Options =>
 			{
 				var connection = builder.Configuration.GetConnectionString("RedisConnection");
 				return ConnectionMultiplexer.Connect(connection);
 			});
-			 
+
 			//builder.Services.AddScoped<IGenericRepositories<Product, int>, GenericRepository<Product, int>>();
 
 			//This AddScoped For Generic to didn't Add Service for each Repository
-			builder.Services.AddScoped(typeof(IGenericRepositories<,>),typeof(GenericRepository<,>));
+			builder.Services.AddScoped(typeof(IGenericRepositories<,>), typeof(GenericRepository<,>));
 			//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
@@ -92,10 +89,10 @@ namespace AgroMind.GP.APIs
 			catch (Exception ex)
 			{
 				logger.LogError(ex, "There Are Problems during Apply Migrations !");// What Message Act => LogError -> red and Message of error
-			} 
+			}
 			#endregion
 
-			
+
 			//builder.Logging.AddConsole();
 			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AgroMind.GP.Core.Entities.Identity
+﻿namespace AgroMind.GP.Core.Entities.Identity
 {
 	public class AgriculturalExpert : AppUser
 	{
@@ -24,7 +18,7 @@ namespace AgroMind.GP.Core.Entities.Identity
 
 		// Navigation properties
 		//public ICollection<Consultation> Consultations { get; set; } = new HashSet<Consultation>();
-	     
-	     
+
+
 	}
 }

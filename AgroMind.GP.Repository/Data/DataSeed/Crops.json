@@ -1,3 +1,4 @@
+
 [
   {
     "CropName": "Wheat",
@@ -8,7 +9,24 @@
     "CropHealthStatus": "Healthy",
     "PictureUrl": "https://example.com/images/wheat.jpg",
     "FarmerId": "ea768028-fed7-40ea-a998-5bd12344a675",
-    "CropDescription": "A high-yield wheat crop suitable for bread production."
+    "CropDescription": "A high-yield wheat crop suitable for bread production.",
+    "Stages": [
+      {
+        "Stage": "Soil Preparation",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Seed Selection",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Germination",
+        "Duration": null,
+        "Status": null
+      }
+    ]
   },
   {
     "CropName": "Tomato",
@@ -19,7 +37,35 @@
     "CropHealthStatus": "Moderate",
     "PictureUrl": "https://example.com/images/tomato.jpg",
     "FarmerId": "ea768028-fed7-40ea-a998-5bd12344a675",
-    "CropDescription": "Fresh organic tomatoes grown with minimal pesticide use."
+    "CropDescription": "Fresh organic tomatoes grown with minimal pesticide use.",
+    "Stages": [
+     
+      {
+        "Stage": "Seedling Stage",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Vegetative Growth",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Bud Formation",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Flowering",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Pollination",
+        "Duration": null,
+        "Status": null
+      }
+    ]
   },
   {
     "CropName": "Corn",
@@ -30,6 +76,29 @@
     "CropHealthStatus": "Excellent",
     "PictureUrl": "https://example.com/images/corn.jpg",
     "FarmerId": "ea768028-fed7-40ea-a998-5bd12344a675",
-    "CropDescription": "Hybrid corn with high resistance to pests."
+    "CropDescription": "Hybrid corn with high resistance to pests.",
+    "Stages": [
+     
+      {
+        "Stage": "Fruit Development",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Maturity & Ripening",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Harvesting",
+        "Duration": null,
+        "Status": null
+      },
+      {
+        "Stage": "Post-Harvest Handling",
+        "Duration": null,
+        "Status": null
+      }
+    ]
   }
 ]

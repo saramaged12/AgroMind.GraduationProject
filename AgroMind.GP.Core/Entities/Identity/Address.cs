@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AgroMind.GP.Core.Entities.Identity
+﻿namespace AgroMind.GP.Core.Entities.Identity
 {
 	public class Address
 	{
-        public int id { get; set; }
+		public int id { get; set; }
 
 		public string Fname { get; set; } // who will receive order
 
@@ -20,14 +13,14 @@ namespace AgroMind.GP.Core.Entities.Identity
 		public string street { get; set; }
 
 		public string country { get; set; }
-		
+
 		public string AppUserId { get; set; }
 		//public string AppUserId { get; set; } //take PK of Optional put it in Manadatory //string because type of id of AppUser is guid->string
-											 //should to do that to clear to EFcore Which Table is Mandatory(address) and which is Optional(user)
-		public AppUser user { get; set; }									 //public AppUser user { get; set; }
-        
+		//should to do that to clear to EFcore Which Table is Mandatory(address) and which is Optional(user)
+		public AppUser user { get; set; }                                    //public AppUser user { get; set; }
+
 		//public AppUser user { get; set; }
 		//blic AppUser user { get; set; }
 
-    }
+	}
 }
