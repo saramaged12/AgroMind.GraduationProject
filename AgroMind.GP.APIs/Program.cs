@@ -105,7 +105,7 @@ namespace AgroMind.GP.APIs
 			}
 
 			app.UseHttpsRedirection();
-			app.UseStaticFiles();
+			//app.UseStaticFiles();
 			app.UseAuthentication();
 			app.UseAuthorization();
 			app.MapControllers();

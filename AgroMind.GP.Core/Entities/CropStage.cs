@@ -14,6 +14,15 @@ namespace AgroMind.GP.Core.Entities
 		public Crop Crop { get; set; }
 		public int? CropId { get; set; } // Foreign key reference
 
+		public string? description { get; set; }
+		public string? PictureUrl { get; set; }
+
+		public ICollection<Step>? Steps { get; set; } = new HashSet<Step>();
+
+
+		public string? TotalCost { get; set; }
+
+
 		public static implicit operator string(CropStage v)
 		{
 			throw new NotImplementedException();

@@ -12,6 +12,13 @@ namespace AgroMind.GP.Repository.Data.Configurations
 					.WithMany(C => C.Stages)
 					.HasForeignKey(S => S.CropId)
 			.OnDelete(DeleteBehavior.Restrict);  // If Crop is deleted, keep StageCrops
+
+			builder.HasMany(cs => cs.Steps)
+				.WithOne(s => s.Stage)
+				.HasForeignKey(s => s.StageId)
+				.OnDelete(DeleteBehavior.Restrict);  // Step is deleted, keep StageCrops
+
+
 		}
 	}
 }
