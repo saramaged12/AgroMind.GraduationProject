@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	[Authorize(Roles = "AgriculturalExpert")]
+	//[Authorize(Roles = "AgriculturalExpert")]
 	public class CropController : APIbaseController
 	{
 		private readonly IGenericRepositories<Crop, int> _croprepo;

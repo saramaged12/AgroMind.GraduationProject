@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250322154906_edditt2")]
+    partial class edditt2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,20 +88,11 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<string>("PictureUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Stage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TotalCost")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("description")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -379,39 +373,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Step", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("Duration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("StageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StepName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("cost")
-                        .HasColumnType("int");
-
-                    b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("tool")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StageId");
-
-                    b.ToTable("Step");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -670,16 +631,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Step", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.CropStage", "Stage")
-                        .WithMany("Steps")
-                        .HasForeignKey("StageId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Stage");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -770,11 +721,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Crop", b =>
                 {
                     b.Navigation("Stages");
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.CropStage", b =>
-                {
-                    b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.AppUser", b =>
