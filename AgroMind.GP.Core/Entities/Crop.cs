@@ -8,6 +8,20 @@ namespace AgroMind.GP.Core.Entities
 
 		public string CropName { get; set; }
 
+
+		public string? CropDescription { get; set; } // Changed from "Description" to avoid conflict
+		public string? PictureUrl { get; set; } // Nullable to match frontend `cropImage`
+
+		public string? FarmerId { get; set; }
+		[JsonIgnore] // Prevent infinite loop during serialization
+		public Farmer? Farmer { get; set; }
+
+		public int? LandId { get; set; }
+		public Land? Land { get; set; }
+
+		public List<CropStage> Stages { get; set; } = new List<CropStage>(); // Changed to List<>
+
+		///Remove?
 		public string? CropType { get; set; }
 
 		public DateTime? plantingDate { get; set; }
@@ -18,19 +32,7 @@ namespace AgroMind.GP.Core.Entities
 
 		public string? CropHealthStatus { get; set; }
 
-		public string PictureUrl { get; set; }
-
-		public string? FarmerId { get; set; }
-		[JsonIgnore] // Prevents infinite loop
-		public Farmer Farmer { get; set; } //Navigation Property
-
-		//retreive to not non nullable
-		public int? LandId { get; set; }
-		public Land Land { get; set; }
-
-		public string? Description { get; set; }
-
-		public ICollection<CropStage> Stages { get; set; } = new HashSet<CropStage>();
+		
 
 
 	}

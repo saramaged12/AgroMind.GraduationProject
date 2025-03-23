@@ -4,13 +4,10 @@
 	{
 		public int Id { get; set; }
 		public string CropName { get; set; }
-		public string Description { get; set; }
-
-		public string ImageUrl { get; set; } // Store image path or URL
-
-		public string StageName { get; set; }
-
-		public string? FarmerName { get; set; }
+		public string? Description { get; set; }
+		public string? PictureUrl { get; set; }  // Matches frontend's `cropImage`
+		public List<CropStageDto> Stages { get; set; } = new List<CropStageDto>();  // List of stages
+		public decimal TotalCost { get; set; } // Calculated sum of stage costs
 
 
 

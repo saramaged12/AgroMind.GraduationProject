@@ -22,15 +22,21 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(d => d.Supplier, o => o.Ignore()); // Ignore Supplier navigation property
 
 
+			//Mapping FromCrop to CropDTO
 			CreateMap<Crop, CropDto>()
-				.ForMember(d => d.FarmerName, o => o.MapFrom(s => s.Farmer))
-				.ForMember(d => d.StageName, o => o.MapFrom(s => s.Stages));
+	            .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Stages != null ? src.Stages.Sum(s => s.TotalCost) : 0m));
 
-
-
+			// check if src.Stages is null before calling .Sum(), to avoid null reference errors.
+		
+			
+			
 			CreateMap<CropDto, Crop>()
 				.ForMember(d => d.Farmer, o => o.Ignore())
 				.ForMember(d => d.Stages, o => o.Ignore());
+
+
+			CreateMap<CropStage, CropStageDto>();
+			CreateMap<Step, StepDto>();
 		}
 	}
 }
