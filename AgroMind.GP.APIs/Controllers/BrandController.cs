@@ -17,7 +17,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Get All Brands
-		[HttpGet("Brands")]
+		[HttpGet("GetAllBrands")]
 		public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
 		{
 			var brands = await _brandsRepo.GetAllAsync();
@@ -25,7 +25,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Get By Id
-		[HttpGet("{id}")]
+		[HttpGet("GetBrandById/{id}")]
 		public async Task<ActionResult<Brand>> GetBrandById(int id)
 		{
 			var Brand = await _brandsRepo.GetByIdAsync(id);
@@ -54,7 +54,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Update
 
-		[HttpPut("{id}")]
+		[HttpPut("UpdateBrandById/{id}")]
 		public async Task<IActionResult> UpdateBrand(int id, Brand brand)
 		{
 			if (id != brand.Id)
@@ -80,7 +80,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Delete
 
-		[HttpDelete("{id}")]
+		[HttpDelete("DeleteBrand/{id}")]
 		public async Task<IActionResult> DeleteBrand(int id)
 		{
 

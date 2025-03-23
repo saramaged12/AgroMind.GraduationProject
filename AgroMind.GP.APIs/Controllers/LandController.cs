@@ -19,7 +19,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Get All
-		[HttpGet]
+		[HttpGet("GetLands")]
 		public async Task<ActionResult<IEnumerable<Land>>> GetLands()
 		{
 			var SpecLand = new LandSpecification();
@@ -29,7 +29,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Get By Id
-		[HttpGet("{id}")]
+		[HttpGet("getlandById/{id}")]
 		public async Task<ActionResult<Land>> GetLandById(int id)
 		{
 			var spec = new LandSpecification(id);
@@ -37,7 +37,7 @@ namespace AgroMind.GP.APIs.Controllers
 			return Ok(land);
 		}
 		//AddLand
-		[HttpPost]
+		[HttpPost("AddLand")]
 		public async Task<ActionResult<Land>> AddLand(Land land)
 		{
 			if (land == null) return BadRequest("Invalid land data.");
@@ -46,7 +46,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Update Land
-		[HttpPut("{id}")]
+		[HttpPut("UpdateLand/{id}")]
 		public IActionResult UpdateLand(int id, Land updatedLand)
 		{
 			if (id != updatedLand.Id) return BadRequest("Land ID mismatch ");
@@ -59,7 +59,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		// DELETE 
-		[HttpDelete("{id}")]
+		[HttpDelete("DeleteLand/{id}")]
 		public async Task<IActionResult> DeleteLand(int id)
 		{
 			var spec = new LandSpecification(id);
