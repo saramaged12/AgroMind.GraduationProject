@@ -28,7 +28,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Get By Id
-		[HttpGet("{id}")]
+		[HttpGet("GetCategoryById/{id}")]
 		public async Task<ActionResult<Category>> GetCategorytById(int id)
 		{
 			
@@ -58,7 +58,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Update
 
-		[HttpPut("{id}")]
+		[HttpPut("UpdateCategoryById/{id}")]
 		public async Task<IActionResult> UpdateCategory(int id, Category category)
 		{
 			if (id != category.Id)
@@ -84,7 +84,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Delete
 
-		[HttpDelete("{id}")]
+		[HttpDelete("DeleteCropById/{id}")]
 		public async Task<IActionResult> DeleteCategory(int id)
 		{
 		

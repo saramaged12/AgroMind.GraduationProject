@@ -29,7 +29,7 @@ namespace AgroMind.GP.APIs.Controllers
 		//IActionResult //Returning multiple response types (Ok(), NotFound(), etc.)
 
 		//Get All
-		[HttpGet]
+		[HttpGet("GetProducts")]
 		public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
 		{
 			var Spec = new ProductWithBrandAndCategorySpec();
@@ -40,7 +40,7 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 		//Get By Id
-		[HttpGet("{id}")]
+		[HttpGet("GetProductById/{id}")]
 		public async Task<ActionResult<Product>> GetProductById(int id)
 		{
 			var spec = new ProductWithBrandAndCategorySpec(id);
@@ -76,7 +76,7 @@ namespace AgroMind.GP.APIs.Controllers
 		//Update
 
 		// Update a product
-		[HttpPut("{id}")]
+		[HttpPut("UpdateProduct/{id}")]
 		public async Task<IActionResult> UpdateProduct(int id, ProductDTO productDto)
 		{
 			if (id != productDto.Id)
@@ -102,7 +102,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Delete
 
-		[HttpDelete("{id}")]
+		[HttpDelete("DeleteProduct/{id}")]
 		public async Task<IActionResult> DeleteProduct(int id)
 		{
 			var spec = new ProductWithBrandAndCategorySpec(id);
