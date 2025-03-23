@@ -18,6 +18,9 @@ namespace AgroMind.GP.Repository.Data.Configurations
 		  .HasForeignKey(s => s.StageId)
 		  .OnDelete(DeleteBehavior.Restrict);
 
+			builder.Property(s => s.Cost)
+			  .HasColumnType("decimal(18,2)"); // Ensure precision
+
 		}
 	}
 }

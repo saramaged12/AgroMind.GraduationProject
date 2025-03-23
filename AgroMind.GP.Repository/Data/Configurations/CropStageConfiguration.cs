@@ -18,6 +18,8 @@ namespace AgroMind.GP.Repository.Data.Configurations
 				.HasForeignKey(s => s.StageId)
 				.OnDelete(DeleteBehavior.Restrict);  // Step is deleted, keep StageCrops
 
+			builder.Property(cs => cs.TotalCost)
+			   .HasColumnType("decimal(18,2)"); // Ensure precision
 
 		}
 	}
