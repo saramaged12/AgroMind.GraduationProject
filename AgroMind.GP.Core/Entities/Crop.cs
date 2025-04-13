@@ -24,13 +24,13 @@ namespace AgroMind.GP.Core.Entities
 		///Remove?
 		public string? CropType { get; set; }
 
-		public DateTime? plantingDate { get; set; }
+		public DateTime? plantingDate { get; set; }//list who the crop that will  //remove this add start and end date
 
 		public string? LandPlantedType { get; set; }
 
 		public string? AreaPlanted { get; set; }
 
-		public string? CropHealthStatus { get; set; }
+		public string? CropHealthStatus { get; set; }// remove
 
 		
 

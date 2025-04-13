@@ -42,7 +42,7 @@ namespace AgroMind.GP.APIs.Controllers
 		{
 			if (land == null) return BadRequest("Invalid land data.");
 			await _landrepo.AddAsync(land);
-			return CreatedAtAction(nameof(GetLandById), new { id = land.Id }, land);
+			return Ok(new { Message = "Land added successfully" });
 		}
 
 		//Update Land

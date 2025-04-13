@@ -58,22 +58,22 @@ namespace AgroMind.GP.Repository.Data.SeedingData
 				}
 			}
 
-			//Crops
-			if (!dbcontext.Crop.Any())
-			{
-				var CropsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/Crops.json");
-				var crops = JsonSerializer.Deserialize<List<Crop>>(CropsData);
-				if (crops?.Count > 0)
-				{
-					foreach (var crop in crops)
-					{
-						await dbcontext.Set<Crop>().AddAsync(crop);
-					}
-					await dbcontext.SaveChangesAsync();
-				}
+			////Crops
+			//if (!dbcontext.Crop.Any())
+			//{
+			//	var CropsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/Crops.json");
+			//	var crops = JsonSerializer.Deserialize<List<Crop>>(CropsData);
+			//	if (crops?.Count > 0)
+			//	{
+			//		foreach (var crop in crops)
+			//		{
+			//			await dbcontext.Set<Crop>().AddAsync(crop);
+			//		}
+			//		await dbcontext.SaveChangesAsync();
+			//	}
 
 
-			}
+			//}
 
 
 		}

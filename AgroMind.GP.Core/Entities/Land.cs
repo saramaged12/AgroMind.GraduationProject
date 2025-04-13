@@ -6,17 +6,11 @@ namespace AgroMind.GP.Core.Entities
 	{
 
 		public string Name { get; set; }
-
-		public string? Location { get; set; }
-
-		public double? AreaSize { get; set; }
-		public string? unitOfMeasurement { get; set; }
-
+		public double? AreaSize { get; set;}
+		
 		public string? SoilType { get; set; }
 
 		public string? waterSource { get; set; }
-
-		public string? type { get; set; }
 
 		public string? PictureUrl { get; set; }
 
@@ -30,14 +24,11 @@ namespace AgroMind.GP.Core.Entities
 
 		public string weatherCondition { get; set; }
 
-		//public List<string> history { get; set; }
+		public string IrrigationType { get; set; }
+		public DateTime StartDate { get; set; }
+		public float Latitude { get; set; }
+		public float Longitude { get; set; }
 
-		public string currentCrop { get; set; }
-
-		public bool isDeleted { get; set; }
-
-		//areaSizeInM2 ----> mean????? and difference between areaSize and areaSizeInM2?????
-		public double areaSizeInM2 { get; set; }
 	}
 
 }
