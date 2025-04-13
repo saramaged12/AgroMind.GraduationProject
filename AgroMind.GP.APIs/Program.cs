@@ -32,7 +32,10 @@ namespace AgroMind.GP.APIs
 
 			});
 
-
+			builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+			{
+				options.TokenLifespan = TimeSpan.FromHours(2); // Set your desired expiration
+			});
 			#region IdentityServices
 
 			//builder.Services.AddDbContext<AppIdentityDbContext>(Options =>
