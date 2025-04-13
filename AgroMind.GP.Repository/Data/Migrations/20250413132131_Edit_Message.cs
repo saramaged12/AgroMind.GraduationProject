@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class EditMessage : Migration
+    public partial class Edit_Message : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

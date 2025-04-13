@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    [Migration("20250308221123_Edit Message")]
-    partial class EditMessage
+    [Migration("20250413132131_Edit_Message")]
+    partial class Edit_Message
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

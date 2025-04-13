@@ -76,6 +76,5 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		public DbSet<Land> Land { get; set; }
 
 
-
-	}
+    }
 }

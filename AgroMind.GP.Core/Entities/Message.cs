@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Entities
 {
-    public class Message : BaseEntity<string>
+    public class Messages : BaseEntity<string>
     {
 
         [ForeignKey("Sender")]
@@ -25,7 +25,7 @@ namespace AgroMind.GP.Core.Entities
 
         public DateTime TimeStamp { get; set; }
 
-        public Message(string senderId, string receiverId, string content)
+        public Messages(string senderId, string receiverId, string content)
         {
             SenderId = senderId;
             ReceiverId = receiverId;

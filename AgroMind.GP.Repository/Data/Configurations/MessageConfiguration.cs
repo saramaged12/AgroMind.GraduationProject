@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AgroMind.GP.Repository.Data.Configurations
 {
-    public class MessageConfigurations : IEntityTypeConfiguration<Message>
+    public class MessageConfigurations : IEntityTypeConfiguration<Messages>
     {
-        public void Configure(EntityTypeBuilder<Message> builder)
+        public void Configure(EntityTypeBuilder<Messages> builder)
         {
             builder.HasOne(m => m.Sender)  
                 .WithMany()  

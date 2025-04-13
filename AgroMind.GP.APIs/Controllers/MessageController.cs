@@ -11,9 +11,9 @@ namespace AgroMind.GP.APIs.Controllers
 
 	public class MessageController : APIbaseController
 	{
-		private readonly IGenericRepositories<Message, string> _messagerepo;
+		private readonly IGenericRepositories<Messages, string> _messagerepo;
 
-		public MessageController(IGenericRepositories<Message, string> messagerepo)
+		public MessageController(IGenericRepositories<Messages, string> messagerepo)
 		{
             _messagerepo = messagerepo;
 		}
@@ -30,7 +30,7 @@ namespace AgroMind.GP.APIs.Controllers
 
         //Update or Create New Message
         [HttpPost("CreateMessage")]
-        public async Task<IActionResult> AddMessage([FromBody] Message message)
+        public async Task<IActionResult> AddMessage([FromBody] Messages message)
         {
             if (message == null) return BadRequest("Invalid message data.");
             await _messagerepo.AddAsync(message);
@@ -54,7 +54,7 @@ namespace AgroMind.GP.APIs.Controllers
 
         //Get Message By Id
         [HttpGet("{id}")]
-        public async Task<ActionResult<Message>> GetMessageById(string id) //<ActionResult<Message> : will return Land
+        public async Task<ActionResult<Messages>> GetMessageById(string id) //<ActionResult<Message> : will return Land
         {
             var SpecMessage = new MessageSpecification(id);
             var message = await _messagerepo.GetByIdAWithSpecAsync(SpecMessage);
