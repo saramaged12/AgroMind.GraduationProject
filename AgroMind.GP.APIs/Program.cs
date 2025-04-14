@@ -1,4 +1,3 @@
-
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Entities.Identity;
@@ -12,124 +11,98 @@ using StackExchange.Redis;
 
 namespace AgroMind.GP.APIs
 {
-	public class Program
-	{
-		public static async Task Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
+            // Add services
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
-			builder.Services.AddControllers();
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
+            // Configure main database
+            builder.Services.AddDbContext<AgroMindContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
-			builder.Services.AddDbContext<AgroMindContext>(Options =>
-			{
-				//Configuration >- el property el maska el file el appsetting
-				Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            // Optional: Identity DB context (only if using separate DB for users)
+            // builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+            // {
+            //     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+            // });
 
-			});
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(2);
+            });
 
-			builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-			{
-				options.TokenLifespan = TimeSpan.FromHours(2); // Set your desired expiration
-			});
-			#region IdentityServices
+            // Identity services
+            builder.Services.AddIdentityServices(builder.Configuration);
 
-			//builder.Services.AddDbContext<AppIdentityDbContext>(Options =>
-			//{
-			//	Options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+            // Redis
+            builder.Services.AddSingleton<IConnectionMultiplexer>(options =>
+            {
+                var connection = builder.Configuration.GetConnectionString("RedisConnection");
+                return ConnectionMultiplexer.Connect(connection);
+            });
 
-			//});
-			builder.Services.AddIdentityServices(builder.Configuration); //Extension Method have Services of Identity
-			#endregion
-			builder.Services.AddScoped<ICartRepository, CartRepository>();
-			builder.Services.AddSingleton<IConnectionMultiplexer>(Options =>
-			{
-				var connection = builder.Configuration.GetConnectionString("RedisConnection");
-				return ConnectionMultiplexer.Connect(connection);
-			});
+            // Repositories
+            builder.Services.AddScoped(typeof(IGenericRepositories<,>), typeof(GenericRepository<,>));
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
 
-			//builder.Services.AddScoped<IGenericRepositories<Product, int>, GenericRepository<Product, int>>();
+            // AutoMapper
+            builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
-			//This AddScoped For Generic to didn't Add Service for each Repository
-			builder.Services.AddScoped(typeof(IGenericRepositories<,>), typeof(GenericRepository<,>));
-			//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
-			builder.Services.AddAutoMapper(typeof(MappingProfiles));
+            // CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
 
+            var app = builder.Build();
 
+            app.UseCors("AllowAll");
 
-			builder.Services.AddCors(options =>
-			{
-				options.AddPolicy("AllowAll",
-					builder => builder
-					.AllowAnyOrigin()
-					.AllowAnyMethod()
-					.AllowAnyHeader());
-			});
+            // Apply database migrations and seed data
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
 
-			//Add all services BEFORE builder.Build()
+            try
+            {
+                var context = services.GetRequiredService<AgroMindContext>();
+                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger<Program>();
 
-			var app = builder.Build();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
-			app.UseCors("AllowAll");
+                await context.Database.MigrateAsync();
+                await AppIdentityDbContextSeed.SeedRolesAsync(roleManager, logger);
+                await AppIdentityDbContextSeed.SeedUserAsync(userManager, roleManager, logger);
+                await AgroContextSeed.SeedAsync(context);
+            }
+            catch (Exception ex)
+            {
+                var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred during migration/seeding.");
+            }
 
-			#region Update DB
-			//To Allow CLR To Inject Object From AgroMindDbContext
-			using var Scope = app.Services.CreateScope(); //Cretae Scope : is Container has Servises Of LifeTime Type :Scoped
-														  //Like :AgroMindDbContext() "Act Db"
+            // Middleware pipeline
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
-
-			var Services = Scope.ServiceProvider;
-
-
-			var context = Services.GetRequiredService<AgroMindContext>();
-			var loggerFactory = Services.GetRequiredService<ILoggerFactory>();
-			//var logger = Services.GetRequiredService<ILogger<Program>>();
-			var logger = loggerFactory.CreateLogger<Program>();
-
-			var roleManager = Services.GetRequiredService<RoleManager<IdentityRole>>();
-			var userManager = Services.GetRequiredService<UserManager<AppUser>>();
-
-
-			try // if DB kant Mawgoda
-			{
-
-				await context.Database.MigrateAsync(); //Update-Database
-
-				await AppIdentityDbContextSeed.SeedRolesAsync(roleManager, logger);
-				await AppIdentityDbContextSeed.SeedUserAsync(userManager, roleManager, logger);
-				await AgroContextSeed.SeedAsync(context); //Seeding Data
-			}
-			catch (Exception ex)
-			{
-				logger.LogError(ex, "There Are Problems during Apply Migrations !");// What Message Act => LogError -> red and Message of error
-			}
-			#endregion
-
-
-			//builder.Logging.AddConsole();
-			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
-
-
-
-			// Configure the HTTP request pipeline.
-			if (app.Environment.IsDevelopment())
-			{
-				app.UseSwagger();
-				app.UseSwaggerUI();
-			}
-
-			app.UseHttpsRedirection();
-			//app.UseStaticFiles();
-			app.UseAuthentication();
-			app.UseAuthorization();
-			app.MapControllers();
-
-
-			app.Run();
-		}
-	}
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.Run();
+        }
+    }
 }
