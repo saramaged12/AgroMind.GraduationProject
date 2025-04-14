@@ -68,46 +68,46 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Update
 
-		//[HttpPut("UpdateCrop/{id}")]
-		//public async Task<IActionResult> UpdateCrop([FromRoute] int id, [FromBody] CropDto cropDto)
-		//{
-		//	if (id != cropDto.Id)
-		//	{
-		//		return BadRequest();
-		//	}
+		[HttpPut("UpdateCrop/{id}")]
+		public async Task<IActionResult> UpdateCrop([FromRoute] int id, [FromBody] CropDto cropDto)
+		{
+			if (id != cropDto.Id)
+			{
+				return BadRequest();
+			}
 
-		//	var spec = new CropSpecification(id);
-		//	var existingcrop = await _croprepo.GetByIdAWithSpecAsync(spec);
+			var spec = new CropSpecification(id);
+			var existingcrop = await _croprepo.GetByIdAWithSpecAsync(spec);
 
-		//	if (existingcrop == null)
-		//	{
-		//		return NotFound();
-		//	}
+			if (existingcrop == null)
+			{
+				return NotFound();
+			}
 
-		//	_mapper.Map(cropDto, existingcrop); // Map DTO to existing entity
-		//	await _croprepo.UpdateAsync(existingcrop);
+			_mapper.Map(cropDto, existingcrop); // Map DTO to existing entity
+			await _croprepo.UpdateAsync(existingcrop);
 
-		//	return NoContent(); // 204 No Content
-		//}
+			return NoContent(); // 204 No Content
+		}
 
 
 
 		//Delete
 
-		//[HttpDelete("DeleteCrop/{id}")]
-		//public async Task<IActionResult> DeleteCrop([FromRoute] int id)
-		//{
-		//	var spec = new CropSpecification(id);
-		//	var crop = await _croprepo.GetByIdAWithSpecAsync(spec);
+		[HttpDelete("DeleteCrop/{id}")]
+		public async Task<IActionResult> DeleteCrop([FromRoute] int id)
+		{
+			var spec = new CropSpecification(id);
+			var crop = await _croprepo.GetByIdAWithSpecAsync(spec);
 
-		//	if (crop == null)
-		//	{
-		//		return NotFound();
-		//	}
+			if (crop == null)
+			{
+				return NotFound();
+			}
 
-		//	await _croprepo.DeleteAsync(crop);
-		//	return NoContent(); // 204 No Content
-		//}
+			await _croprepo.DeleteAsync(crop);
+			return NoContent(); // 204 No Content
+		}
 
 	}
 
