@@ -25,7 +25,7 @@ namespace AgroMind.GP.APIs.Controllers
 		//Add Step
 
 		[HttpPost("AddStep")]
-		public async Task<ActionResult<StepDto>> AddStep(StepDto stepDto)
+		public async Task<ActionResult<StepDto>> AddStep([FromBody]StepDto stepDto)
 		{
 
 			if (stepDto == null)

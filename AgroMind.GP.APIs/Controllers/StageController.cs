@@ -26,7 +26,7 @@ namespace AgroMind.GP.APIs.Controllers
 		//AddStage
 
 		[HttpPost("AddStage")]
-		public async Task<ActionResult<CropStageDto>> AddStage(CropStageDto stageDto)
+		public async Task<ActionResult<CropStageDto>> AddStage([FromBody] CropStageDto stageDto)
 		{
 			if (stageDto == null)
 			{

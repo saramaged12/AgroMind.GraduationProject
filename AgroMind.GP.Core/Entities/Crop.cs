@@ -12,6 +12,8 @@ namespace AgroMind.GP.Core.Entities
 		public string? CropDescription { get; set; } // Changed from "Description" to avoid conflict
 		public string? PictureUrl { get; set; } // Nullable to match frontend `cropImage`
 
+		public string? OptionalLink { get; set; }
+		public decimal TotalCost { get; set; } // Calculated sum of stage costs
 		public string? FarmerId { get; set; }
 		[JsonIgnore] // Prevent infinite loop during serialization
 		public Farmer? Farmer { get; set; }
@@ -19,6 +21,7 @@ namespace AgroMind.GP.Core.Entities
 		public int? LandId { get; set; }
 		public Land? Land { get; set; }
 
+		
 		public List<CropStage> Stages { get; set; } = new List<CropStage>(); // Changed to List<>
 
 		///Remove?

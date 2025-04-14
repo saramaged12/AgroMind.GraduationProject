@@ -5,6 +5,7 @@ using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -31,36 +32,44 @@ namespace AgroMind.GP.APIs.Controllers
 		{
 			var Spec = new CropSpecification();
 			var crops = await _croprepo.GetAllWithSpecASync(Spec);
-			return Ok(crops);
+			var cropDtos = _mapper.Map<List<CropDto>>(crops);
+			return Ok(cropDtos);
 
 		}
 
 		//Get By Id
 		[HttpGet("GetCropById/{id}")]
-		public async Task<ActionResult<Crop>> GetCroptById(int id)
+		public async Task<ActionResult<Crop>> GetCroptById([FromRoute] int id)
 		{
 			var spec = new CropSpecification(id);
 			var crop = await _croprepo.GetByIdAWithSpecAsync(spec);
-			return Ok(crop);
+			var cropDtos = _mapper.Map<List<CropDto>>(crop);
+			return Ok(cropDtos);
 		}
 
 		//Add
 
 		[HttpPost("AddCrop")]
-		public async Task<ActionResult<CropDto>> AddCrop(CropDto cropDto)
+		public async Task<ActionResult<CropDto>> AddCrop([FromBody] CropDto cropDto)
 		{
+			// Deserialize the stages from JSON
+			if (!string.IsNullOrEmpty(cropDto.StagesJson)) // Assuming you'll add a StagesJson property to CropDto
+			{
+				cropDto.Stages = JsonConvert.DeserializeObject<List<CropStageDto>>(cropDto.StagesJson);
+			}
+
 			var crop = _mapper.Map<Crop>(cropDto);
 			await _croprepo.AddAsync(crop);
 
 			var resultDto = _mapper.Map<CropDto>(crop);
-			return CreatedAtAction(nameof(GetCroptById), new { id = resultDto.Id }, resultDto);
+			return Ok(resultDto);
 		}
 
 
 		//Update
 
 		[HttpPut("UpdateCrop/{id}")]
-		public async Task<IActionResult> UpdateCrop(int id, CropDto cropDto)
+		public async Task<IActionResult> UpdateCrop([FromRoute] int id, [FromBody] CropDto cropDto)
 		{
 			if (id != cropDto.Id)
 			{
@@ -86,7 +95,7 @@ namespace AgroMind.GP.APIs.Controllers
 		//Delete
 
 		[HttpDelete("DeleteCrop/{id}")]
-		public async Task<IActionResult> DeleteCrop(int id)
+		public async Task<IActionResult> DeleteCrop([FromRoute] int id)
 		{
 			var spec = new CropSpecification(id);
 			var crop = await _croprepo.GetByIdAWithSpecAsync(spec);
@@ -101,4 +110,13 @@ namespace AgroMind.GP.APIs.Controllers
 		}
 
 	}
+
+	//POST	Create	Body (JSON)	[FromBody]
+
+	//PUT	Update	Route (id) + Body	[FromRoute] + [FromBody]
+
+	//DELETE	Delete	Route (id)	[FromRoute]
+
+	//GET	Read / Fetch	Route or Query String	[FromRoute] or [FromQuery]
+
 }
