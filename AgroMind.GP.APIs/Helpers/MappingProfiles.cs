@@ -24,12 +24,13 @@ namespace AgroMind.GP.APIs.Helpers
 
 			//Mapping FromCrop to CropDTO
 			CreateMap<Crop, CropDto>()
-	            .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Stages != null ? src.Stages.Sum(s => s.TotalCost) : 0m));
-
+				.ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Stages != null ? src.Stages.Sum(s => s.TotalCost) : 0m))
+				.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages));
 			// check if src.Stages is null before calling .Sum(), to avoid null reference errors.
-		
+
 			
-			
+	            
+
 			CreateMap<CropDto, Crop>()
 				.ForMember(d => d.Farmer, o => o.Ignore())
 				.ForMember(d => d.Stages, o => o.Ignore());

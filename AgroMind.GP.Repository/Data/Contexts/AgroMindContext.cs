@@ -68,7 +68,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		public DbSet<Crop> Crop { get; set; }
 		public DbSet<CropStage> CropStage { get; set; }
 
-		public DbSet<CropStage> Step { get; set; }
+		public DbSet<Step> Step { get; set; }
 
 		public DbSet<Land> Land { get; set; }
 

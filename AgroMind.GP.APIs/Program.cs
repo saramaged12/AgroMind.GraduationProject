@@ -59,8 +59,22 @@ namespace AgroMind.GP.APIs
 			//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
+
+
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("AllowAll",
+					builder => builder
+					.AllowAnyOrigin()
+					.AllowAnyMethod()
+					.AllowAnyHeader());
+			});
+
+			//Add all services BEFORE builder.Build()
+
 			var app = builder.Build();
 
+			app.UseCors("AllowAll");
 
 			#region Update DB
 			//To Allow CLR To Inject Object From AgroMindDbContext
@@ -98,6 +112,7 @@ namespace AgroMind.GP.APIs
 
 			//builder.Logging.AddConsole();
 			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
 
 
 			// Configure the HTTP request pipeline.

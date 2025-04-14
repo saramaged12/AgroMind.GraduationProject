@@ -20,11 +20,12 @@ namespace AgroMind.GP.Core.Entities
 
 		public decimal Cost { get; set; } // Ensure cost is decimal
 
+		public string? Description { get; set; }
 		public int? StageId { get; set; }
 		[JsonIgnore]
 		public CropStage? Stage { get; set; }
 
-		public string Duration { get; set; }
+		
 
 	}
 

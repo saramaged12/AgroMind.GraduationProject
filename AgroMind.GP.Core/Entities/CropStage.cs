@@ -18,7 +18,7 @@ namespace AgroMind.GP.Core.Entities
 
 		public List<Step> Steps { get; set; } = new List<Step>(); // Changed to List<>
 
-
+		public string? OptionalLink { get; set; }
 
 	}
 }
