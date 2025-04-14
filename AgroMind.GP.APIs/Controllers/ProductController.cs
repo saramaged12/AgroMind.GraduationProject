@@ -93,7 +93,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 			Mapper.Map(productDto, existingProduct); // Map DTO to existing entity
-		    _productrepo.Update(existingProduct);
+		    await _productrepo.UpdateAsync(existingProduct);
 
 			return NoContent(); // 204 No Content
 		}
@@ -113,7 +113,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			 _productrepo.Delete(product);
+			await _productrepo.DeleteAsync(product);
 			return NoContent(); // 204 No Content
 		}
 

@@ -47,14 +47,14 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Update Land
 		[HttpPut("UpdateLand/{id}")]
-		public IActionResult UpdateLand(int id, Land updatedLand)
+		public async Task< IActionResult> UpdateLand(int id, Land updatedLand)
 		{
 			if (id != updatedLand.Id) return BadRequest("Land ID mismatch ");
 			var spec = new LandSpecification(id);
 			var existingLand = _landrepo.GetByIdAWithSpecAsync(spec);
 			if (existingLand == null) return NotFound("Land with ID {id} not found.");
 
-			_landrepo.Update(updatedLand);
+			await _landrepo.UpdateAsync(updatedLand);
 			return Ok("Land updated successfully.");
 		}
 
@@ -69,7 +69,7 @@ namespace AgroMind.GP.APIs.Controllers
 			 
 				return NotFound();
 		    	
-			_landrepo.Delete(land);
+			await _landrepo.DeleteAsync(land);
 			return Ok($"Land with ID {id} deleted successfully.");
 		}
 

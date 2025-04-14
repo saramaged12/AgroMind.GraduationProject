@@ -75,7 +75,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 			
-			_categoriesRepo.Update(existingcategory);
+			await _categoriesRepo.UpdateAsync(existingcategory);
 
 			return NoContent(); // 204 No Content
 		}
@@ -95,7 +95,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			_categoriesRepo.Delete(category);
+			await _categoriesRepo.DeleteAsync(category);
 			return NoContent(); // 204 No Content
 		}
 	}

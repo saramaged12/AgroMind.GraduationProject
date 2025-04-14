@@ -85,7 +85,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 			_mapper.Map(cropDto, existingcrop); // Map DTO to existing entity
-			_croprepo.Update(existingcrop);
+			await _croprepo.UpdateAsync(existingcrop);
 
 			return NoContent(); // 204 No Content
 		}
@@ -105,7 +105,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			_croprepo.Delete(crop);
+			await _croprepo.DeleteAsync(crop);
 			return NoContent(); // 204 No Content
 		}
 
