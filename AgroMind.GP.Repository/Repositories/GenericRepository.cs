@@ -19,20 +19,23 @@ namespace AgroMind.GP.Repository.Repositories
 		public async Task AddAsync(TEntity entity)
 		{
 			await _context.Set<TEntity>().AddAsync(entity);
-			_context.SaveChanges();
+			await _context.SaveChangesAsync();
 		}
-		public void Update(TEntity entity)
+
+
+		public async Task UpdateAsync(TEntity entity)
 		{
 			_context.Set<TEntity>().Update(entity);
-			_context.SaveChanges();
+			await _context.SaveChangesAsync();
 		}
 
-		public void Delete(TEntity entity)
+		
+		public async Task DeleteAsync(TEntity entity)
 		{
 			_context.Set<TEntity>().Remove(entity);
-			_context.SaveChanges();
+			await _context.SaveChangesAsync();
 		}
-
+		
 		#region WithoutSpec
 		public async Task<IEnumerable<TEntity>> GetAllAsync()
 		{

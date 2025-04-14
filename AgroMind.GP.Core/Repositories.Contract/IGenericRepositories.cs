@@ -9,6 +9,10 @@ namespace AgroMind.GP.Core.Repositories.Contract
 		#region withoutSpec
 		Task<IEnumerable<TEntity>> GetAllAsync();
 		Task<TEntity> GetByIdAsync(Tkey id);
+
+		Task AddAsync(TEntity entity);
+		Task UpdateAsync(TEntity entity);
+		Task DeleteAsync(TEntity entity);
 		#endregion
 
 		#region With Specification
@@ -21,8 +25,6 @@ namespace AgroMind.GP.Core.Repositories.Contract
 		//Task UpdateWithSpecAsync(ISpecification<TEntity, Tkey> spec ,Action<TEntity> action);
 
 		#endregion
-		Task AddAsync(TEntity entity);
-		void Update(TEntity entity); //Update and Delete Not Work Async
-		void Delete(TEntity entity);
+		
 	}
 }

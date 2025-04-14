@@ -71,7 +71,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 
-			_brandsRepo.Update(existingbrand);
+			await _brandsRepo.UpdateAsync(existingbrand);
 
 			return NoContent(); // 204 No Content
 		}
@@ -91,7 +91,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			_brandsRepo.Delete(brand);
+			await _brandsRepo.DeleteAsync(brand);
 			return NoContent(); // 204 No Content
 		}
 
