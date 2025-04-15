@@ -6,8 +6,11 @@ namespace AgroMind.GP.Core.Repositories.Contract
 	public interface IGenericRepositories<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
 		//To Mathc Any Type of Key(String or Int)
 	{
+
+		//IReadOnlyList is best Performance Rather Than IEnumerable
+		//if we use to Retreive data only and not to iterate on the list
 		#region withoutSpec
-		Task<IEnumerable<TEntity>> GetAllAsync();
+		Task<IReadOnlyList<TEntity>> GetAllAsync();
 		Task<TEntity> GetByIdAsync(Tkey id);
 
 		Task AddAsync(TEntity entity);
@@ -16,7 +19,7 @@ namespace AgroMind.GP.Core.Repositories.Contract
 		#endregion
 
 		#region With Specification
-		Task<IEnumerable<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec);
+		Task<IReadOnlyList<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec);
 
 		Task<TEntity> GetByIdAWithSpecAsync(ISpecification<TEntity, Tkey> spec);
 
@@ -26,5 +29,6 @@ namespace AgroMind.GP.Core.Repositories.Contract
 
 		#endregion
 		
+
 	}
 }

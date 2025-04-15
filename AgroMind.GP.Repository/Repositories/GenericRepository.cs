@@ -37,12 +37,12 @@ namespace AgroMind.GP.Repository.Repositories
 		}
 		
 		#region WithoutSpec
-		public async Task<IEnumerable<TEntity>> GetAllAsync()
+		public async Task<IReadOnlyList<TEntity>> GetAllAsync()
 		{
 			//IF there is NavigationProperty  should be use Include 
-			if (typeof(TEntity) == typeof(Product))
+			//if (typeof(TEntity) == typeof(Product))
 
-				return (IEnumerable<TEntity>)await _context.Products.Include(p => p.Brand).Include(p => p.Category).Include(s => s.Supplier).ToListAsync();
+			//	return (IReadOnlyList<TEntity>)await _context.Products.Include(p => p.Brand).Include(p => p.Category).Include(s => s.Supplier).ToListAsync();
 
 			return await _context.Set<TEntity>().ToListAsync(); //Set<> // b t return DBSet of Any Type
 		}
@@ -53,7 +53,7 @@ namespace AgroMind.GP.Repository.Repositories
 		#endregion
 
 		#region withSpec >- Open for Extension Closed for Modification
-		public async Task<IEnumerable<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec)
+		public async Task<IReadOnlyList<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec)
 		{
 			return await ApplySpecification(spec).ToListAsync();
 		}

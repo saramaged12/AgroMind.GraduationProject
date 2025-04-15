@@ -28,7 +28,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Get All
 		[HttpGet("GetAllCrops")]
-		public async Task<ActionResult<IEnumerable<Crop>>> GetCrops()
+		public async Task<ActionResult<IReadOnlyList<Crop>>> GetCrops()
 		{
 			var Spec = new CropSpecification();
 			var crops = await _croprepo.GetAllWithSpecASync(Spec);

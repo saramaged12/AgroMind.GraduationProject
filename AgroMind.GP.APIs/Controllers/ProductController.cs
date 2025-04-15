@@ -30,11 +30,11 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Get All
 		[HttpGet("GetProducts")]
-		public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+		public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts()
 		{
 			var Spec = new ProductWithBrandAndCategorySpec();
 			var products = await _productrepo.GetAllWithSpecASync(Spec);
-			var mappedproducts=Mapper.Map<IEnumerable<Product>,IEnumerable<ProductDTO>>(products);
+			var mappedproducts=Mapper.Map<IReadOnlyList<Product>,IEnumerable<ProductDTO>>(products);
 			return Ok(mappedproducts);
 
 		}
