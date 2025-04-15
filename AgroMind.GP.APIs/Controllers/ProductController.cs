@@ -34,7 +34,7 @@ namespace AgroMind.GP.APIs.Controllers
 		{
 			var Spec = new ProductWithBrandAndCategorySpec();
 			var products = await _productrepo.GetAllWithSpecASync(Spec);
-			var mappedproducts=Mapper.Map<IReadOnlyList<Product>,IEnumerable<ProductDTO>>(products);
+			var mappedproducts=Mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductDTO>>(products);
 			return Ok(mappedproducts);
 
 		}
