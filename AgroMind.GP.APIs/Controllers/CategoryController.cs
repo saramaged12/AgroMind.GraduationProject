@@ -21,7 +21,7 @@ namespace AgroMind.GP.APIs.Controllers
 		//Get All Categoriess
 		[HttpGet("Categories")]
 
-		public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+		public async Task<ActionResult<IReadOnlyList<Category>>> GetCategories()
 		{
 			var categories = await _categoriesRepo.GetAllAsync();
 			return Ok(categories);

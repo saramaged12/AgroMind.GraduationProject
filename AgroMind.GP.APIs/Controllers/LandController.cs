@@ -20,7 +20,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Get All
 		[HttpGet("GetLands")]
-		public async Task<ActionResult<IEnumerable<Land>>> GetLands()
+		public async Task<ActionResult<IReadOnlyList<Land>>> GetLands()
 		{
 			var SpecLand = new LandSpecification();
 			var lands = await _landrepo.GetAllWithSpecASync(SpecLand);

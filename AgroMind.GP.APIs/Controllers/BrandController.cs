@@ -18,7 +18,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 		//Get All Brands
 		[HttpGet("GetAllBrands")]
-		public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+		public async Task<ActionResult<IReadOnlyList<Brand>>> GetBrands()
 		{
 			var brands = await _brandsRepo.GetAllAsync();
 			return Ok(brands);
