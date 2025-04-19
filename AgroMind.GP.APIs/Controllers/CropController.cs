@@ -43,7 +43,7 @@ namespace AgroMind.GP.APIs.Controllers
 		{
 			var spec = new CropSpecification(id);
 			var crop = await _croprepo.GetByIdAWithSpecAsync(spec);
-			var cropDtos = _mapper.Map<List<CropDto>>(crop);
+			var cropDtos = _mapper.Map<CropDto>(crop);
 			return Ok(cropDtos);
 		}
 
@@ -71,10 +71,10 @@ namespace AgroMind.GP.APIs.Controllers
 		[HttpPut("UpdateCrop/{id}")]
 		public async Task<IActionResult> UpdateCrop([FromRoute] int id, [FromBody] CropDto cropDto)
 		{
-			if (id != cropDto.Id)
-			{
-				return BadRequest();
-			}
+			//if (id != cropDto.Id)
+			//{
+			//	return BadRequest();
+			//}
 
 			var spec = new CropSpecification(id);
 			var existingcrop = await _croprepo.GetByIdAWithSpecAsync(spec);
@@ -87,7 +87,7 @@ namespace AgroMind.GP.APIs.Controllers
 			_mapper.Map(cropDto, existingcrop); // Map DTO to existing entity
 			await _croprepo.UpdateAsync(existingcrop);
 
-			return NoContent(); // 204 No Content
+			return Ok(); // 204 No Content
 		}
 
 
