@@ -201,8 +201,15 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 			{
 				try
 				{
-					var token = await _tokenService.CreateTokenAsync(user, _userManager);
-					var resetPasswordLink = Url.Action("ResetPassword", "Accounts", new { email = user.Email, token }, Request.Scheme);
+
+					//var token = await _tokenService.CreateTokenAsync(user, _userManager); //is wrong
+
+					// Generate a password reset token
+					var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+					Console.WriteLine($"Generated Token: {token}");
+					// Create a reset password link
+					var resetPasswordLink = Url.Action("ResetPassword", "Accounts",
+						new { email = user.Email, token = Uri.EscapeDataString(token) }, Request.Scheme);
 
 					var email = new Email
 					{
@@ -249,7 +256,20 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 				return NotFound(new { Message = "User not found." });
 
 
-			var result = await _userManager.ResetPasswordAsync(user,model.Token, model.NewPassword);
+			// Decode the token
+			var decodedToken = Uri.UnescapeDataString(model.Token);
+
+			// Log the token for debugging
+			Console.WriteLine($"Received Token: {decodedToken}");
+
+
+			// Optional: Verify the token before resetting the password
+			var isValidToken = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "ResetPassword", decodedToken);
+			if (!isValidToken)
+				return BadRequest(new { Message = "Invalid token." });
+
+
+			var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
 
 			if (result.Succeeded)
 				return Ok(new { Message = "Password reset successful. You can now log in with your new password." });
