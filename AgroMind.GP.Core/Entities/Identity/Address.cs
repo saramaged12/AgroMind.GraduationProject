@@ -17,10 +17,9 @@
 		public string AppUserId { get; set; }
 		//public string AppUserId { get; set; } //take PK of Optional put it in Manadatory //string because type of id of AppUser is guid->string
 		//should to do that to clear to EFcore Which Table is Mandatory(address) and which is Optional(user)
-		public AppUser user { get; set; }                                    //public AppUser user { get; set; }
+		public AppUser AppUser { get; set; }                                    //public AppUser user { get; set; }
 
-		//public AppUser user { get; set; }
-		//blic AppUser user { get; set; }
+		
 
 	}
 }

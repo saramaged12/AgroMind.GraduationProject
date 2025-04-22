@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250422040950_AddUsersAndRemoveFarmer")]
+    partial class AddUsersAndRemoveFarmer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<string>("CropType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FarmerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("LandId")
                         .HasColumnType("int");
 
@@ -68,8 +68,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FarmerId");
 
                     b.HasIndex("LandId");
 
@@ -246,9 +244,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<double?>("AreaSize")
                         .HasColumnType("float");
 
-                    b.Property<string>("FarmerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("IrrigationType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -284,8 +279,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FarmerId");
 
                     b.ToTable("Land");
                 });
@@ -574,13 +567,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.ToTable("AgriculturalExpert", (string)null);
                 });
 
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
-                {
-                    b.HasBaseType("AgroMind.GP.Core.Entities.Identity.AppUser");
-
-                    b.ToTable("Farmer", (string)null);
-                });
-
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>
                 {
                     b.HasBaseType("AgroMind.GP.Core.Entities.Identity.AppUser");
@@ -600,17 +586,10 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Crop", b =>
                 {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.Farmer", "Farmer")
-                        .WithMany("Crops")
-                        .HasForeignKey("FarmerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("AgroMind.GP.Core.Entities.Land", "Land")
                         .WithMany("Crops")
                         .HasForeignKey("LandId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Farmer");
 
                     b.Navigation("Land");
                 });
@@ -634,16 +613,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Land", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.Farmer", "Farmer")
-                        .WithMany("Lands")
-                        .HasForeignKey("FarmerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Farmer");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.ProductModule.Product", b =>
@@ -740,15 +709,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
-                {
-                    b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
-                        .WithOne()
-                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.Farmer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>
                 {
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", null)
@@ -786,13 +746,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Land", b =>
                 {
                     b.Navigation("Crops");
-                });
-
-            modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Farmer", b =>
-                {
-                    b.Navigation("Crops");
-
-                    b.Navigation("Lands");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Supplier", b =>
