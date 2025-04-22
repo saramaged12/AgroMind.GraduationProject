@@ -45,7 +45,7 @@ namespace AgroMind.GP.APIs
 			//});
 			builder.Services.AddIdentityServices(builder.Configuration); //Extension Method have Services of Identity
 			#endregion
-			builder.Services.AddScoped<ICartRepository, CartRepository>();
+			//builder.Services.AddScoped<ICartRepository, CartRepository>();
 			builder.Services.AddSingleton<IConnectionMultiplexer>(Options =>
 			{
 				var connection = builder.Configuration.GetConnectionString("RedisConnection");
