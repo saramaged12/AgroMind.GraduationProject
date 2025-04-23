@@ -1,10 +1,10 @@
-﻿using AgroMind.GP.Core.Entities;
-using AgroMind.GP.Core.Specifications.Contract;
+﻿using AgroMind.GP.Core.Contracts.Specifications.Contract;
+using AgroMind.GP.Core.Entities;
 using System.Linq.Expressions;
 
 namespace AgroMind.GP.Core.Specification
 {
-	public class BaseSpecifications<TEntity, Tkey> : ISpecification<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
+    public class BaseSpecifications<TEntity, Tkey> : ISpecification<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
 	{
 
 

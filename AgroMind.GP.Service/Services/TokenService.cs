@@ -1,5 +1,5 @@
-﻿using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Services.Contract;
+﻿using AgroMind.GP.Core.Contracts.Services.Contract;
+using AgroMind.GP.Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Service.Services
 {
-	public class TokenService :ITokenService
+    public class TokenService :ITokenService
 	{
 
 

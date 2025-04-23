@@ -1,6 +1,6 @@
 ﻿
+using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Services.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +10,7 @@ using System.Text;
 
 namespace AgroMind.GP.APIs.Extensions
 {
-	public static class IdentityServiceExtension
+    public static class IdentityServiceExtension
 	{
 		public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
 		{

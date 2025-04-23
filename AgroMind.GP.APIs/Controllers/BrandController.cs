@@ -1,13 +1,13 @@
-﻿using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Core.Repositories.Contract;
+﻿using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	
-	public class BrandController : APIbaseController
+
+    public class BrandController : APIbaseController
 	{
 		private readonly IGenericRepositories<Brand, int> _brandsRepo;
 
@@ -71,7 +71,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 
-			await _brandsRepo.UpdateAsync(existingbrand);
+			 _brandsRepo.Update(existingbrand);
 
 			return NoContent(); // 204 No Content
 		}
@@ -91,7 +91,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			await _brandsRepo.DeleteAsync(brand);
+			 _brandsRepo.Delete(brand);
 			return NoContent(); // 204 No Content
 		}
 

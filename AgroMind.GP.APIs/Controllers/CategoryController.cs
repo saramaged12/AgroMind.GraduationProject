@@ -1,15 +1,15 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	
-	public class CategoryController : APIbaseController
+
+    public class CategoryController : APIbaseController
 	{
 		private readonly IGenericRepositories<Category, int> _categoriesRepo;
 
@@ -75,7 +75,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 			
-			await _categoriesRepo.UpdateAsync(existingcategory);
+			 _categoriesRepo.Update(existingcategory);
 
 			return NoContent(); // 204 No Content
 		}
@@ -95,7 +95,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			await _categoriesRepo.DeleteAsync(category);
+			 _categoriesRepo.Delete(category);
 			return NoContent(); // 204 No Content
 		}
 	}

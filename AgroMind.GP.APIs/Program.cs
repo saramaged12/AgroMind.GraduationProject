@@ -1,8 +1,8 @@
 
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.APIs.Helpers;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Repository.Data.SeedingData;
 using AgroMind.GP.Repository.Repositories;
@@ -12,7 +12,7 @@ using StackExchange.Redis;
 
 namespace AgroMind.GP.APIs
 {
-	public class Program
+    public class Program
 	{
 		public static async Task Main(string[] args)
 		{

@@ -1,6 +1,6 @@
-﻿using AgroMind.GP.Core.Entities;
+﻿using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Repositories.Contract;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Pipelines.Sockets.Unofficial;
@@ -14,13 +14,13 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Repository.Repositories
 {
-	//JsonSerializer: Built-in .NET tool for handling JSON operations.
+    //JsonSerializer: Built-in .NET tool for handling JSON operations.
 
 
-   //KeyDeleteAsync: Deletes a Redis key
-   //StringGetAsync: Retrieves the value of a key as a string
-   //StringSetAsync: Stores a key-value pair, with an optional expiration time
-	public class CartRepository : ICartRepository
+    //KeyDeleteAsync: Deletes a Redis key
+    //StringGetAsync: Retrieves the value of a key as a string
+    //StringSetAsync: Stores a key-value pair, with an optional expiration time
+    public class CartRepository : ICartRepository
 	{
 		private readonly IDatabase _database;
 

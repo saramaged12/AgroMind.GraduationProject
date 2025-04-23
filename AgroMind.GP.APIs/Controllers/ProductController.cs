@@ -1,6 +1,6 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AgroMind.GP.APIs.Controllers
 {
 
-	public class ProductController : APIbaseController
+    public class ProductController : APIbaseController
 	{
 		private readonly IGenericRepositories<Product, int> _productrepo;
 		
@@ -93,7 +93,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 			Mapper.Map(productDto, existingProduct); // Map DTO to existing entity
-		    await _productrepo.UpdateAsync(existingProduct);
+		     _productrepo.Update(existingProduct);
 
 			return NoContent(); // 204 No Content
 		}
@@ -113,7 +113,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			await _productrepo.DeleteAsync(product);
+			 _productrepo.Delete(product);
 			return NoContent(); // 204 No Content
 		}
 

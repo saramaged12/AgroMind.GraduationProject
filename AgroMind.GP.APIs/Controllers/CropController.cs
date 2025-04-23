@@ -1,6 +1,6 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Entities;
-using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +9,8 @@ using Newtonsoft.Json;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	
-	[Route("api/[controller]")]
+
+    [Route("api/[controller]")]
 	[ApiController]
 
 	//[Authorize(Roles = "AgriculturalExpert")]
@@ -85,7 +85,7 @@ namespace AgroMind.GP.APIs.Controllers
 			}
 
 			_mapper.Map(cropDto, existingcrop); // Map DTO to existing entity
-			await _croprepo.UpdateAsync(existingcrop);
+			 _croprepo.Update(existingcrop);
 
 			return Ok(); // 204 No Content
 		}
@@ -105,7 +105,7 @@ namespace AgroMind.GP.APIs.Controllers
 				return NotFound();
 			}
 
-			await _croprepo.DeleteAsync(crop);
+			 _croprepo.Delete(crop);
 			return NoContent(); // 204 No Content
 		}
 
