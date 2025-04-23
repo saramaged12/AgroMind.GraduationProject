@@ -2,10 +2,13 @@
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Services.Contract;
+using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Repository.Data.SeedingData;
 using AgroMind.GP.Repository.Repositories;
+using AgroMind.GP.Service.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -59,6 +62,8 @@ namespace AgroMind.GP.APIs
 			//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
+			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddScoped<IProductService,ProductService>();
 
 
 			builder.Services.AddCors(options =>

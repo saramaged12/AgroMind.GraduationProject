@@ -1,6 +1,4 @@
-﻿using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Entities.ProductModule;
-
+﻿
 namespace AgroMind.GP.APIs.DTOs
 {
 	public class ProductDTO
