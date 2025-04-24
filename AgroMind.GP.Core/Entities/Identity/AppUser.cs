@@ -10,7 +10,9 @@ namespace AgroMind.GP.Core.Entities.Identity
 
 		public string Gender { get; set; }
 		public int Age { get; set; }
+
 		public Address Address { get; set; }
+
 
 
 		

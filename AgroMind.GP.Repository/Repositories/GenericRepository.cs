@@ -27,7 +27,9 @@ namespace AgroMind.GP.Repository.Repositories
 		
 		public void Delete(TEntity entity)=>
 			_context.Set<TEntity>().Remove(entity);
+
 			
+
 		
 		#region WithoutSpec
 		public async Task<IReadOnlyList<TEntity>> GetAllAsync()
@@ -37,7 +39,7 @@ namespace AgroMind.GP.Repository.Repositories
 
 			//	return (IReadOnlyList<TEntity>)await _context.Products.Include(p => p.Brand).Include(p => p.Category).Include(s => s.Supplier).ToListAsync();
 
-			return await _context.Set<TEntity>().ToListAsync(); //Set<> // b t return DBSet of Any Type
+			return await _context.Set<TEntity>()/*.Where(e => !e.IsDeleted)*/.ToListAsync(); //Set<> // b t return DBSet of Any Type
 		}
 		public async Task<TEntity> GetByIdAsync(Tkey id)
 		{
@@ -48,7 +50,7 @@ namespace AgroMind.GP.Repository.Repositories
 		#region withSpec >- Open for Extension Closed for Modification
 		public async Task<IReadOnlyList<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec)
 		{
-			return await ApplySpecification(spec).ToListAsync();
+			return await ApplySpecification(spec)/*.Where(e => !e.IsDeleted)*/.ToListAsync();
 		}
 
 		public async Task<TEntity> GetByIdAWithSpecAsync(ISpecification<TEntity, Tkey> spec)
