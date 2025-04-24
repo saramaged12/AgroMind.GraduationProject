@@ -10,11 +10,16 @@ namespace AgroMind.GP.Core.Specification
 			Includes.Add(p => p.Brand);
 			Includes.Add(p => p.Category);
 			Includes.Add(p => p.Supplier);
+			
+			
 		}
 
 		//Get Product By Id
 		public ProductWithBrandAndCategorySpec(int id) : base(p => p.Id == id)
 		{
+			Includes.Add(p => p.Brand);
+			Includes.Add(p => p.Category);
+			Includes.Add(p => p.Supplier);
 		}
 	}
 }

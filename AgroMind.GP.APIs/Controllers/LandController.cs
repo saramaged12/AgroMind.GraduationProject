@@ -1,7 +1,7 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Core.Repositories.Contract;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AgroMind.GP.APIs.Controllers
 {
 
-	public class LandController : APIbaseController
+    public class LandController : APIbaseController
 	{
 		private readonly IGenericRepositories<Land, int> _landrepo;
 
@@ -54,7 +54,7 @@ namespace AgroMind.GP.APIs.Controllers
 			var existingLand = _landrepo.GetByIdAWithSpecAsync(spec);
 			if (existingLand == null) return NotFound("Land with ID {id} not found.");
 
-			await _landrepo.UpdateAsync(updatedLand);
+			 _landrepo.Update(updatedLand);
 			return Ok("Land updated successfully.");
 		}
 
@@ -69,7 +69,7 @@ namespace AgroMind.GP.APIs.Controllers
 			 
 				return NotFound();
 		    	
-			await _landrepo.DeleteAsync(land);
+			 _landrepo.Delete(land);
 			return Ok($"Land with ID {id} deleted successfully.");
 		}
 

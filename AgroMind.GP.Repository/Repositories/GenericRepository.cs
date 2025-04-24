@@ -1,13 +1,13 @@
-﻿using AgroMind.GP.Core.Entities;
+﻿using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Specifications.Contract;
+using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Core.Repositories.Contract;
-using AgroMind.GP.Core.Specifications.Contract;
 using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace AgroMind.GP.Repository.Repositories
 {
-	public class GenericRepository<TEntity, Tkey> : IGenericRepositories<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
+    public class GenericRepository<TEntity, Tkey> : IGenericRepositories<TEntity, Tkey> where TEntity : BaseEntity<Tkey>
 	{
 		private readonly AgroMindContext _context;
 
@@ -16,32 +16,19 @@ namespace AgroMind.GP.Repository.Repositories
 			_context = context;
 		}
 
-		public async Task AddAsync(TEntity entity)
-		{
-			await _context.Set<TEntity>().AddAsync(entity);
-			await _context.SaveChangesAsync();
-		}
-
-
-		public async Task UpdateAsync(TEntity entity)
-		{
-			_context.Set<TEntity>().Update(entity);
-			await _context.SaveChangesAsync();
-		}
-
+		public async Task AddAsync(TEntity entity)=>
 		
-		public async Task DeleteAsync(TEntity entity)
-		{
+			await _context.Set<TEntity>().AddAsync(entity);
+
+		public void Update(TEntity entity) =>
+			_context.Set<TEntity>().Update(entity);
+	
+		
+		
+		public void Delete(TEntity entity)=>
 			_context.Set<TEntity>().Remove(entity);
-			await _context.SaveChangesAsync();
-		}
-		//public async Task SoftDeleteAsync(TEntity entity)
-		//{
-		//	entity.IsDeleted = true;
-		//	entity.DeletedAt = DateTime.UtcNow;
-		//	_context.Update(entity);
-		//	await _context.SaveChangesAsync();
-		//}
+
+			
 
 		
 		#region WithoutSpec

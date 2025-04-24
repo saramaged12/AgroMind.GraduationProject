@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AgroMind.GP.Service\AgroMind.GP.Service.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

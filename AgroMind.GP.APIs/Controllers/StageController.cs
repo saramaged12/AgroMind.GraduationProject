@@ -1,13 +1,13 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Entities;
-using AgroMind.GP.Core.Repositories.Contract;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 
 	//[Authorize(Roles = "AgriculturalExpert")]

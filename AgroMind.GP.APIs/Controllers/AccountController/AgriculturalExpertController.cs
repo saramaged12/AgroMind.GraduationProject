@@ -1,6 +1,6 @@
 ﻿using AgroMind.GP.APIs.DTOs;
 using AgroMind.GP.Core.Entities;
-using AgroMind.GP.Core.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;

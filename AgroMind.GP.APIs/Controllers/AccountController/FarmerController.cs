@@ -1,14 +1,14 @@
-﻿using AgroMind.GP.Core.Entities;
+﻿using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Repositories.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers.AccountController
 {
-	
-	[Authorize (Roles ="Farmer")]
+
+    [Authorize (Roles ="Farmer")]
 	public class FarmerController : APIbaseController
 	{
 		private readonly ICartRepository _cartRepository;

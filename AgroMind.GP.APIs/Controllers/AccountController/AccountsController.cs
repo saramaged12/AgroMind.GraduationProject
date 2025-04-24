@@ -1,8 +1,8 @@
 ﻿using AgroMind.GP.APIs.DTOs.IdentityDtos;
 using AgroMind.GP.APIs.Helpers;
+using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Services.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -17,8 +17,8 @@ using System.Security.Claims;
 
 namespace AgroMind.GP.APIs.Controllers.AccountController
 {
-	//baseUrl//api//Controller/EndPoint Name
-	[Route("api/[controller]")]
+    //baseUrl//api//Controller/EndPoint Name
+    [Route("api/[controller]")]
 	[ApiController]
 	public class AccountsController : ControllerBase
 	{
