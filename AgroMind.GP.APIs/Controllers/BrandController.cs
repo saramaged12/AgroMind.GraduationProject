@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-
-    public class BrandController : APIbaseController
+	[Route("api/[controller]")]
+	[ApiController]
+	public class BrandController : APIbaseController
 	{
 		private readonly IServiceManager _serviceManager;
 

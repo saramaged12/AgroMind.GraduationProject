@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-		public class ProductController : APIbaseController
+	[Route("api/[controller]")]
+	[ApiController]
+	public class ProductController : APIbaseController
 		{
 			private readonly IServiceManager _serviceManager;
 
@@ -37,19 +39,31 @@ namespace AgroMind.GP.APIs.Controllers
 				return Ok(product);
 			}
 
-			// Add Product
-			[HttpPost("AddProduct")]
-			public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductDTO productDto)
-			{
-				if (productDto == null)
-					return BadRequest("Product data is required.");
+		// Add Product
+		[HttpPost("AddProduct")]
+		public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductDTO productDto)
+		{
+			if (productDto == null)
+				return BadRequest("Product data is required.");
 
-				await _serviceManager.ProductService.AddAsync(productDto);
-				return CreatedAtAction(nameof(GetProductById), new { id = productDto.Id }, productDto);
-			}
+			//	await _serviceManager.ProductService.AddAsync(productDto);
+			//	return CreatedAtAction(nameof(GetProductById), new { id = productDto.Id }, productDto);
 
-			// Update Product
-			[HttpPut("UpdateProduct/{id}")]
+			//var createdProduct= await _serviceManager.ProductService.AddAsync(productDto);
+			//return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+
+			// Call the service to add the product and return the created product
+			var createdProduct = await _serviceManager.ProductService.AddAsync(productDto);
+
+			if (createdProduct == null)
+				return BadRequest("Failed to create the product.");
+
+			return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+
+		}
+
+		// Update Product
+		[HttpPut("UpdateProduct/{id}")]
 			public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productDto)
 			{
 				if (id != productDto.Id)

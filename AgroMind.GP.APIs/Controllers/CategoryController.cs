@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-		public class CategoryController : APIbaseController
+	[Route("api/[controller]")]
+	[ApiController]
+	public class CategoryController : APIbaseController
 		{
 			private readonly IServiceManager _serviceManager;
 

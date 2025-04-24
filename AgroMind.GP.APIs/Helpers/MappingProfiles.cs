@@ -11,9 +11,10 @@ namespace AgroMind.GP.APIs.Helpers
 		{
 			//Mapping From Product to ProductDTO
 			CreateMap<Product, ProductDTO>()
-				.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand))
-				.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category))
-				.ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier));
+				.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand.BrandName))
+				.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.CategoryName))
+				.ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier.FName));
+				
 
 			// Mapping from ProductDTO to Product
 			CreateMap<ProductDTO, Product>()
@@ -21,6 +22,9 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(d => d.Category, o => o.Ignore()) // Ignore Category navigation property
 				.ForMember(d => d.Supplier, o => o.Ignore()); // Ignore Supplier navigation property
 
+			CreateMap<Category, CategoryDTO>().ReverseMap();
+
+			CreateMap<Brand, BrandDTO>().ReverseMap();
 
 			//Mapping FromCrop to CropDTO
 			CreateMap<Crop, CropDto>()

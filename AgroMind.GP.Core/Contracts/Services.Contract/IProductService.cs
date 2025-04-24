@@ -10,7 +10,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 	public interface IProductService
 	{
 		//Add Products
-		Task AddAsync (ProductDTO productDto);
+		Task<ProductDTO> AddAsync (ProductDTO productDto);
 
 		//Get All Products
 		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync();

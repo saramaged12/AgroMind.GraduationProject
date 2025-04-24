@@ -3,6 +3,7 @@ using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
@@ -30,23 +31,19 @@ namespace AgroMind.GP.Service.Services
 			_mapper = mapper;
 		}
 
-		public async Task AddAsync(ProductDTO productDto)
+		public async Task<ProductDTO> AddAsync(ProductDTO productDto)
 		{
-			//Takes a ProductDTO, maps it to the real Product entity, adds it to the DB.
-
 			if (productDto == null)
-				throw new ArgumentNullException(nameof(productDto), "Product data cannot be null.");
+				throw new ArgumentNullException(nameof(productDto));
 
-			var repo =_unitOfWork.GetRepositories<Product, int>();
-		    var productdto=_mapper.Map<Product>(productDto);
-		    await repo.AddAsync(productdto);
+			var productEntity = _mapper.Map<Product>(productDto);
+			var repo = _unitOfWork.GetRepositories<Product, int>();
+
+			await repo.AddAsync(productEntity);
 			await _unitOfWork.SaveChangesAsync();
 
-
-
-
+			return _mapper.Map<ProductDTO>(productEntity);
 		}
-
 		public async Task DeleteProducts(ProductDTO productDto)
 		{
 			if (productDto == null)
@@ -65,8 +62,9 @@ namespace AgroMind.GP.Service.Services
 
 		public async Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync()
 		{
+			var Specification = new ProductWithBrandAndCategorySpec();
 			var Repo =_unitOfWork.GetRepositories<Product, int>();
-			var Products= await Repo.GetAllAsync();
+			var Products= await Repo.GetAllWithSpecASync(Specification);
 			var ProducsDTO = _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductDTO>>(Products);
 			return ProducsDTO;
 			
@@ -74,7 +72,8 @@ namespace AgroMind.GP.Service.Services
 
 		public async Task<ProductDTO> GetProductByIdAsync(int id)
 		{
-			var product= await _unitOfWork.GetRepositories<Product, int>().GetByIdAsync(id);
+			var Specifications= new ProductWithBrandAndCategorySpec(id);	
+			var product= await _unitOfWork.GetRepositories<Product, int>().GetByIdAWithSpecAsync(Specifications);
 			if (product == null)
 				throw new KeyNotFoundException($"Product with ID {id} not found.");
 
