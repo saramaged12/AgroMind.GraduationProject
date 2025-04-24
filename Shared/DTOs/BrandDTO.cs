@@ -2,7 +2,7 @@
 {
 	public class BrandDTO
 	{
-		public int id  { get; set; }
+		public int Id  { get; set; }
 		public string? BrandName {get; set; }
 	}
 }

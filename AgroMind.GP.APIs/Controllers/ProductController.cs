@@ -1,5 +1,6 @@
 ﻿using AgroMind.GP.APIs.DTOs;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
@@ -8,116 +9,70 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-
-    public class ProductController : APIbaseController
-	{
-		private readonly IGenericRepositories<Product, int> _productrepo;
-		
-
-		public IMapper Mapper { get; }
-
-		public ProductController(IGenericRepositories<Product,int> Productrepo ,IMapper mapper)
+		public class ProductController : APIbaseController
 		{
-			_productrepo = Productrepo;
-			
-			Mapper = mapper;
-		}
+			private readonly IServiceManager _serviceManager;
 
-
-		//ActionResult<T> and IActionResult are used as return types for controller actions
-		//<ActionResult<IEnumerable<Product>> // Returning a data type with possible status codes
-		//IActionResult //Returning multiple response types (Ok(), NotFound(), etc.)
-
-		//Get All
-		[HttpGet("GetProducts")]
-		public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts()
-		{
-			var Spec = new ProductWithBrandAndCategorySpec();
-			var products = await _productrepo.GetAllWithSpecASync(Spec);
-			var mappedproducts=Mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductDTO>>(products);
-			return Ok(mappedproducts);
-
-		}
-
-		//Get By Id
-		[HttpGet("GetProductById/{id}")]
-		public async Task<ActionResult<Product>> GetProductById(int id)
-		{
-			var spec = new ProductWithBrandAndCategorySpec(id);
-			var product = await _productrepo.GetByIdAWithSpecAsync(spec);
-			if (product == null)
+			public ProductController(IServiceManager serviceManager)
 			{
-				return NotFound();
+				_serviceManager = serviceManager;
 			}
 
-			return Ok(product);
-		}
-		//Add without auto Mapper
-		//[HttpPost]
-
-		//public async Task<ActionResult<Product>> AddProduct (Product product)
-		//{
-		//    await _productrepo.AddAsync(product);
-		//	return Ok(product);
-		//}
-		//Add
-
-
-		[HttpPost("AddProduct")]
-		public async Task<ActionResult<ProductDTO>> AddProduct(ProductDTO productDto)
-		{
-			var product = Mapper.Map<Product>(productDto);
-			await _productrepo.AddAsync(product);
-
-			var resultDto = Mapper.Map<ProductDTO>(product);
-			return CreatedAtAction(nameof(GetProductById), new { id = resultDto.Id }, resultDto);
-		}
-
-		//Update
-
-		// Update a product
-		[HttpPut("UpdateProduct/{id}")]
-		public async Task<IActionResult> UpdateProduct(int id, ProductDTO productDto)
-		{
-			if (id != productDto.Id)
+			// Get All Products
+			[HttpGet("GetProducts")]
+			public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetProducts()
 			{
-				return BadRequest();
+				var products = await _serviceManager.ProductService.GetAllProductsAsync();
+				return Ok(products);
 			}
 
-			var spec = new ProductWithBrandAndCategorySpec(id);
-			var existingProduct = await _productrepo.GetByIdAWithSpecAsync(spec);
-
-			if (existingProduct == null)
+			// Get Product By Id
+			[HttpGet("GetProductById/{id}")]
+			public async Task<ActionResult<ProductDTO>> GetProductById(int id)
 			{
-				return NotFound();
+				var product = await _serviceManager.ProductService.GetProductByIdAsync(id);
+				if (product == null)
+					return NotFound($"Product with ID {id} not found.");
+
+				return Ok(product);
 			}
 
-			Mapper.Map(productDto, existingProduct); // Map DTO to existing entity
-		     _productrepo.Update(existingProduct);
-
-			return NoContent(); // 204 No Content
-		}
-
-
-
-		//Delete
-
-		[HttpDelete("DeleteProduct/{id}")]
-		public async Task<IActionResult> DeleteProduct(int id)
-		{
-			var spec = new ProductWithBrandAndCategorySpec(id);
-			var product = await _productrepo.GetByIdAWithSpecAsync(spec);
-
-			if (product == null)
+			// Add Product
+			[HttpPost("AddProduct")]
+			public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductDTO productDto)
 			{
-				return NotFound();
+				if (productDto == null)
+					return BadRequest("Product data is required.");
+
+				await _serviceManager.ProductService.AddAsync(productDto);
+				return CreatedAtAction(nameof(GetProductById), new { id = productDto.Id }, productDto);
 			}
 
-			 _productrepo.Delete(product);
-			return NoContent(); // 204 No Content
+			// Update Product
+			[HttpPut("UpdateProduct/{id}")]
+			public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productDto)
+			{
+				if (id != productDto.Id)
+					return BadRequest("Product ID mismatch.");
+
+				var existingProduct = await _serviceManager.ProductService.GetProductByIdAsync(id);
+				if (existingProduct == null)
+					return NotFound($"Product with ID {id} not found.");
+
+				await _serviceManager.ProductService.UpdateProducs(productDto);
+				return NoContent();
+			}
+
+			// Delete Product
+			[HttpDelete("DeleteProduct/{id}")]
+			public async Task<IActionResult> DeleteProduct(int id)
+			{
+				var product = await _serviceManager.ProductService.GetProductByIdAsync(id);
+				if (product == null)
+					return NotFound($"Product with ID {id} not found.");
+
+				await _serviceManager.ProductService.DeleteProducts(new ProductDTO { Id = id });
+				return NoContent();
+			}
 		}
-
-
 	}
-
-}

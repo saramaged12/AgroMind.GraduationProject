@@ -8,11 +8,15 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace AgroMind.GP.Service.Services
 {
+        // The controller should focus on handling HTTP requests and responses
+		//, while the service layer should handle business logic, including validation and null checks.
 	public class ProductService : IProductService
 	{
 		private readonly IUnitOfWork _unitOfWork;
@@ -29,21 +33,33 @@ namespace AgroMind.GP.Service.Services
 		public async Task AddAsync(ProductDTO productDto)
 		{
 			//Takes a ProductDTO, maps it to the real Product entity, adds it to the DB.
+
+			if (productDto == null)
+				throw new ArgumentNullException(nameof(productDto), "Product data cannot be null.");
+
 			var repo =_unitOfWork.GetRepositories<Product, int>();
 		    var productdto=_mapper.Map<Product>(productDto);
 		    await repo.AddAsync(productdto);
-			
+			await _unitOfWork.SaveChangesAsync();
+
+
 
 
 		}
 
-		public void DeleteProducts(ProductDTO productDTO)
+		public async Task DeleteProducts(ProductDTO productDto)
 		{
-			//Maps the DTO to Product entity and deletes it.
+			if (productDto == null)
+				throw new ArgumentNullException(nameof(productDto), "Product data cannot be null.");
+
 			var repo = _unitOfWork.GetRepositories<Product, int>();
-			var productEntity = _mapper.Map<Product>(productDTO);
+			var productEntity = await repo.GetByIdAsync(productDto.Id);
+			if (productEntity == null)
+				throw new KeyNotFoundException($"Product with ID {productDto.Id} not found.");
+
 			repo.Delete(productEntity);
-			
+			await _unitOfWork.SaveChangesAsync();
+
 
 		}
 
@@ -59,16 +75,29 @@ namespace AgroMind.GP.Service.Services
 		public async Task<ProductDTO> GetProductByIdAsync(int id)
 		{
 			var product= await _unitOfWork.GetRepositories<Product, int>().GetByIdAsync(id);
+			if (product == null)
+				throw new KeyNotFoundException($"Product with ID {id} not found.");
+
 			return _mapper.Map<Product, ProductDTO>(product);	
 		}
 
-		public void UpdateProducs(ProductDTO productDTO)
+		public async Task UpdateProducs(ProductDTO productDto)
 		{
 			//Maps the DTO to the entity and updates the product.
+			if (productDto == null)
+				throw new ArgumentNullException(nameof(productDto), "Product data cannot be null.");
+
 			var repo = _unitOfWork.GetRepositories<Product, int>();
-			var productEntity = _mapper.Map<Product>(productDTO);
+
+			var existingProduct =  await repo.GetByIdAsync(productDto.Id);
+			if (existingProduct == null)
+				throw new KeyNotFoundException($"Product with ID {productDto.Id} not found.");
+
+			var productEntity = _mapper.Map<Product>(productDto);
 			repo.Update(productEntity);
-			
+			await _unitOfWork.SaveChangesAsync();
+
+
 
 		}
 	}

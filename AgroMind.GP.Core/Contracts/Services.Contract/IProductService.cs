@@ -21,10 +21,10 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		//Update Products
 		
-		void UpdateProducs(ProductDTO productDTO);
+		Task UpdateProducs(ProductDTO productDTO);
 
 		//Delete Products
-		void DeleteProducts(ProductDTO productDTO);
+		Task DeleteProducts(ProductDTO productDTO);
 
 
 

@@ -1,4 +1,6 @@
-﻿using AgroMind.GP.Core.Contracts.Repositories.Contract;
+﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Http;
@@ -9,91 +11,75 @@ namespace AgroMind.GP.APIs.Controllers
 
     public class BrandController : APIbaseController
 	{
-		private readonly IGenericRepositories<Brand, int> _brandsRepo;
+		private readonly IServiceManager _serviceManager;
 
-		public BrandController(IGenericRepositories<Brand, int> brandsRepo)
+		public BrandController(IServiceManager serviceManager)
 		{
-			_brandsRepo = brandsRepo;
+			_serviceManager = serviceManager;
 		}
 
-		//Get All Brands
-		[HttpGet("GetAllBrands")]
-		public async Task<ActionResult<IReadOnlyList<Brand>>> GetBrands()
-		{
-			var brands = await _brandsRepo.GetAllAsync();
-			return Ok(brands);
-		}
-
-		//Get By Id
-		[HttpGet("GetBrandById/{id}")]
-		public async Task<ActionResult<Brand>> GetBrandById(int id)
-		{
-			var Brand = await _brandsRepo.GetByIdAsync(id);
-			if (Brand == null)
+	
+			// Get All Brands
+			[HttpGet("GetAllBrands")]
+			public async Task<ActionResult<IReadOnlyList<BrandDTO>>> GetBrands()
 			{
-				return NotFound();
-			}
-			return Ok(Brand);
-		}
-
-		//Add
-
-		[HttpPost("AddBrand")]
-		public async Task<ActionResult<Brand>> AddBrand(Brand brand)
-		{
-			if (brand == null)
-			{
-				return BadRequest("brand is null.");
-			}
-			await _brandsRepo.AddAsync(brand);
-			return CreatedAtAction(nameof(GetBrandById), new { id = brand.Id }, brand);
-
-			
-		}
-
-
-		//Update
-
-		[HttpPut("UpdateBrandById/{id}")]
-		public async Task<IActionResult> UpdateBrand(int id, Brand brand)
-		{
-			if (id != brand.Id)
-			{
-				return BadRequest();
+				var brands = await _serviceManager.BrandService.GetAllBrandsAsync();
+				return Ok(brands);
 			}
 
-
-			var existingbrand = await _brandsRepo.GetByIdAsync(id);
-
-			if (existingbrand == null)
+			// Get Brand By Id
+			[HttpGet("GetBrandById/{id}")]
+			public async Task<ActionResult<BrandDTO>> GetBrandById(int id)
 			{
-				return NotFound();
+				var brand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
+				if (brand == null)
+					return NotFound($"Brand with ID {id} not found.");
+
+				return Ok(brand);
 			}
 
+			// Add Brand
+			[HttpPost("AddBrand")]
+			public async Task<ActionResult<BrandDTO>> AddBrand([FromBody] BrandDTO brandDto)
+			{
+				if (brandDto is null)
+					return BadRequest("Brand data is required.");
 
-			 _brandsRepo.Update(existingbrand);
+				await _serviceManager.BrandService.AddBrandAsync(brandDto);
+				return CreatedAtAction(nameof(GetBrandById), new { id = brandDto.Id }, brandDto);
+			}
 
-			return NoContent(); // 204 No Content
-		}
+		
+
+		   // Update Brand
+		   [HttpPut("UpdateBrandById/{id}")]
+           public async Task<IActionResult> UpdateBrand(int id, [FromBody] BrandDTO brandDto)
+		   {
+				if (id != brandDto.Id)
+					return BadRequest("Brand ID mismatch.");
+
+				var existingBrand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
+				if (existingBrand == null)
+					return NotFound($"Brand with ID {id} not found.");
+
+				await _serviceManager.BrandService.UpdateBrands(brandDto);
+				return NoContent();
+		   }
 
 
 
-		//Delete
-
+		// Delete Brand
 		[HttpDelete("DeleteBrand/{id}")]
-		public async Task<IActionResult> DeleteBrand(int id)
-		{
-
-			var brand = await _brandsRepo.GetByIdAsync(id);
-
-			if (brand == null)
+			public async Task<IActionResult> DeleteBrand(int id)
 			{
-				return NotFound();
+				var brand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
+				if (brand == null)
+					return NotFound($"Brand with ID {id} not found.");
+
+				await _serviceManager.BrandService.DeleteBrands(brand);
+				return NoContent();
 			}
-
-			 _brandsRepo.Delete(brand);
-			return NoContent(); // 204 No Content
 		}
-
 	}
-}
+
+

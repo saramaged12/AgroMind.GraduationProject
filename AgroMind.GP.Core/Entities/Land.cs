@@ -1,5 +1,6 @@
 ﻿using AgroMind.GP.Core.Entities.Identity;
 
+
 namespace AgroMind.GP.Core.Entities
 {
 	public class Land : BaseEntity<int>

@@ -22,9 +22,9 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		//Update Brandss
 
-		void UpdateBrandss(BrandDTO brandDTO);
+		Task UpdateBrands(BrandDTO brandDTO);
 
 		//Delete Categories
-		void DeleteBrandss(BrandDTO brandDTO);
+		Task DeleteBrands(BrandDTO brandDTO);
 	}
 }

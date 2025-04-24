@@ -16,51 +16,71 @@ namespace AgroMind.GP.Service.Services
 		private readonly IMapper _mapper;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public CategoryService(IMapper mapper , IUnitOfWork unitOfWork)
-		{
-			_mapper = mapper;
-			_unitOfWork = unitOfWork;
-		}
+		    public CategoryService( IUnitOfWork unitOfWork, IMapper mapper)
+		    {
+			   _mapper = mapper;
+			   _unitOfWork = unitOfWork;
+		    }
 
-		public async Task AddCategoryAsync(CategoryDTO categoryDto)
-		{
-			// Maps the DTO to the Category entity and adds it to the database
-			var repo = _unitOfWork.GetRepositories<Category, int>();
-			var categoryEntity = _mapper.Map<Category>(categoryDto);
-			await repo.AddAsync(categoryEntity);
+		    public async Task AddCategoryAsync(CategoryDTO categoryDto)
+			{
+				if (categoryDto == null)
+					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
 
-		}
+				var repo = _unitOfWork.GetRepositories<Category, int>();
+				var categoryEntity = _mapper.Map<Category>(categoryDto);
+				await repo.AddAsync(categoryEntity);
+				await _unitOfWork.SaveChangesAsync();
+			}
 
-		public void DeleteCategories(CategoryDTO categoryDto)
-		{
-			var repo = _unitOfWork.GetRepositories<Category, int>();
-			var categoryEntity = _mapper.Map<Category>(categoryDto);
-			repo.Delete(categoryEntity);
+			public async Task DeleteCategories(CategoryDTO categoryDto)
+			{
+				if (categoryDto == null)
+					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
 
-		}
+				var repo = _unitOfWork.GetRepositories<Category, int>();
+				var existingCategory = await repo.GetByIdAsync(categoryDto.Id);
 
-		public async Task<IReadOnlyList<CategoryDTO>> GetAllCategoriesAsync()
-		{
-		   var categories=await _unitOfWork.GetRepositories<Category, int>() .GetAllAsync();
-		  
-		   return _mapper.Map<IReadOnlyList<Category>, IReadOnlyList<CategoryDTO>>(categories);
-		  
-		}
+				if (existingCategory == null)
+					throw new KeyNotFoundException($"Category with ID {categoryDto.Id} not found.");
 
-		public async Task<CategoryDTO> GetCategoryByIdAsync(int id)
-		{
-			var category= await _unitOfWork.GetRepositories<Category, int>().GetByIdAsync(id);
-			var categorydto=_mapper.Map<Category,CategoryDTO>(category);
-			return categorydto;
-		}
+				repo.Delete(existingCategory);
+				await _unitOfWork.SaveChangesAsync();
+			}
 
-		public void UpdateCategories(CategoryDTO categoryDto)
-		{
-			// Maps the DTO to the Category entity and updates it
-			var repo = _unitOfWork.GetRepositories<Category, int>();
-			var categoryEntity = _mapper.Map<Category>(categoryDto);
-			repo.Update(categoryEntity);
+			public async Task<IReadOnlyList<CategoryDTO>> GetAllCategoriesAsync()
+			{
+				var repo = _unitOfWork.GetRepositories<Category, int>();
+				var categories = await repo.GetAllAsync();
+				return _mapper.Map<IReadOnlyList<Category>, IReadOnlyList<CategoryDTO>>(categories);
+			}
 
+			public async Task<CategoryDTO> GetCategoryByIdAsync(int id)
+			{
+				var repo = _unitOfWork.GetRepositories<Category, int>();
+				var category = await repo.GetByIdAsync(id);
+
+				if (category == null)
+					throw new KeyNotFoundException($"Category with ID {id} not found.");
+
+				return _mapper.Map<Category, CategoryDTO>(category);
+			}
+
+			public async Task UpdateCategories(CategoryDTO categoryDto)
+			{
+				if (categoryDto == null)
+					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
+
+				var repo = _unitOfWork.GetRepositories<Category, int>();
+				var existingCategory = await repo.GetByIdAsync(categoryDto.Id);
+
+				if (existingCategory == null)
+					throw new KeyNotFoundException($"Category with ID {categoryDto.Id} not found.");
+
+				var categoryEntity = _mapper.Map<Category>(categoryDto);
+				repo.Update(categoryEntity);
+				await _unitOfWork.SaveChangesAsync();
+			}
 		}
 	}
-}
+

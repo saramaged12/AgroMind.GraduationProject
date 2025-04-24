@@ -21,9 +21,9 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		//Update Categoriess
 
-		void UpdateCategories(CategoryDTO categorydto);
+		Task UpdateCategories(CategoryDTO categorydto);
 
 		//Delete Categories
-		void DeleteCategories(CategoryDTO categoryDTO);
+		Task DeleteCategories(CategoryDTO categoryDTO);
 	}
 }
