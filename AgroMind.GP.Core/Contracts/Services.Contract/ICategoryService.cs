@@ -11,7 +11,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 	{
 		//Add Categories
 
-		Task AddCategoryAsync(CategoryDTO categoryDto);
+		Task<CategoryDTO> AddCategoryAsync(CategoryDTO categoryDto);
 		//Get All Categories
 		Task<IReadOnlyList<CategoryDTO>> GetAllCategoriesAsync();
 

@@ -46,8 +46,13 @@ namespace AgroMind.GP.APIs.Controllers
 				if (brandDto is null)
 					return BadRequest("Brand data is required.");
 
-				await _serviceManager.BrandService.AddBrandAsync(brandDto);
-				return CreatedAtAction(nameof(GetBrandById), new { id = brandDto.Id }, brandDto);
+
+				var Brand= await _serviceManager.BrandService.AddBrandAsync(brandDto);
+
+			       if(Brand == null)
+				     return BadRequest("Failed to create the Brand.");
+
+				return CreatedAtAction(nameof(GetBrandById), new { id = Brand.Id }, Brand);
 			}
 
 		

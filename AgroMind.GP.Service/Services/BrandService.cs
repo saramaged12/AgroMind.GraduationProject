@@ -23,15 +23,17 @@ namespace AgroMind.GP.Service.Services
 				_mapper = mapper;
 			}
 
-			public async Task AddBrandAsync(BrandDTO brandDto)
+			public async Task<BrandDTO> AddBrandAsync(BrandDTO brandDto)
 			{
 				if (brandDto == null)
 					throw new ArgumentNullException(nameof(brandDto), "Brand data cannot be null.");
 
-				var repo = _unitOfWork.GetRepositories<Brand, int>();
-				var brandEntity = _mapper.Map<Brand>(brandDto);
+			    var brandEntity = _mapper.Map<Brand>(brandDto);
+			    var repo = _unitOfWork.GetRepositories<Brand, int>();
+			
 				await repo.AddAsync(brandEntity);
 				await _unitOfWork.SaveChangesAsync();
+			    return _mapper.Map<BrandDTO>(brandEntity);
 			}
 
 			public async Task<IReadOnlyList<BrandDTO>> GetAllBrandsAsync()
@@ -63,10 +65,14 @@ namespace AgroMind.GP.Service.Services
 				if (existingBrand == null)
 					throw new KeyNotFoundException($"Brand with ID {brandDto.Id} not found.");
 
-				var brandEntity = _mapper.Map<Brand>(brandDto);
-				repo.Update(brandEntity);
-				await _unitOfWork.SaveChangesAsync();
-			}
+			    // Map the updated properties to the existing entity
+			       _mapper.Map(brandDto, existingBrand);
+
+
+			    // Update the existing entity
+			       repo.Update(existingBrand);
+			       await _unitOfWork.SaveChangesAsync();
+		    }
 
 			public async Task DeleteBrands(BrandDTO brandDto)
 			{

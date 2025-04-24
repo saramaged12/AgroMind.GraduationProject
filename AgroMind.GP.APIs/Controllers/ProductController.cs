@@ -46,12 +46,6 @@ namespace AgroMind.GP.APIs.Controllers
 			if (productDto == null)
 				return BadRequest("Product data is required.");
 
-			//	await _serviceManager.ProductService.AddAsync(productDto);
-			//	return CreatedAtAction(nameof(GetProductById), new { id = productDto.Id }, productDto);
-
-			//var createdProduct= await _serviceManager.ProductService.AddAsync(productDto);
-			//return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
-
 			// Call the service to add the product and return the created product
 			var createdProduct = await _serviceManager.ProductService.AddAsync(productDto);
 

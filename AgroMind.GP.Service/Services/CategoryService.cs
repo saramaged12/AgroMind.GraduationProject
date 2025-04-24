@@ -22,15 +22,17 @@ namespace AgroMind.GP.Service.Services
 			   _unitOfWork = unitOfWork;
 		    }
 
-		    public async Task AddCategoryAsync(CategoryDTO categoryDto)
+		    public async Task<CategoryDTO> AddCategoryAsync(CategoryDTO categoryDto)
 			{
 				if (categoryDto == null)
 					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
 
-				var repo = _unitOfWork.GetRepositories<Category, int>();
-				var categoryEntity = _mapper.Map<Category>(categoryDto);
+			var categoryEntity = _mapper.Map<Category>(categoryDto);
+			var repo = _unitOfWork.GetRepositories<Category, int>();
+			
 				await repo.AddAsync(categoryEntity);
 				await _unitOfWork.SaveChangesAsync();
+			return _mapper.Map<CategoryDTO>(categoryEntity);
 			}
 
 			public async Task DeleteCategories(CategoryDTO categoryDto)
@@ -77,10 +79,17 @@ namespace AgroMind.GP.Service.Services
 				if (existingCategory == null)
 					throw new KeyNotFoundException($"Category with ID {categoryDto.Id} not found.");
 
-				var categoryEntity = _mapper.Map<Category>(categoryDto);
-				repo.Update(categoryEntity);
-				await _unitOfWork.SaveChangesAsync();
-			}
+				
+
+		       	// Map the updated properties to the existing entity
+			      _mapper.Map(categoryDto, existingCategory);
+
+		
+			   // Update the existing entity
+			       repo.Update(existingCategory);
+			       await _unitOfWork.SaveChangesAsync();
+
 		}
+	}
 	}
 

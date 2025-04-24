@@ -22,5 +22,12 @@ namespace AgroMind.GP.Core.Contracts.Specifications.Contract
         //Signature For Property For List Of Includes
 
         public List<Expression<Func<TEntity, object>>> Includes { get; set; }
-    }
+
+
+		// New methods for Add, Update, and Delete
+		//void ApplyAdd(TEntity entity);
+		//void ApplyUpdate(TEntity existingEntity, TEntity updatedEntity);
+		//void ApplyDelete(TEntity entity);
+
+	}
 }

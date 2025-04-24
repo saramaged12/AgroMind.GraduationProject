@@ -11,7 +11,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 	{
 		//Add Brands
 
-		Task AddBrandAsync(BrandDTO brandDto);
+	    Task<BrandDTO> AddBrandAsync(BrandDTO brandDto);
 
 		//Get All Brandss
 		Task<IReadOnlyList<BrandDTO>> GetAllBrandsAsync();

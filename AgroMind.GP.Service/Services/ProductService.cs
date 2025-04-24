@@ -92,8 +92,12 @@ namespace AgroMind.GP.Service.Services
 			if (existingProduct == null)
 				throw new KeyNotFoundException($"Product with ID {productDto.Id} not found.");
 
-			var productEntity = _mapper.Map<Product>(productDto);
-			repo.Update(productEntity);
+			// Map the updated properties to the existing entity
+			_mapper.Map(productDto, existingProduct);
+
+
+			// Update the existing entity
+			repo.Update(existingProduct);
 			await _unitOfWork.SaveChangesAsync();
 
 

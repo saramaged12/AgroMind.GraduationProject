@@ -46,8 +46,13 @@ namespace AgroMind.GP.APIs.Controllers
 				if (categoryDto == null)
 					return BadRequest("Category data is required.");
 
-				await _serviceManager.CategoryService.AddCategoryAsync(categoryDto);
-				return CreatedAtAction(nameof(GetCategoryById), new { id = categoryDto.Id }, categoryDto);
+
+				var CategoryCreated=await _serviceManager.CategoryService.AddCategoryAsync(categoryDto);
+
+			     if (CategoryCreated == null)
+			    	return BadRequest("Failed to create the Category.");
+
+			        return CreatedAtAction(nameof(GetCategoryById), new { id = CategoryCreated.Id }, CategoryCreated);
 			}
 
 			// Update Category
