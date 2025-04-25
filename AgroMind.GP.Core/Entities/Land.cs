@@ -6,8 +6,8 @@ namespace AgroMind.GP.Core.Entities
 	public class Land : BaseEntity<int>
 	{
 
-		public string Name { get; set; }
-		public double? AreaSize { get; set;}
+		public string? LandName { get; set; }
+		public double? Size { get; set;}
 		
 		public string? SoilType { get; set; }
 
@@ -21,14 +21,10 @@ namespace AgroMind.GP.Core.Entities
 
 		public string? FarmerId { get; set; }
 
-		public string status { get; set; }
-
-		public string weatherCondition { get; set; }
-
-		public string IrrigationType { get; set; }
+		public string? IrrigationType { get; set; }
 		public DateTime StartDate { get; set; }
-		public float Latitude { get; set; }
-		public float Longitude { get; set; }
+		public double Latitude { get; set; }
+		public double Longitude { get; set; }
 
 	}
 
