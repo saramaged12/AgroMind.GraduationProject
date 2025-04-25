@@ -2,6 +2,7 @@
 {
 	public class StepDto
 	{
+		public int Id { get; set; } 
 
 		public string? StepName { get; set; } 
 
