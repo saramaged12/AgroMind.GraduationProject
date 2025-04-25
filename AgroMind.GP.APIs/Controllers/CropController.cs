@@ -52,11 +52,11 @@ namespace AgroMind.GP.APIs.Controllers
 		[HttpPost("AddCrop")]
 		public async Task<ActionResult<CropDto>> AddCrop([FromBody] CropDto cropDto)
 		{
-			// Deserialize the stages from JSON
-			if (!string.IsNullOrEmpty(cropDto.StagesJson)) // Assuming you'll add a StagesJson property to CropDto
-			{
-				cropDto.Stages = JsonConvert.DeserializeObject<List<CropStageDto>>(cropDto.StagesJson);
-			}
+			//// Deserialize the stages from JSON
+			//if (!string.IsNullOrEmpty(cropDto.StagesJson)) // Assuming you'll add a StagesJson property to CropDto
+			//{
+			//	cropDto.Stages = JsonConvert.DeserializeObject<List<CropStageDto>>(cropDto.StagesJson);
+			//}
 
 			var crop = _mapper.Map<Crop>(cropDto);
 			await _croprepo.AddAsync(crop);
