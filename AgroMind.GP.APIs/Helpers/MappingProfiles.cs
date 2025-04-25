@@ -2,6 +2,7 @@
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AutoMapper;
+using Shared.DTOs;
 
 namespace AgroMind.GP.APIs.Helpers
 {
@@ -32,10 +33,10 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages))
 
 			    .ForMember(dest => dest.Id, opt => opt.Ignore());
-			
+
 			// check if src.Stages is null before calling .Sum(), to avoid null reference errors.
 
-
+			CreateMap<Land, LandDTO>().ReverseMap();
 
 
 			CreateMap<CropDto, Crop>()

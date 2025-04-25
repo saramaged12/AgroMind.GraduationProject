@@ -14,8 +14,7 @@ namespace AgroMind.GP.Repository.Data.Configurations
 				.OnDelete(DeleteBehavior.Restrict);
 			//OnDelete(DeleteBehavior.Cascade);  // If Farmer is deleted, delete Lands
 
-			builder.Property(e => e.Latitude).HasColumnType("float");
-			builder.Property(e => e.Longitude).HasColumnType("float");
+			
 		}
 	}
 }

@@ -1,76 +1,91 @@
 ﻿using AgroMind.GP.APIs.DTOs;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTOs;
 
 namespace AgroMind.GP.APIs.Controllers
 {
+	[Route("api/[controller]")]
+	[ApiController]
 
-    public class LandController : APIbaseController
+	public class LandController : APIbaseController
 	{
-		private readonly IGenericRepositories<Land, int> _landrepo;
+		private readonly IServiceManager _serviceManager;
 
-		public LandController(IGenericRepositories<Land, int> landrepo)
+		public LandController(IServiceManager serviceManager)
 		{
-			_landrepo = landrepo;
+			_serviceManager = serviceManager;
 		}
 
-		//Get All
-		[HttpGet("GetLands")]
-		public async Task<ActionResult<IReadOnlyList<Land>>> GetLands()
+		// Get All Lands
+		[HttpGet("GetAllLands")]
+		public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetLands()
 		{
-			var SpecLand = new LandSpecification();
-			var lands = await _landrepo.GetAllWithSpecASync(SpecLand);
+			var lands = await _serviceManager.LandService.GetAllLandsAsync();
 			return Ok(lands);
-
 		}
 
-		//Get By Id
-		[HttpGet("getlandById/{id}")]
-		public async Task<ActionResult<Land>> GetLandById(int id)
+		// Get Land By Id
+		[HttpGet("GetLandById/{id}")]
+		public async Task<ActionResult<LandDTO>> GetLandById(int id)
 		{
-			var spec = new LandSpecification(id);
-			var land = await _landrepo.GetByIdAWithSpecAsync(spec);
+			var land = await _serviceManager.LandService.GetLandByIdAsync(id);
+			if (land == null)
+				return NotFound($"Land with ID {id} not found.");
+
 			return Ok(land);
 		}
-		//AddLand
+
+		// Add Land
 		[HttpPost("AddLand")]
-		public async Task<ActionResult<Land>> AddLand(Land land)
+		public async Task<ActionResult<LandDTO>> AddLand([FromBody] LandDTO landDto)
 		{
-			if (land == null) return BadRequest("Invalid land data.");
-			await _landrepo.AddAsync(land);
-			return Ok(new { Message = "Land added successfully" });
+			if (landDto is null)
+				return BadRequest("Land data is required.");
+
+
+			var Land = await _serviceManager.LandService.AddAsync(landDto);
+
+			if (Land == null)
+				return BadRequest("Failed to create the Land.");
+
+			return CreatedAtAction(nameof(GetLandById), new { id = Land.Id }, Land);
 		}
 
-		//Update Land
-		[HttpPut("UpdateLand/{id}")]
-		public async Task< IActionResult> UpdateLand(int id, Land updatedLand)
-		{
-			if (id != updatedLand.Id) return BadRequest("Land ID mismatch ");
-			var spec = new LandSpecification(id);
-			var existingLand = _landrepo.GetByIdAWithSpecAsync(spec);
-			if (existingLand == null) return NotFound("Land with ID {id} not found.");
 
-			 _landrepo.Update(updatedLand);
-			return Ok("Land updated successfully.");
+
+		// Update Land
+		[HttpPut("UpdateLandById/{id}")]
+		public async Task<IActionResult> UpdateLand(int id, [FromBody] LandDTO landDto)
+		{
+			if (id != landDto.Id)
+				return BadRequest("Land ID mismatch.");
+
+			var existingland = await _serviceManager.LandService.GetLandByIdAsync(id);
+			if (existingland == null)
+				return NotFound($"Land with ID {id} not found.");
+
+			await _serviceManager.LandService.UpdateLands(landDto);
+			return NoContent();
 		}
 
-		// DELETE 
-		[HttpDelete("DeleteLand/{id}")]
+
+
+		// Delete Land
+		[HttpDelete("DeletLand/{id}")]
 		public async Task<IActionResult> DeleteLand(int id)
 		{
-			var spec = new LandSpecification(id);
-			var land = await _landrepo.GetByIdAWithSpecAsync(spec);
-			 
-			if(land == null)
-			 
-				return NotFound();
-		    	
-			 _landrepo.Delete(land);
-			return Ok($"Land with ID {id} deleted successfully.");
+			var land = await _serviceManager.LandService.GetLandByIdAsync(id);
+			if (land == null)
+				return NotFound($"Brand with ID {id} not found.");
+
+			await _serviceManager.LandService.DeleteLands(land);
+			return NoContent();
 		}
 
 	}
