@@ -65,6 +65,14 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 			builder.Services.AddScoped<IServiceManager,ServiceManager>();
 
+			builder.Services.AddControllers()
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+		options.JsonSerializerOptions.PropertyNamingPolicy = null;
+		options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+		//options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonConverter<DateTime>());
+	});
 
 			builder.Services.AddCors(options =>
 			{

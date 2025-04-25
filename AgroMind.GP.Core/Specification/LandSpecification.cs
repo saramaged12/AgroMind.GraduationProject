@@ -7,8 +7,9 @@ namespace AgroMind.GP.Core.Specification
 		//For Get All Crops
 		public LandSpecification() : base()
 		{
-			Includes.Add(L => L.Farmer);
-			Includes.Add(L => L.Crops);
+			//if i want to include the related data ? Farmer Name and Crops Name
+			//Includes.Add(L => L.Farmer);
+			//Includes.Add(L => L.Crops);
 
 		}
 
