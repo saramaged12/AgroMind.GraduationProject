@@ -1,5 +1,6 @@
 ﻿using AgroMind.GP.APIs.DTOs;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
+using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -13,13 +14,11 @@ namespace AgroMind.GP.APIs.Controllers
 	//[Authorize(Roles = "AgriculturalExpert")]
 	public class StepController : ControllerBase
 	{
-		private readonly IGenericRepositories<Step, int> _Steprepo;
-		private readonly IMapper _mapper;
+		private readonly IServiceManager _serviceManager;
 
-		public StepController(IGenericRepositories<Step,int> steprepo,IMapper mapper)
+		public StepController(IServiceManager serviceManager)
 		{
-			_Steprepo = steprepo;
-			_mapper = mapper;
+			_serviceManager = serviceManager;
 		}
 
 		//Add Step
@@ -29,16 +28,27 @@ namespace AgroMind.GP.APIs.Controllers
 		{
 
 			if (stepDto == null)
-			{
-				return BadRequest("Invalid step data.");
-			}
+				return BadRequest(" Step data is required.");
 
-			var step = _mapper.Map<Step>(stepDto);
-			await _Steprepo.AddAsync(step);
+			
+			var createdstep = await _serviceManager.StepService.AddStepAsync(stepDto);
 
-			var resultDto = _mapper.Map<StepDto>(step);
-			return Ok(resultDto);
+			if (createdstep == null)
+				return BadRequest("Failed to create the Crop.");
 
+			return CreatedAtAction(nameof(GetStepById), new { id = createdstep.Id }, createdstep);
+
+		}
+
+		// Get Step By Id
+		[HttpGet("GetStepById/{id}")]
+		public async Task<ActionResult<StepDto>> GetStepById(int id)
+		{
+			var step = await _serviceManager.StepService.GetStepByIdAsync(id);
+			if (step == null)
+				return NotFound($"Step with ID {id} not found.");
+
+			return Ok(step);
 		}
 
 	}
