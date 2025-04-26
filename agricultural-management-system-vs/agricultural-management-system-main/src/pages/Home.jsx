@@ -1,4 +1,3 @@
-
 import React from "react";
 import HealthyFoods from '../components/HealthyFoods';
 import Products from '../components/Products';
@@ -13,12 +12,12 @@ function Home() {
     return (
         <div>
             {/* Hero Section */}
-            <div 
-                className="hero-section position-relative vh-100 w-100" 
-                style={{ 
-                    backgroundImage: "url('/src/assets/images/index-2.jpg')", 
+            <div
+                className="hero-section position-relative vh-100 w-100"
+                style={{
+                    backgroundImage: "url('/src/assets/images/index-2.jpg')",
                     backgroundSize: "cover",
-                    backgroundPosition: "100% center" 
+                    backgroundPosition: "100% center"
                 }}
             >
                 {/* Dark Overlay */}
@@ -27,13 +26,13 @@ function Home() {
                 {/* Content */}
                 <div className="position-relative d-flex flex-column justify-content-center align-items-center h-100 text-white text-center px-3">
                     <p className="tagline">Better Agriculture for Better Future</p>
-                    <h1 className="hero-title">EVERY CROP COUNTS, <br/> EVERY FARMER MATTERS.</h1>
+                    <h1 className="hero-title">EVERY CROP COUNTS, <br /> EVERY FARMER MATTERS.</h1>
                     <div className="underline"></div>
                     <p className="hero-text">
                         The paramount doctrine of the economic and technological euphoria of recent decades has been that everything depends on innovation.
                     </p>
                     <button className="hero-button">
-                        See Our Services 
+                        See Our Services
                         <span className="arrow">➝</span>
                     </button>
                 </div>
@@ -43,11 +42,11 @@ function Home() {
             </div>
 
             {/* Other Sections */}
-            <AgricultureSkill/>
-            <HeroSection/>
-            <FarmerSection/>
-            <HealthyLifeSection/>
-            <OrganicSection/>
+            <AgricultureSkill />
+            <HeroSection />
+            <FarmerSection />
+            <HealthyLifeSection />
+            <OrganicSection />
             <HealthyFoods />
             <Products />
         </div>

@@ -37,10 +37,12 @@ import Dashboard from "./pages/ExpertDasboard";
 import ResetPassword from './pages/ResetPassword';
 import ForgotPassword from './pages/ForgotPassword';
 import LandFormPage from "./pages/LandFormPage";
+import ChatBot from "./components/ChatBot";
 
 function App() {
     const [order, setOrder] = useState(null);
     return (
+        <>
         <Router>
             <Navbar/>
             {/* <SecondaryNavbar/>
@@ -77,9 +79,10 @@ function App() {
         <Route path="/add-land" element={<LandFormPage />} />
                
             </Routes>
-      
+            <ChatBot />
             <Footer/>
         </Router>
+        </>
     );
 }
 
