@@ -67,7 +67,7 @@ namespace AgroMind.GP.APIs.Controllers
 			if (id != cropDto.Id)
 				return BadRequest("Crop ID mismatch.");
 
-			var existingCrop = await _serviceManager.ProductService.GetProductByIdAsync(id);
+			var existingCrop = await _serviceManager.CropService.GetCropByIdAsync(id);
 			if (existingCrop == null)
 				return NotFound($"Crop with ID {id} not found.");
 

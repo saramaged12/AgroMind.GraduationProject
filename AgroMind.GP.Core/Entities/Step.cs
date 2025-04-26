@@ -16,11 +16,11 @@ namespace AgroMind.GP.Core.Entities
 		public string? ToolImage { get; set; } 
 		public int? DurationDays { get; set; } // Changed from DateTime? to int? (days)
 
-		public string? Fertilizer { get; set; } 
+		public string? Fertilizer { get; set; }
 		//public int? FertilizerDuration { get; set; } 
 
-		public decimal Cost { get; set; }
-		
+		public decimal Cost { get; set; } // Cost of this step
+
 		public int? StageId { get; set; }
 		[JsonIgnore]
 		public CropStage? Stage { get; set; }

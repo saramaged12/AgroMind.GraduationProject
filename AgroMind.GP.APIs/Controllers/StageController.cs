@@ -51,5 +51,39 @@ namespace AgroMind.GP.APIs.Controllers
 
 			return Ok(stage);
 		}
+		// Get All Stages
+		[HttpGet("GetStages")]
+		public async Task<ActionResult<IReadOnlyList<CropStageDto>>> GetStages()
+		{
+			var stages = await _serviceManager.StageService.GetAllStagesAsync();
+			return Ok(stages);
+		}
+
+		// Update Stage
+		[HttpPut("UpdateSatge/{id}")]
+		public async Task<IActionResult> UpdateStage(int id, [FromBody] CropStageDto stageDto)
+		{
+			if (id != stageDto.Id)
+				return BadRequest("Stage ID mismatch.");
+
+			var existingStage = await _serviceManager.StageService.GetStageByIdAsync(id);
+			if (existingStage == null)
+				return NotFound($"Stage with ID {id} not found.");
+
+			await _serviceManager.StageService.UpdateStage(stageDto);
+			return NoContent();
+		}
+
+		// Delete Stage
+		[HttpDelete("DeleteStage/{id}")]
+		public async Task<IActionResult> DeleteStage(int id)
+		{
+			var stage = await _serviceManager.StageService.GetStageByIdAsync(id);
+			if (stage == null)
+				return NotFound($"Stage with ID {id} not found.");
+
+			await _serviceManager.StageService.DeleteStage(new CropStageDto { Id = id });
+			return NoContent();
+		}
 	}
 }

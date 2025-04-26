@@ -14,9 +14,14 @@ namespace AgroMind.GP.Core.Entities
 		public List<CropStage> Stages { get; set; } = new List<CropStage>(); // Changed to List<>
 
 		
+		// Null-safe calculated property
+		public decimal TotalCost => Stages?.Sum(stage => stage.TotalCost) ?? 0;
 
-		//Add Or Remove?
-		//public decimal? TotalCost { get; set; } // Calculated sum of stage costs
+		//TotalCost is a calculated property that dynamically computes the total cost of all stages in the Stages list.
+
+		//This ensures that the value of TotalCost is always up-to-date and reflects the current state of the Stages.
+
+
 		public string? FarmerId { get; set; }
 		[JsonIgnore] // Prevent infinite loop during serialization
 		public Farmer? Farmer { get; set; }

@@ -10,6 +10,7 @@
 
 		public List<StepDto> Steps { get; set; } = new List<StepDto>();
 
+		public decimal Cost { get; set; } // Cost of the stage it self
 		public decimal TotalCost { get; set; }
 
 	}

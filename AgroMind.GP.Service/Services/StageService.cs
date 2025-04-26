@@ -23,19 +23,6 @@ namespace AgroMind.GP.Service.Services
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<CropStageDto> AddStageAsync(CropStageDto stageDto)
-		{
-			if (stageDto == null)
-				throw new ArgumentNullException(nameof(stageDto), "Stage data cannot be null.");
-
-			var stageEntity = _mapper.Map<CropStage>(stageDto);
-			var repo = _unitOfWork.GetRepositories<CropStage, int>();
-
-			await repo.AddAsync(stageEntity);
-			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CropStageDto>(stageEntity);
-		}
-
 		public async Task DeleteStage(CropStageDto stageDto)
 		{
 			if (stageDto == null)
@@ -71,10 +58,41 @@ namespace AgroMind.GP.Service.Services
 			return _mapper.Map<CropStage, CropStageDto>(stage);
 		}
 
+
+	
+
+		public async Task<CropStageDto> AddStageAsync(CropStageDto stageDto)
+		{
+			if (stageDto == null)
+				throw new ArgumentNullException(nameof(stageDto), "Stage data cannot be null.");
+
+			var stageEntity = _mapper.Map<CropStage>(stageDto);
+
+			// Calculate TotalCost for the stage
+			stageEntity.TotalCost = stageEntity.Cost + (stageEntity.Steps?.Sum(step => step.Cost) ?? 0);
+
+			var repo = _unitOfWork.GetRepositories<CropStage, int>();
+			await repo.AddAsync(stageEntity);
+
+			// Update the parent crop's TotalCost (no explicit assignment)
+			if (stageEntity.CropId.HasValue)
+			{
+				var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
+				var crop = await cropRepo.GetByIdAsync(stageEntity.CropId.Value);
+				if (crop != null)
+				{
+					cropRepo.Update(crop); // Save changes to the crop
+				}
+			}
+
+			await _unitOfWork.SaveChangesAsync();
+			return _mapper.Map<CropStageDto>(stageEntity);
+		}
+
 		public async Task UpdateStage(CropStageDto stageDto)
 		{
 			if (stageDto == null)
-				throw new ArgumentNullException(nameof(stageDto), "Satge data cannot be null.");
+				throw new ArgumentNullException(nameof(stageDto), "Stage data cannot be null.");
 
 			var repo = _unitOfWork.GetRepositories<CropStage, int>();
 			var existingStage = await repo.GetByIdAsync(stageDto.Id);
@@ -82,16 +100,24 @@ namespace AgroMind.GP.Service.Services
 			if (existingStage == null)
 				throw new KeyNotFoundException($"Stage with ID {stageDto.Id} not found.");
 
-
-
-			// Map the updated properties to the existing entity
 			_mapper.Map(stageDto, existingStage);
 
+			// Recalculate TotalCost for the stage
+			existingStage.TotalCost = existingStage.Cost + (existingStage.Steps?.Sum(step => step.Cost) ?? 0);
 
-			// Update the existing entity
+			// Update the parent crop's TotalCost (no explicit assignment)
+			if (existingStage.CropId.HasValue)
+			{
+				var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
+				var crop = await cropRepo.GetByIdAsync(existingStage.CropId.Value);
+				if (crop != null)
+				{
+					cropRepo.Update(crop); // Save changes to the crop
+				}
+			}
+
 			repo.Update(existingStage);
 			await _unitOfWork.SaveChangesAsync();
-
 		}
 	}
 }

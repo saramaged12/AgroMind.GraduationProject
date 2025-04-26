@@ -18,9 +18,13 @@ namespace AgroMind.GP.Repository.Data.Configurations
 				.HasForeignKey(c => c.LandId)
 				.OnDelete(DeleteBehavior.Restrict);
 			// .OnDelete(DeleteBehavior.Cascade);  // If Land is deleted, delete Crops
-			//builder.Property(c => c.TotalCost)
-			//   .HasColumnType("decimal(18,2)"); // Ensure precision
+			
+			builder .HasMany(cs=>cs.Stages)
+				.WithOne(c=>c.Crop)
+				.HasForeignKey(c=>c.CropId)
+				.OnDelete(DeleteBehavior.Restrict);
 
+			
 		}
 	}
 }

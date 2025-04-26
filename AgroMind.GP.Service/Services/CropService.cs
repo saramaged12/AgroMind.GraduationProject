@@ -25,19 +25,7 @@ namespace AgroMind.GP.Service.Services
 			_mapper = mapper;
 			_unitOfWork = unitOfWork;
 		}
-
-		public async Task<CropDto> AddCropAsync(CropDto cropDto)
-		{
-			if (cropDto == null)
-				throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
-
-			var cropEntity = _mapper.Map<Crop>(cropDto);
-			var repo = _unitOfWork.GetRepositories<Crop, int>();
-
-			await repo.AddAsync(cropEntity);
-			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CropDto>(cropEntity);
-		}
+	
 
 		public async Task DeleteCrop(CropDto cropDto)
 		{
@@ -74,6 +62,21 @@ namespace AgroMind.GP.Service.Services
 			return _mapper.Map<Crop, CropDto>(crop);
 		}
 
+		public async Task<CropDto> AddCropAsync(CropDto cropDto)
+		{
+			if (cropDto == null)
+				throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
+
+			var cropEntity = _mapper.Map<Crop>(cropDto);
+
+			// No need to explicitly calculate TotalCost; it is a read-only property
+			var repo = _unitOfWork.GetRepositories<Crop, int>();
+			await repo.AddAsync(cropEntity);
+			await _unitOfWork.SaveChangesAsync();
+
+			return _mapper.Map<CropDto>(cropEntity);
+		}
+
 		public async Task UpdateCrops(CropDto cropDto)
 		{
 			if (cropDto == null)
@@ -82,19 +85,15 @@ namespace AgroMind.GP.Service.Services
 			var repo = _unitOfWork.GetRepositories<Crop, int>();
 			var existingCrop = await repo.GetByIdAsync(cropDto.Id);
 
-			if (existingCrop== null)
+			if (existingCrop == null)
 				throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
 
-
-
-			// Map the updated properties to the existing entity
 			_mapper.Map(cropDto, existingCrop);
 
-
-			// Update the existing entity
+			// No need to explicitly calculate TotalCost; it is a read-only property
 			repo.Update(existingCrop);
 			await _unitOfWork.SaveChangesAsync();
-
 		}
+
 	}
 }

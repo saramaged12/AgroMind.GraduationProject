@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250425221215_UpdatesForCostandTotal3")]
+    partial class UpdatesForCostandTotal3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,7 +54,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("LandId");
 
-                    b.ToTable("Crop", (string)null);
+                    b.ToTable("Crop");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.CropStage", b =>
@@ -81,7 +84,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("CropId");
 
-                    b.ToTable("CropStage", (string)null);
+                    b.ToTable("CropStage");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Address", b =>
@@ -121,7 +124,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.HasIndex("AppUserId")
                         .IsUnique();
 
-                    b.ToTable("Addresss", (string)null);
+                    b.ToTable("Addresss");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.AppUser", b =>
@@ -248,7 +251,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("FarmerId");
 
-                    b.ToTable("Land", (string)null);
+                    b.ToTable("Land");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.ProductModule.Brand", b =>
@@ -264,7 +267,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.ProductModule.Category", b =>
@@ -280,7 +283,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.ProductModule.Product", b =>
@@ -320,7 +323,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Step", b =>
@@ -359,7 +362,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("StageId");
 
-                    b.ToTable("Step", (string)null);
+                    b.ToTable("Step");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
