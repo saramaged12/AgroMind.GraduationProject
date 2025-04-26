@@ -2,16 +2,18 @@
 {
 	public class StepDto
 	{
+		public int Id { get; set; } 
 
-		public int Id { get; set; }
-		public string StepName { get; set; } // Matches frontend's description
+		public string? StepName { get; set; } 
+
+		public string? Description { get; set; }
 		public string? Tool { get; set; }
-		public string? ToolImage { get; set; } // New property for frontend's tool image
-		public int? DurationDays { get; set; } // Duration for step
-		public string? Fertilizer { get; set; } // Matches frontend's fertilizer
-		public int? FertilizerDuration { get; set; } // Duration for fertilizer
-		public decimal Cost { get; set; } // Cost of step
-		public string? Description { get; set; } // Add Description
+		public string? ToolImage { get; set; } 
+
+		public int? DurationDays { get; set; }
+
+		public string? Fertilizer { get; set; } 
+		public decimal Cost { get; set; } 
 
 
 	}

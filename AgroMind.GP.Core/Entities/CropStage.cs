@@ -5,20 +5,24 @@ namespace AgroMind.GP.Core.Entities
 	public class CropStage : BaseEntity<int>
 	{
 
-		public string StageName { get; set; } // Matches frontend `stage`
-		public int? Duration { get; set; } // Changed from DateTime? to int? (Number of days)
-		public string? Description { get; set; }
-		public string? PictureUrl { get; set; }
+		public string? StageName { get; set; } 
 
-		public decimal TotalCost { get; set; } // Ensure it is a decimal (Frontend calculates total cost)
+		public string? OptionalLink { get; set; }
+
+		public List<Step> Steps { get; set; } = new List<Step>(); 
+
+		public decimal Cost { get; set; } // Cost of the stage it self
+
+		public decimal TotalCost { get; set; } //  The sum of the stage's cost and the costs of all its steps.
+											   //  Cost of the stage + sum of all step costs
+
 
 		public int? CropId { get; set; }
 		[JsonIgnore] // Prevent infinite loop
 		public Crop? Crop { get; set; }
 
-		public List<Step> Steps { get; set; } = new List<Step>(); // Changed to List<>
-
-		public string? OptionalLink { get; set; }
+		
+		
 
 	}
 }

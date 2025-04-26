@@ -7,8 +7,8 @@ namespace AgroMind.GP.Core.Specification
 		//For Get All Crops
 		public CropSpecification() : base()
 		{
-			Includes.Add(c => c.Farmer);
-			Includes.Add(c => c.Land);
+			//Includes.Add(c => c.Farmer);
+			//Includes.Add(c => c.Land);
 			Includes.Add(c => c.Stages);
 
 
@@ -17,6 +17,7 @@ namespace AgroMind.GP.Core.Specification
 		//Get Crop By Id
 		public CropSpecification(int id) : base(c => c.Id == id)
 		{
+			Includes.Add(c => c.Stages);
 		}
 	}
 }

@@ -27,6 +27,13 @@ namespace AgroMind.GP.Service.Services
 
 		private readonly Lazy<ILandService> _LazyLandService = new Lazy<ILandService>(() => new LandService(unitOfWork, mapper));
 
+		private readonly Lazy<ICropService> _LazyCropService = new Lazy<ICropService>(() => new CropService(unitOfWork, mapper));
+
+		private readonly Lazy<IStageService> _LazyStageService = new Lazy<IStageService>(() => new StageService(unitOfWork, mapper));
+
+		private readonly Lazy<IStepService> _LazyStepService = new Lazy<IStepService>(() => new StepService(unitOfWork, mapper));
+
+
 
 
 		//Create object From Service when u need it (Call Productservice)  accesss it (access el value)and create object of ProductService
@@ -39,5 +46,14 @@ namespace AgroMind.GP.Service.Services
 		public IBrandService BrandService => _LazyBrandService.Value;
 
 		public ILandService LandService => _LazyLandService.Value;
+
+		public ICropService CropService => _LazyCropService.Value;
+
+		public IStageService StageService => _LazyStageService.Value;
+
+		public IStepService StepService => _LazyStepService.Value;
+
+
+
 	}
 }
