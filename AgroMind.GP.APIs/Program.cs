@@ -15,7 +15,7 @@ using StackExchange.Redis;
 
 namespace AgroMind.GP.APIs
 {
-	public class Program
+    public class Program
 	{
 		public static async Task Main(string[] args)
 		{
@@ -63,7 +63,9 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 			builder.Services.AddScoped<IServiceManager, ServiceManager>();
+
 
 			builder.Services.AddControllers()
 	.AddJsonOptions(options =>
