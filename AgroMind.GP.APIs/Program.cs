@@ -63,7 +63,9 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-			builder.Services.AddScoped<IServiceManager,ServiceManager>();
+
+			builder.Services.AddScoped<IServiceManager, ServiceManager>();
+
 
 			builder.Services.AddControllers()
 	.AddJsonOptions(options =>
