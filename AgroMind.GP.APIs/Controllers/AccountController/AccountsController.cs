@@ -282,8 +282,6 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 			return BadRequest(ModelState);
 		}
 	}
-
-
 }
 
 
