@@ -13,7 +13,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		Task<ProductDTO> AddAsync (ProductDTO productDto);
 
 		//Get All Products
-		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync();
+		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId , int? CategoryId);
 
 		//Get By ID Products
 

@@ -5,7 +5,11 @@ namespace AgroMind.GP.Core.Specification
 	public class ProductWithBrandAndCategorySpec : BaseSpecifications<Product, int>
 	{
 		//For Get All Products
-		public ProductWithBrandAndCategorySpec() : base()
+		public ProductWithBrandAndCategorySpec(int? BrandId, int? CategoryId) 
+			: base(p=>(!BrandId.HasValue||p.BrandId==BrandId)
+		&&(!CategoryId.HasValue||p.CategoryId==CategoryId))
+		// Filters products by BrandId and CategoryId if provided, otherwise includes all.
+
 		{
 			Includes.Add(p => p.Brand);
 			Includes.Add(p => p.Category);
