@@ -19,24 +19,6 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 
-
-			// Apply global query filter for soft delete
-
-
-		//	foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-		//	{
-		//		if (typeof(BaseEntity<>).IsAssignableFrom(entityType.ClrType) ||
-		//typeof(AppUser).IsAssignableFrom(entityType.ClrType))
-		//		{
-		//			var parameter = Expression.Parameter(entityType.ClrType, "e");
-		//			var property = Expression.Property(parameter, "IsDeleted");
-		//			var compare = Expression.Equal(property, Expression.Constant(false));
-		//			var lambda = Expression.Lambda(compare, parameter);
-
-		//			modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
-		//		}
-		//	}
-
 			//ApplyConfigurations
 
 			//modelBuilder.ApplyConfiguration(new ProductConfigration()); // for one class configuration
@@ -73,53 +55,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 				.Metadata.SetValueComparer(timeSpanComparer);
 		}
 
-	//	public override int SaveChanges()
-	//	{
-	//		foreach (var entry in ChangeTracker.Entries())
-	//		{
-	//			if (entry.Entity.GetType().BaseType?.IsGenericType == true &&
-	//entry.Entity.GetType().BaseType?.GetGenericTypeDefinition() == typeof(BaseEntity<>))
-	//			{
-	//				var isDeletedProperty = entry.Entity.GetType().GetProperty("IsDeleted");
-	//				var deletedAtProperty = entry.Entity.GetType().GetProperty("DeletedAt");
-
-	//				if (isDeletedProperty != null && deletedAtProperty != null)
-	//				{
-	//					isDeletedProperty.SetValue(entry.Entity, true);
-	//					deletedAtProperty.SetValue(entry.Entity, DateTime.UtcNow);
-	//				}
-
-	//				entry.State = EntityState.Modified;
-	//			}
-	//		}
-
-	//		return base.SaveChanges();
-	//	}
-
-	//	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-	//	{
-	//		foreach (var entry in ChangeTracker.Entries())
-	//		{
-	//			if (entry.Entity.GetType().BaseType?.IsGenericType == true &&
-	//entry.Entity.GetType().BaseType?.GetGenericTypeDefinition() == typeof(BaseEntity<>))
-	//			{
-	//				var isDeletedProperty = entry.Entity.GetType().GetProperty("IsDeleted");
-	//				var deletedAtProperty = entry.Entity.GetType().GetProperty("DeletedAt");
-
-	//				if (isDeletedProperty != null && deletedAtProperty != null)
-	//				{
-	//					isDeletedProperty.SetValue(entry.Entity, true);
-	//					deletedAtProperty.SetValue(entry.Entity, DateTime.UtcNow);
-	//				}
-
-	//				entry.State = EntityState.Modified;
-	//			}
-	//		}
-
-	//		return base.SaveChangesAsync(cancellationToken);
-	//	}
-
-
+	
 
 		public DbSet<Address> Addresss { get; set; }
 		public DbSet<Farmer> Farmers { get; set; }

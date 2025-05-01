@@ -282,21 +282,6 @@ namespace AgroMind.GP.APIs.Controllers.AccountController
 			return BadRequest(ModelState);
 		}
 	}
-	//[HttpDelete("{id}")]
-	//public async Task<IActionResult> DeleteUser(string id)
-	//{
-	//	var user = await _context.Users.FindAsync(id);
-	//	if (user == null || user.IsDeleted)
-	//	{
-	//		return NotFound();
-	//	}
-
-	//	user.IsDeleted = true;
-	//	user.DeletedAt = DateTime.UtcNow;
-	//	await _context.SaveChangesAsync();
-
-	//	return NoContent();
-	//}
 
 
 }
