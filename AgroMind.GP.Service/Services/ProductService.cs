@@ -60,6 +60,7 @@ namespace AgroMind.GP.Service.Services
 
 		}
 
+
 		public async Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId, int? CategoryId)
 		{
 			var Specification = new ProductWithBrandAndCategorySpec(BrandId,CategoryId);

@@ -27,7 +27,6 @@ namespace AgroMind.GP.Repository.Repositories
 		
 		public void Delete(TEntity entity)=>
 			_context.Set<TEntity>().Remove(entity);
-			
 		
 		#region WithoutSpec
 		public async Task<IReadOnlyList<TEntity>> GetAllAsync()
@@ -62,24 +61,5 @@ namespace AgroMind.GP.Repository.Repositories
 		}
 		#endregion
 
-		//public async Task UpdateWithSpecAsync(ISpecification<TEntity, Tkey> spec, Action<TEntity> updateAction)
-		//{
-		//	var entity = await GetByIdAWithSpecAsync(spec);
-		//	if (entity != null)
-		//	{
-		//		updateAction(entity); // Apply changes
-		//		_context.Set<TEntity>().Update(entity);
-		//		await _context.SaveChangesAsync(); // Save changes to the database
-		//	}
-		//}
-		//public async Task DeleteWithSpecAsync(ISpecification<TEntity, Tkey> spec)
-		//{
-		//	var entity = await GetByIdAWithSpecAsync(spec);
-		//	if (entity != null)
-		//	{
-		//		_context.Set<TEntity>().Remove(entity);
-		//		await _context.SaveChangesAsync(); // Ensure changes are saved to the database
-		//	}
-		//}
 	}
 }
