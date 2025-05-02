@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250502093534_RemoveSoftDelete")]
+    partial class RemoveSoftDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,14 +39,8 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<string>("CropName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("FarmerId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("LandId")
                         .HasColumnType("int");
@@ -54,8 +51,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FarmerId");
-
-                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("LandId");
 
@@ -76,12 +71,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<int?>("CropId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("OptionalLink")
                         .HasColumnType("nvarchar(max)");
 
@@ -95,28 +84,24 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("CropId");
 
-                    b.HasIndex("IsDeleted");
-
                     b.ToTable("CropStage");
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.Address", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Fname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Lname")
                         .IsRequired()
@@ -134,13 +119,10 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.HasIndex("AppUserId")
-                        .IsUnique()
-                        .HasFilter("[AppUserId] IS NOT NULL");
-
-                    b.HasIndex("IsDeleted");
+                        .IsUnique();
 
                     b.ToTable("Addresss");
                 });
@@ -160,9 +142,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -177,9 +156,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LName")
                         .IsRequired()
@@ -220,8 +196,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsDeleted");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -243,17 +217,11 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("FarmerId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("IrrigationType")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LandName")
                         .HasColumnType("nvarchar(max)");
@@ -283,8 +251,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("FarmerId");
 
-                    b.HasIndex("IsDeleted");
-
                     b.ToTable("Land");
                 });
 
@@ -299,15 +265,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<string>("BrandName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("IsDeleted");
 
                     b.ToTable("Brands");
                 });
@@ -323,15 +281,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<string>("CategoryName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("IsDeleted");
 
                     b.ToTable("Categories");
                 });
@@ -350,14 +300,8 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -377,8 +321,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("IsDeleted");
-
                     b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
@@ -395,9 +337,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -406,9 +345,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.Property<string>("Fertilizer")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("StageId")
                         .HasColumnType("int");
@@ -423,8 +359,6 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("StageId");
 
@@ -648,7 +582,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
                 {
                     b.HasOne("AgroMind.GP.Core.Entities.Identity.AppUser", "AppUser")
                         .WithOne("Address")
-                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.Address", "AppUserId");
+                        .HasForeignKey("AgroMind.GP.Core.Entities.Identity.Address", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("AppUser");
                 });
@@ -796,7 +732,8 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("Address");
+                    b.Navigation("Address")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AgroMind.GP.Core.Entities.Land", b =>
