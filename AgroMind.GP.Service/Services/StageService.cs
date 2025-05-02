@@ -34,7 +34,7 @@ namespace AgroMind.GP.Service.Services
 			if (existingStage == null)
 				throw new KeyNotFoundException($"Stage with ID {stageDto.Id} not found.");
 
-			repo.Delete(existingStage);
+			repo.SoftDelete(existingStage);
 			await _unitOfWork.SaveChangesAsync();
 		}
 

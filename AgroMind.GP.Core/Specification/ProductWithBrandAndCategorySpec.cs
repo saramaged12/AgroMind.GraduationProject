@@ -7,23 +7,23 @@ namespace AgroMind.GP.Core.Specification
 		//For Get All Products
 		public ProductWithBrandAndCategorySpec(int? BrandId, int? CategoryId) 
 			: base(p=>(!BrandId.HasValue||p.BrandId==BrandId)
-		&&(!CategoryId.HasValue||p.CategoryId==CategoryId))
+		&&(!CategoryId.HasValue||p.CategoryId==CategoryId) && !p.IsDeleted)
 		// Filters products by BrandId and CategoryId if provided, otherwise includes all.
 
 		{
 			Includes.Add(p => p.Brand);
 			Includes.Add(p => p.Category);
-			Includes.Add(p => p.Supplier);
+			//Includes.Add(p => p.Supplier);
 			
 			
 		}
 
 		//Get Product By Id
-		public ProductWithBrandAndCategorySpec(int id) : base(p => p.Id == id)
+		public ProductWithBrandAndCategorySpec(int id) : base(p => p.Id == id && !p.IsDeleted)
 		{
 			Includes.Add(p => p.Brand);
 			Includes.Add(p => p.Category);
-			Includes.Add(p => p.Supplier);
+			//Includes.Add(p => p.Supplier);
 		}
 	}
 }

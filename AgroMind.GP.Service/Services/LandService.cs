@@ -53,7 +53,7 @@ namespace AgroMind.GP.Service.Services
 				if (landEntity == null)
 					throw new KeyNotFoundException($"Land with ID {landDto.Id} not found.");
 
-				repo.Delete(landEntity);
+				repo.SoftDelete(landEntity);
 				await _unitOfWork.SaveChangesAsync();
 
 

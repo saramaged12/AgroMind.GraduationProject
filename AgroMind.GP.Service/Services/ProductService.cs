@@ -54,7 +54,7 @@ namespace AgroMind.GP.Service.Services
 			if (productEntity == null)
 				throw new KeyNotFoundException($"Product with ID {productDto.Id} not found.");
 
-			repo.Delete(productEntity);
+			repo.SoftDelete(productEntity);
 			await _unitOfWork.SaveChangesAsync();
 
 
@@ -104,5 +104,13 @@ namespace AgroMind.GP.Service.Services
 
 
 		}
+
+		// Add method to retrieve deleted products (for admin purposes)
+		//public async Task<IReadOnlyList<ProductDTO>> GetDeletedProductsAsync()
+		//{
+		//	var repo = _unitOfWork.GetRepositories<Product, int>();
+		//	var deletedProducts = await repo.GetAllAsync(true); // Add includeDeleted parameter
+		//	return _mapper.Map<IReadOnlyList<ProductDTO>>(deletedProducts);
+		//}
 	}
 }
