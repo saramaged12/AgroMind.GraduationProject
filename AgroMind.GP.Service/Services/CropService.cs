@@ -38,7 +38,7 @@ namespace AgroMind.GP.Service.Services
 			if (existingCrop == null)
 				throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
 
-			repo.Delete(existingCrop);
+			repo.SoftDelete(existingCrop);
 			await _unitOfWork.SaveChangesAsync();
 		}
 

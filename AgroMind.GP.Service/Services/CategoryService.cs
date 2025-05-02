@@ -46,7 +46,7 @@ namespace AgroMind.GP.Service.Services
 				if (existingCategory == null)
 					throw new KeyNotFoundException($"Category with ID {categoryDto.Id} not found.");
 
-				repo.Delete(existingCategory);
+				repo.SoftDelete(existingCategory);
 				await _unitOfWork.SaveChangesAsync();
 			}
 

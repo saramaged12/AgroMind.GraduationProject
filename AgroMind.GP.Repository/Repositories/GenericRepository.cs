@@ -22,11 +22,18 @@ namespace AgroMind.GP.Repository.Repositories
 
 		public void Update(TEntity entity) =>
 			_context.Set<TEntity>().Update(entity);
-	
-		
-		
-		public void Delete(TEntity entity)=>
-			_context.Set<TEntity>().Remove(entity);
+
+
+
+		public void SoftDelete(TEntity entity)
+		{
+			if (entity != null)
+			{
+				entity.IsDeleted = true;
+				entity.DeletedAt = DateTime.UtcNow;
+				_context.Entry(entity).State = EntityState.Modified;
+			}
+		}
 		
 		#region WithoutSpec
 		public async Task<IReadOnlyList<TEntity>> GetAllAsync()

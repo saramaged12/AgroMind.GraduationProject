@@ -15,11 +15,13 @@ namespace AgroMind.GP.Core.Contracts.Repositories.Contract
 
         Task AddAsync(TEntity entity);
         void Update(TEntity entity);
-        void Delete(TEntity entity);
-        #endregion
+        void SoftDelete(TEntity entity);
 
-        #region With Specification
-        Task<IReadOnlyList<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec);
+		//Task<IReadOnlyList<TEntity>> GetAllAsync(bool includeDeleted = false);
+		#endregion
+
+		#region With Specification
+		Task<IReadOnlyList<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec);
 
         Task<TEntity> GetByIdAWithSpecAsync(ISpecification<TEntity, Tkey> spec);
 

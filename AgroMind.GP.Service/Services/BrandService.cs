@@ -85,7 +85,7 @@ namespace AgroMind.GP.Service.Services
 				if (existingBrand == null)
 					throw new KeyNotFoundException($"Brand with ID {brandDto.Id} not found.");
 
-				repo.Delete(existingBrand);
+				repo.SoftDelete(existingBrand);
 				await _unitOfWork.SaveChangesAsync();
 			}
 		}

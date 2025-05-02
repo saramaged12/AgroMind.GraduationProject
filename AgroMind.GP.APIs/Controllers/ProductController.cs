@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -82,5 +83,15 @@ namespace AgroMind.GP.APIs.Controllers
 				await _serviceManager.ProductService.DeleteProducts(new ProductDTO { Id = id });
 				return NoContent();
 			}
-		}
+
+
+		// Add endpoint to view deleted products (admin only)
+		//[HttpGet("DeletedProducts")]
+		//[Authorize(Roles = "Admin")]
+		//public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetDeletedProducts()
+		//{
+		//	var deletedProducts = await _serviceManager.ProductService.GetDeletedProductsAsync();
+		//	return Ok(deletedProducts);
+		//}
+	}
 	}

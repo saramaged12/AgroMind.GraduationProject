@@ -24,33 +24,6 @@ namespace AgroMind.GP.Service.Services
 		}
 
 
-		//public async Task<StepDto> AddStepAsync(StepDto stepDto)
-		//{
-		//	if (stepDto == null)
-		//		throw new ArgumentNullException(nameof(stepDto), "Step data cannot be null.");
-
-		//	var stepEntity = _mapper.Map<Step>(stepDto);
-
-		//	var repo = _unitOfWork.GetRepositories<Step, int>();
-		//	await repo.AddAsync(stepEntity);
-
-		//	// Update TotalCost of the parent stage
-		//	var stageRepo = _unitOfWork.GetRepositories<CropStage, int>();
-		//	if (stepEntity.StageId.HasValue)
-		//	{
-		//		var stage = await stageRepo.GetByIdAsync(stepEntity.StageId.Value);
-		//		if (stage != null)
-		//		{
-		//			stage.TotalCost = stage.Cost + stage.Steps.Sum(step => step.Cost);
-		//			stageRepo.Update(stage);
-		//		}
-		//	}
-
-
-		//	await _unitOfWork.SaveChangesAsync();
-		//	return _mapper.Map<StepDto>(stepEntity);
-		//}
-
 		public async Task DeleteStep(StepDto stepDto)
 		{
 			if (stepDto == null)
@@ -62,7 +35,7 @@ namespace AgroMind.GP.Service.Services
 			if (existingStep == null)
 				throw new KeyNotFoundException($"Crop with ID {stepDto.Id} not found.");
 
-			repo.Delete(existingStep);
+			repo.SoftDelete(existingStep);
 			await _unitOfWork.SaveChangesAsync();
 		}
 
@@ -88,39 +61,7 @@ namespace AgroMind.GP.Service.Services
 
 
 
-		//public async Task UpdateStep(StepDto stepDto)
-		//{
-		//	if (stepDto == null)
-		//		throw new ArgumentNullException(nameof(stepDto), "Step data cannot be null.");
-
-		//	var repo = _unitOfWork.GetRepositories<Step, int>();
-		//	var existingStep = await repo.GetByIdAsync(stepDto.Id);
-
-		//	if (existingStep == null)
-		//		throw new KeyNotFoundException($"Step with ID {stepDto.Id} not found.");
-
-		//	_mapper.Map(stepDto, existingStep);
-		//	repo.Update(existingStep);
-
-		//	// Update TotalCost of the parent stage
-		//	var stageRepo = _unitOfWork.GetRepositories<CropStage, int>();
-
-		//	//var stage = await stageRepo.GetByIdAsync(existingStep.StageId); // This is Cuse Error If stageRepo is null should To Check has Value or No
-		//	//existingStep.StageId.Value //Is Correct
-
-		//	if (existingStep.StageId.HasValue)
-		//	{
-		//		var stage = await stageRepo.GetByIdAsync(existingStep.StageId.Value);
-		//		if (stage != null)
-		//		{
-		//			stage.TotalCost = stage.Cost + stage.Steps.Sum(step => step.Cost);
-		//			stageRepo.Update(stage);
-		//		}
-		//	}
-		//	await _unitOfWork.SaveChangesAsync();
-		//}
-
-
+	
 		public async Task<StepDto> AddStepAsync(StepDto stepDto)
 		{
 			if (stepDto == null)
