@@ -9,7 +9,7 @@ namespace AgroMind.GP.Core.Entities
 
 		public string? OptionalLink { get; set; }
 
-		public List<Step> Steps { get; set; } = new List<Step>(); 
+		public List<Step>? Steps { get; set; } = new List<Step>(); 
 
 		public decimal Cost { get; set; } // Cost of the stage it self
 
