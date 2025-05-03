@@ -62,9 +62,9 @@ namespace AgroMind.GP.Service.Services
 		}
 
 
-		public async Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId, int? CategoryId,ProductSortingOptions sortingOptions)
+		public async Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(ProductQueryParams queryParams)
 		{
-			var Specification = new ProductWithBrandAndCategorySpec(BrandId,CategoryId,sortingOptions);
+			var Specification = new ProductWithBrandAndCategorySpec(queryParams);
 			var Repo =_unitOfWork.GetRepositories<Product, int>();
 			var Products= await Repo.GetAllWithSpecASync(Specification);
 			var ProducsDTO = _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductDTO>>(Products);

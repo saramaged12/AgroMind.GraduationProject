@@ -15,7 +15,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		//Get All Products
 
-		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId , int? CategoryId,ProductSortingOptions sortingOptions);
+		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(ProductQueryParams QueryParams);
 
 
 		//Get By ID Products
