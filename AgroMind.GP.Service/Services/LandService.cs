@@ -48,7 +48,7 @@ namespace AgroMind.GP.Service.Services
 				if (landDto == null)
 					throw new ArgumentNullException(nameof(landDto), "Land data cannot be null.");
 
-				var repo = _unitOfWork.GetRepositories<Product, int>();
+				var repo = _unitOfWork.GetRepositories<Land, int>();
 				var landEntity = await repo.GetByIdAsync(landDto.Id);
 				if (landEntity == null)
 					throw new KeyNotFoundException($"Land with ID {landDto.Id} not found.");
