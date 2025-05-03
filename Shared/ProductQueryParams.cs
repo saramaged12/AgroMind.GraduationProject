@@ -14,7 +14,7 @@ namespace Shared
 
 		public ProductSortingOptions sortingOptions { get; set; }
 
-		
+		public string ? SearchValue { get; set; } 
 
 	}
 }

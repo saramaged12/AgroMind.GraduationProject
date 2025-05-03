@@ -6,9 +6,11 @@ namespace AgroMind.GP.Core.Specification
 	public class ProductWithBrandAndCategorySpec : BaseSpecifications<Product, int>
 	{
 		//For Get All Products
-		public ProductWithBrandAndCategorySpec(ProductQueryParams queryParams) 
-			: base(p=>(!queryParams.BrandId.HasValue||p.BrandId==queryParams. BrandId)
-		&&(!queryParams. CategoryId.HasValue||p.CategoryId==queryParams. CategoryId) && !p.IsDeleted)
+		public ProductWithBrandAndCategorySpec(ProductQueryParams queryParams)
+			: base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId)
+		&& (!queryParams.CategoryId.HasValue || p.CategoryId == queryParams.CategoryId) && (!p.IsDeleted)
+			&& (string.IsNullOrWhiteSpace(queryParams.SearchValue) || (p.Name.ToLower().Contains(queryParams.SearchValue.ToLower()))))
+			
 		// Filters products by BrandId and CategoryId if provided, otherwise includes all.
 
 		{
