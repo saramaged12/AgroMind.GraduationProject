@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -23,9 +24,9 @@ namespace AgroMind.GP.APIs.Controllers
 
 			// Get All Products
 			[HttpGet("GetProducts")]
-			public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetProducts(int? BrandId , int? CategoryId)
+			public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetProducts(int? BrandId , int? CategoryId, ProductSortingOptions sortingOptions)
 			{
-				var products = await _serviceManager.ProductService.GetAllProductsAsync(BrandId,CategoryId);
+				var products = await _serviceManager.ProductService.GetAllProductsAsync(BrandId,CategoryId,sortingOptions);
 				return Ok(products);
 			}
 

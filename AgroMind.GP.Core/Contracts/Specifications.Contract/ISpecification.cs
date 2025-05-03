@@ -16,13 +16,16 @@ namespace AgroMind.GP.Core.Contracts.Specifications.Contract
         //Expression "Lambda Expression" <Lambda Type> "Delegate"
         //Delegate -> Determine function from any Type [Func,Predicate,Action]
         // I want Delegate to take one Parmeter and Return Boolean -> (Func) 
-        public Expression<Func<TEntity, bool>> Criteria { get; set; } //Criteria b t match condition ?
+        public Expression<Func<TEntity, bool>>? Criteria { get; set; } //Criteria b t match condition ?
 
 
         //Signature For Property For List Of Includes
 
         public List<Expression<Func<TEntity, object>>> Includes { get; set; }
 
+        Expression<Func<TEntity, object>> OrderBy { get; } //Order By
+
+        Expression<Func<TEntity, object>> OrderByDescending { get; }
 
 		// New methods for Add, Update, and Delete
 		//void ApplyAdd(TEntity entity);

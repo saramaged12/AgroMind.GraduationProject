@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		//Get All Products
 
-		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId , int? CategoryId);
+		Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId , int? CategoryId,ProductSortingOptions sortingOptions);
 
 
 		//Get By ID Products
