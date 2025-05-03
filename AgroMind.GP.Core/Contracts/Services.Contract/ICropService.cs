@@ -23,5 +23,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		
 		Task DeleteCrop(CropDto cropDto);
+
+		Task<IReadOnlyList<CropDto>> GetAllDeletedCropsAsync();
 	}
 }

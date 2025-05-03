@@ -95,6 +95,12 @@ namespace AgroMind.GP.APIs.Controllers
 			await _serviceManager.StepService.DeleteStep(new StepDto { Id = id });
 			return NoContent();
 		}
+		[HttpGet("GetDeletedSteps")]
+		public async Task<ActionResult<IReadOnlyList<StepDto>>> GetDeletedSteps()
+		{
+			var deletedSteps =await _serviceManager.StepService.GetAllDeletedStepsAsync();
+			return Ok(deletedSteps);
+		}
 	}
 }
 

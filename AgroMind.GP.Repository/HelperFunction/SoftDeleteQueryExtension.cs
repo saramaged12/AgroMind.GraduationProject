@@ -10,7 +10,8 @@ namespace AgroMind.GP.Repository.HelperFunction
     {
         public static void ApplySoftDeleteQueryFilter(this ModelBuilder modelBuilder)
         {
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+			// Apply soft-delete filter to ALL entities
+			foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
 				// Only apply to root entities (not TPT-derived types)
 				if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType)&&

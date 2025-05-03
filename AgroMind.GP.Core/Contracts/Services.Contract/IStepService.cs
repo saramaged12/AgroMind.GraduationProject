@@ -23,5 +23,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 
 		Task DeleteStep(StepDto stepDto);
+
+		Task<IReadOnlyList<StepDto>> GetAllDeletedStepsAsync();
 	}
 }

@@ -9,15 +9,15 @@ namespace AgroMind.GP.Core.Specification
 		{
 			//Includes.Add(c => c.Farmer);
 			//Includes.Add(c => c.Land);
-			Includes.Add(c => c.Stages);
+			AddInclude(c => c.Stages);
 
 
 		}
 
 		//Get Crop By Id
-		public CropSpecification(int id) : base(c => c.Id == id)
+		public CropSpecification(int id) : base(c => c.Id == id && !c.IsDeleted)
 		{
-			Includes.Add(c => c.Stages);
+			AddInclude(c => c.Stages);
 		}
 	}
 }

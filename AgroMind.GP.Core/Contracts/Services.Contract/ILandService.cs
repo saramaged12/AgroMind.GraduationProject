@@ -25,5 +25,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		Task UpdateLands(LandDTO landDTO);
 
 		Task DeleteLands(LandDTO landDTO);
+
+		Task<IReadOnlyList<LandDTO>> GetAllDeletedLandsAsync();
 	}
 }

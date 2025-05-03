@@ -85,14 +85,14 @@ namespace AgroMind.GP.APIs.Controllers
 				return NoContent();
 			}
 
+	    	//endpoint to view deleted products (admin only)
+		    [HttpGet("DeletedProducts")]
+		    //[Authorize(Roles = "SystemAdministratot")]
+		    public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetDeletedProducts()
+		    {
+			var deletedProducts = await _serviceManager.ProductService.GetAllDeletedProductsAsync();
+			return Ok(deletedProducts);
+		    }
 
-		// Add endpoint to view deleted products (admin only)
-		//[HttpGet("DeletedProducts")]
-		//[Authorize(Roles = "Admin")]
-		//public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetDeletedProducts()
-		//{
-		//	var deletedProducts = await _serviceManager.ProductService.GetDeletedProductsAsync();
-		//	return Ok(deletedProducts);
-		//}
 	}
 	}

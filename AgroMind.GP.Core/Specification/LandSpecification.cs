@@ -14,7 +14,7 @@ namespace AgroMind.GP.Core.Specification
 		}
 
 		//Get Crop By Id
-		public LandSpecification(int id) : base(c => c.Id == id)
+		public LandSpecification(int id) : base(c => c.Id == id && !c.IsDeleted)
 		{
 		}
 	}

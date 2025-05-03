@@ -6,6 +6,7 @@ using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -137,6 +138,13 @@ namespace AgroMind.GP.Service.Services
 			}
 
 			await _unitOfWork.SaveChangesAsync();
+		}
+
+		public async Task<IReadOnlyList<StepDto>> GetAllDeletedStepsAsync()
+		{
+			var repo = _unitOfWork.GetRepositories<Step, int>();
+			var deletedSteps= await repo.GetAllDeletedAsync();
+			return _mapper.Map<IReadOnlyList<StepDto>>(deletedSteps);
 		}
 	}
 }

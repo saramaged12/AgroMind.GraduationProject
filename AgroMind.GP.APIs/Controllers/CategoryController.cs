@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -81,6 +82,14 @@ namespace AgroMind.GP.APIs.Controllers
 				await _serviceManager.CategoryService.DeleteCategories(new CategoryDTO { Id = id });
 				return NoContent();
 			}
-		}
+	     	
+		    [HttpGet("DeletedCategories")]
+		    //[Authorize(Roles = "SystemAdministratot")]
+		    public async Task<ActionResult<IReadOnlyList<CategoryDTO>>> GetDeletedCategories()
+		    {
+			var deletedCategories = await _serviceManager.CategoryService.GetAllDeletedCategoriesAsync();
+			return Ok(deletedCategories);
+		    }
+	}
 	}
 

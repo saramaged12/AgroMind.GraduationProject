@@ -27,12 +27,12 @@ namespace AgroMind.GP.Repository.Repositories
 
 		public void SoftDelete(TEntity entity)
 		{
-			if (entity != null)
-			{
-				entity.IsDeleted = true;
+			if (entity == null) throw new ArgumentNullException(nameof(entity));
+
+			entity.IsDeleted = true;
 				entity.DeletedAt = DateTime.UtcNow;
 				_context.Entry(entity).State = EntityState.Modified;
-			}
+			
 		}
 		
 		#region WithoutSpec
@@ -43,18 +43,26 @@ namespace AgroMind.GP.Repository.Repositories
 
 			//	return (IReadOnlyList<TEntity>)await _context.Products.Include(p => p.Brand).Include(p => p.Category).Include(s => s.Supplier).ToListAsync();
 
-			return await _context.Set<TEntity>()/*.Where(e => !e.IsDeleted)*/.ToListAsync(); //Set<> // b t return DBSet of Any Type
+			return await _context.Set<TEntity>().ToListAsync(); //Set<> // b t return DBSet of Any Type
 		}
 		public async Task<TEntity> GetByIdAsync(Tkey id)
 		{
 			return await _context.Set<TEntity>().FindAsync(id);
+		}
+
+		public async Task<IReadOnlyList<TEntity>> GetAllDeletedAsync()
+		{
+			return await _context.Set<TEntity>()
+				.IgnoreQueryFilters()
+				.Where(e => e.IsDeleted)
+				.ToListAsync();
 		}
 		#endregion
 
 		#region withSpec >- Open for Extension Closed for Modification
 		public async Task<IReadOnlyList<TEntity>> GetAllWithSpecASync(ISpecification<TEntity, Tkey> spec)
 		{
-			return await ApplySpecification(spec)/*.Where(e => !e.IsDeleted)*/.ToListAsync();
+			return await ApplySpecification(spec).ToListAsync();
 		}
 
 		public async Task<TEntity> GetByIdAWithSpecAsync(ISpecification<TEntity, Tkey> spec)

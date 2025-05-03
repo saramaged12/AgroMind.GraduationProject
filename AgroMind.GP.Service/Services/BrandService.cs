@@ -88,7 +88,14 @@ namespace AgroMind.GP.Service.Services
 				repo.SoftDelete(existingBrand);
 				await _unitOfWork.SaveChangesAsync();
 			}
-		}
+
+		    public async Task<IReadOnlyList<BrandDTO>> GetAllDeletedBrandsAsync()
+		    {
+			var repo = _unitOfWork.GetRepositories<Brand, int>();
+			var deletedbrands = await repo.GetAllDeletedAsync();
+			return _mapper.Map<IReadOnlyList<BrandDTO>>(deletedbrands);
+		    }
+	}
 	}
 	
 
