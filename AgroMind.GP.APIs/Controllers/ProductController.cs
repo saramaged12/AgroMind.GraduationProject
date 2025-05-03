@@ -24,9 +24,9 @@ namespace AgroMind.GP.APIs.Controllers
 
 			// Get All Products
 			[HttpGet("GetProducts")]
-			public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetProducts(int? BrandId , int? CategoryId, ProductSortingOptions sortingOptions)
+			public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetProducts([FromQuery]ProductQueryParams QueryParams)
 			{
-				var products = await _serviceManager.ProductService.GetAllProductsAsync(BrandId,CategoryId,sortingOptions);
+				var products = await _serviceManager.ProductService.GetAllProductsAsync(QueryParams);
 				return Ok(products);
 			}
 

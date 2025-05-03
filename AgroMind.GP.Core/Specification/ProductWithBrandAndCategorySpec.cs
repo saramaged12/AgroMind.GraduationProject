@@ -6,9 +6,9 @@ namespace AgroMind.GP.Core.Specification
 	public class ProductWithBrandAndCategorySpec : BaseSpecifications<Product, int>
 	{
 		//For Get All Products
-		public ProductWithBrandAndCategorySpec(int? BrandId, int? CategoryId,ProductSortingOptions sortingOptions) 
-			: base(p=>(!BrandId.HasValue||p.BrandId==BrandId)
-		&&(!CategoryId.HasValue||p.CategoryId==CategoryId) && !p.IsDeleted)
+		public ProductWithBrandAndCategorySpec(ProductQueryParams queryParams) 
+			: base(p=>(!queryParams.BrandId.HasValue||p.BrandId==queryParams. BrandId)
+		&&(!queryParams. CategoryId.HasValue||p.CategoryId==queryParams. CategoryId) && !p.IsDeleted)
 		// Filters products by BrandId and CategoryId if provided, otherwise includes all.
 
 		{
@@ -17,7 +17,7 @@ namespace AgroMind.GP.Core.Specification
 			AddInclude(p => p.Category);
 			//Includes.Add(p => p.Supplier);
 
-			switch (sortingOptions)
+			switch (queryParams. sortingOptions)
 			{
 				case ProductSortingOptions.NameAscending:
 					AddOrderBy(P=>P.Name);
