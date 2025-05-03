@@ -23,5 +23,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 
 		Task DeleteStage(CropStageDto stageDto);
+
+		Task<IReadOnlyList<CropStageDto>> GetAllDeletedStagesAsync();
 	}
 }

@@ -29,9 +29,11 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		//Delete Products
 		Task DeleteProducts(ProductDTO productDTO);
 
+		Task<IReadOnlyList<ProductDTO>> GetAllDeletedProductsAsync();
 
 
-		
+
+
 
 
 

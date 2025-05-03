@@ -49,6 +49,14 @@ namespace AgroMind.GP.Repository.Repositories
 		{
 			return await _context.Set<TEntity>().FindAsync(id);
 		}
+
+		public async Task<IReadOnlyList<TEntity>> GetAllDeletedAsync()
+		{
+			return await _context.Set<TEntity>()
+				.IgnoreQueryFilters()
+				.Where(e => e.IsDeleted)
+				.ToListAsync();
+		}
 		#endregion
 
 		#region withSpec >- Open for Extension Closed for Modification

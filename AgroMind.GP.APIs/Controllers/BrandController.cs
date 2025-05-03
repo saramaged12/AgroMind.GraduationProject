@@ -3,6 +3,7 @@ using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,8 +75,8 @@ namespace AgroMind.GP.APIs.Controllers
 
 
 
-		// Delete Brand
-		[HttpDelete("DeleteBrand/{id}")]
+		    // Delete Brand
+		    [HttpDelete("DeleteBrand/{id}")]
 			public async Task<IActionResult> DeleteBrand(int id)
 			{
 				var brand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
@@ -85,7 +86,18 @@ namespace AgroMind.GP.APIs.Controllers
 				await _serviceManager.BrandService.DeleteBrands(brand);
 				return NoContent();
 			}
-		}
+
+
+		   
+		     [HttpGet("DeletedBrands")]
+		    //[Authorize(Roles = "SystemAdministratot")]
+	       	public async Task<ActionResult<IReadOnlyList<BrandDTO>>> GetDeletedBrands()
+		    {
+			var deletedBrands = await _serviceManager.BrandService.GetAllDeletedBrandsAsync();
+			return Ok(deletedBrands);
+		    }
+	}
 	}
 
 
+ 

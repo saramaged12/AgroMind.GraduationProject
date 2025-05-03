@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
@@ -86,6 +87,15 @@ namespace AgroMind.GP.APIs.Controllers
 
 			await _serviceManager.LandService.DeleteLands(land);
 			return NoContent();
+		}
+
+		
+		[HttpGet("DeletedLands")]
+		//[Authorize(Roles = "SystemAdministratot")]
+		public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetDeletedLands()
+		{
+			var deletedLand = await _serviceManager.LandService.GetAllDeletedLandsAsync();
+			return Ok(deletedLand);
 		}
 
 	}

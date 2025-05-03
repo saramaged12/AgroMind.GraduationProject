@@ -17,7 +17,7 @@ namespace AgroMind.GP.Core.Contracts.Repositories.Contract
         void Update(TEntity entity);
         void SoftDelete(TEntity entity);
 
-		//Task<IReadOnlyList<TEntity>> GetAllAsync(bool includeDeleted = false);
+		Task<IReadOnlyList<TEntity>> GetAllDeletedAsync();
 		#endregion
 
 		#region With Specification

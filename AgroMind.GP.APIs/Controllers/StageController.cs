@@ -85,5 +85,12 @@ namespace AgroMind.GP.APIs.Controllers
 			await _serviceManager.StageService.DeleteStage(new CropStageDto { Id = id });
 			return NoContent();
 		}
+
+		[HttpGet("DeletedStages")]
+		public async Task<ActionResult<IReadOnlyList<CropStageDto>>> GetDeletedStages() 
+		{
+		    var DeletedStages= await _serviceManager.StageService.GetAllDeletedStagesAsync();
+			return Ok(DeletedStages);
+		}
 	}
 }

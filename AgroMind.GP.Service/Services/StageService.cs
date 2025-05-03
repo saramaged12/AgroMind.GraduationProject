@@ -59,7 +59,7 @@ namespace AgroMind.GP.Service.Services
 		}
 
 
-	
+
 
 		public async Task<CropStageDto> AddStageAsync(CropStageDto stageDto)
 		{
@@ -119,5 +119,14 @@ namespace AgroMind.GP.Service.Services
 			repo.Update(existingStage);
 			await _unitOfWork.SaveChangesAsync();
 		}
+
+		public async Task<IReadOnlyList<CropStageDto>> GetAllDeletedStagesAsync()
+		{
+			var repo = _unitOfWork.GetRepositories<CropStage, int>();
+			var DeletedStages= await repo.GetAllDeletedAsync();
+			return _mapper.Map<IReadOnlyList<CropStageDto>>(DeletedStages);
+		}
+
+		
 	}
 }

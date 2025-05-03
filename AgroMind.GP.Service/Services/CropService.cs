@@ -95,5 +95,12 @@ namespace AgroMind.GP.Service.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
+		public async Task<IReadOnlyList<CropDto>> GetAllDeletedCropsAsync()
+		{
+			var repo = _unitOfWork.GetRepositories<Crop, int>();
+			var deletedcrops = await repo.GetAllDeletedAsync();
+			return _mapper.Map<IReadOnlyList<CropDto>>(deletedcrops);
+		}
+
 	}
 }

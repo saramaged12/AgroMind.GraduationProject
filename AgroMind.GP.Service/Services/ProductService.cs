@@ -106,12 +106,14 @@ namespace AgroMind.GP.Service.Services
 
 		}
 
-		// Add method to retrieve deleted products (for admin purposes)
-		//public async Task<IReadOnlyList<ProductDTO>> GetDeletedProductsAsync()
-		//{
-		//	var repo = _unitOfWork.GetRepositories<Product, int>();
-		//	var deletedProducts = await repo.GetAllAsync(true); // Add includeDeleted parameter
-		//	return _mapper.Map<IReadOnlyList<ProductDTO>>(deletedProducts);
-		//}
+		
+		public async Task<IReadOnlyList<ProductDTO>> GetAllDeletedProductsAsync()
+		{
+			var repo = _unitOfWork.GetRepositories<Product, int>();
+			var deletedProducts = await repo.GetAllDeletedAsync(); 
+			return _mapper.Map<IReadOnlyList<ProductDTO>>(deletedProducts);
+		}
+
+	
 	}
 }

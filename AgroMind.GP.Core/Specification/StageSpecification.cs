@@ -12,16 +12,16 @@ namespace AgroMind.GP.Core.Specification
 		//For Get All Crops
 		public StageSpecification() : base()
 		{
-			Includes.Add(s => s.Steps);
+			AddInclude(s => s.Steps);
 			
 
 
 		}
 
 		//Get Crop By Id
-		public StageSpecification(int id) : base(c => c.Id == id)
+		public StageSpecification(int id) : base(c => c.Id == id&&!c.IsDeleted)
 		{
-			Includes.Add(s => s.Steps);
+			AddInclude(s => s.Steps);
 		}
 	
 

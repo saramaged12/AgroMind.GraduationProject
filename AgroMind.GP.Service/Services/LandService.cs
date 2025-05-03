@@ -102,6 +102,14 @@ namespace AgroMind.GP.Service.Services
 
 
 			}
+
+		    public async Task<IReadOnlyList<LandDTO>> GetAllDeletedLandsAsync()
+		    {
+			   var repo=_unitOfWork.GetRepositories<Land,int>();
+			   var deletedLands = await repo.GetAllDeletedAsync();
+			   return _mapper.Map<IReadOnlyList<LandDTO>>(deletedLands);
+			   
+		    }
 		}
 	}
 

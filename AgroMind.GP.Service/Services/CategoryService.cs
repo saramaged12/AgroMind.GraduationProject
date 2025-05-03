@@ -89,7 +89,15 @@ namespace AgroMind.GP.Service.Services
 			       repo.Update(existingCategory);
 			       await _unitOfWork.SaveChangesAsync();
 
-		}
+		    }
+
+
+		    public async Task<IReadOnlyList<CategoryDTO>> GetAllDeletedCategoriesAsync()
+		    {
+			var repo = _unitOfWork.GetRepositories<Category, int>();
+			var deletedcategories = await repo.GetAllDeletedAsync();
+			return _mapper.Map<IReadOnlyList<CategoryDTO>>(deletedcategories);
+		    }
 	}
 	}
 
