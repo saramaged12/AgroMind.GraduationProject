@@ -21,6 +21,15 @@ namespace AgroMind.GP.Repository
 				Query = Query.Where(Spec.Criteria); // context.Set<T>().where (P=>P.Id==id) 
 			}
 
+			if (Spec.OrderBy is not null)
+			{
+				Query = Query.OrderBy(Spec.OrderBy); // context.Set<T>().where (P=>P.Id==id).OrderBy(P=>P.Name)
+			}
+
+			if (Spec.OrderByDescending is not null)
+			{
+				Query = Query.OrderByDescending(Spec.OrderByDescending); // context.Set<T>().where (P=>P.Id==id).OrderByDescending(P=>P.Name)
+			}
 			//p => p.Brand
 
 			//p => p.BrandType

@@ -6,6 +6,7 @@ using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,9 +62,9 @@ namespace AgroMind.GP.Service.Services
 		}
 
 
-		public async Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId, int? CategoryId)
+		public async Task<IReadOnlyList<ProductDTO>> GetAllProductsAsync(int? BrandId, int? CategoryId,ProductSortingOptions sortingOptions)
 		{
-			var Specification = new ProductWithBrandAndCategorySpec(BrandId,CategoryId);
+			var Specification = new ProductWithBrandAndCategorySpec(BrandId,CategoryId,sortingOptions);
 			var Repo =_unitOfWork.GetRepositories<Product, int>();
 			var Products= await Repo.GetAllWithSpecASync(Specification);
 			var ProducsDTO = _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductDTO>>(Products);

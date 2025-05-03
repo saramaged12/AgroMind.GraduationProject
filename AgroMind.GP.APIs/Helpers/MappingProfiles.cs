@@ -14,12 +14,12 @@ namespace AgroMind.GP.APIs.Helpers
 				CreateMap<Land, LandDTO>().ReverseMap();
 
 
-			
-				// Mapping From Product to ProductDTO
-				CreateMap<Product, ProductDTO>()
-					.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand != null ? s.Brand.BrandName : string.Empty)) // Handle null Brand
-					.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.CategoryName : string.Empty)) // Handle null Category
-					.ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier != null ? s.Supplier.FName : string.Empty)); // Handle null Supplier
+
+			// Mapping From Product to ProductDTO
+			CreateMap<Product, ProductDTO>()
+				.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand != null ? s.Brand.BrandName : string.Empty)) // Handle null Brand
+				.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.CategoryName : string.Empty));// Handle null Category
+					//.ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier != null ? s.Supplier.FName : string.Empty)); // Handle null Supplier
 
 				// Mapping from ProductDTO to Product
 				CreateMap<ProductDTO, Product>()

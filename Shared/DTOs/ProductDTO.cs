@@ -19,7 +19,7 @@ namespace AgroMind.GP.APIs.DTOs
 		public string? CategoryName { get; set; } //FK 
 		public string? BrandName { get; set; } // 1 Brand to M Producr
 
-		public string? SupplierName { get; set; } //1
+		//public string? SupplierName { get; set; } //1
 		
 	}
 
