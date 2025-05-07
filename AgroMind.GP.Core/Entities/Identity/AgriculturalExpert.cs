@@ -2,7 +2,7 @@
 {
 	public class AgriculturalExpert : AppUser
 	{
-		public string Specialization { get; set; }
+		public string? Specialization { get; set; }
 
 		public int ExperienceYears { get; set; }
 
@@ -11,9 +11,9 @@
 		public List<TimeSpan> AvailableHours { get; set; } = new List<TimeSpan>();
 
 		public int ExpertRating { get; set; }
-		public string RegionCovered { get; set; }
+		public string? RegionCovered { get; set; }
 
-		public string PreferedCrops { get; set; }
+		public string? PreferedCrops { get; set; }
 
 
 		// Navigation properties

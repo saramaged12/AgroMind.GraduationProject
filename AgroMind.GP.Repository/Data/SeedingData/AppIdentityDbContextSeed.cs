@@ -14,7 +14,7 @@ namespace AgroMind.GP.Repository.Data.SeedingData
 
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager, ILogger logger)
         {
-            string[] roles = { "Farmer", "Expert", "Supplier", "System Administrator" };
+            string[] roles = { "Farmer", "AgriculturalExpert", "Supplier", "SystemAdministrator" };
 
             foreach (var role in roles)
             {
@@ -30,7 +30,7 @@ namespace AgroMind.GP.Repository.Data.SeedingData
         }
         public static async Task SeedUserAsync(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, ILogger logger)
         {
-            string adminRole = "Expert";
+            string adminRole = "SystemAdministrator";
             // Ensure the role exists before creating the user
             if (!await roleManager.RoleExistsAsync(adminRole))
             {
