@@ -8,6 +8,7 @@ namespace Shared.DTOs
 {
 	public class LandDTO
 	{
+
 		public int Id { get; set; }
 
 
@@ -25,7 +26,7 @@ namespace Shared.DTOs
 
 
 
-		public string? FarmerId { get; set; }
+		public string? FarmerId { get; set; } //farmerId
 		public string? IrrigationType { get; set; }
 		
 		
