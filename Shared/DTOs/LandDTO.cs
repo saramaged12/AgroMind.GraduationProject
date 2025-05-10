@@ -14,18 +14,21 @@ namespace Shared.DTOs
 		public string? LandName { get; set; }
 		public double? Size { get; set; }
 
+
 		public string? SoilType { get; set; }
+
+		public string? waterSource { get; set; }
+
+		public string? Location { get; set; }
+
+		public string? PictureUrl { get; set; }
+
+
 
 		public string? FarmerId { get; set; }
 		public string? IrrigationType { get; set; }
 		
-		public double Latitude { get; set; }
-		public double Longitude { get; set; }
-
-		public string? PictureUrl { get; set; }
-
-		public string? waterSource { get; set; }
-
+		
 		
 		
 	}

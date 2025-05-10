@@ -13,6 +13,7 @@ namespace AgroMind.GP.Core.Entities
 
 		public string? waterSource { get; set; }
 
+		public string? Location { get; set; }
 		public string? PictureUrl { get; set; }
 
 		public ICollection<Crop>? Crops { get; set; } = new HashSet<Crop>();
@@ -23,8 +24,7 @@ namespace AgroMind.GP.Core.Entities
 
 		public string? IrrigationType { get; set; }
 	
-		public double Latitude { get; set; }
-		public double Longitude { get; set; }
+	
 
 	}
 
