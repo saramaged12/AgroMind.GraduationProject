@@ -14,7 +14,7 @@ namespace Shared.DTOs
 
 		public string? SoilType { get; set; }
 		public string? IrrigationType { get; set; }
-		public DateTime StartDate { get; set; }
+		
 		public double Latitude { get; set; }
 		public double Longitude { get; set; }
 
