@@ -29,6 +29,12 @@ namespace AgroMind.GP.Core.Entities
 		public int? LandId { get; set; }
 		public Land? Land { get; set; }
 
+		public DateTime StartDate { get; set; }
+
+		public DateTime LastStartDate { get; set; }
+
+		public int Duration { get; set; }
+
 
 
 	}
