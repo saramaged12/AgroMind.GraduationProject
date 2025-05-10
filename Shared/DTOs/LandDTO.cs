@@ -9,10 +9,14 @@ namespace Shared.DTOs
 	public class LandDTO
 	{
 		public int Id { get; set; }
+
+
 		public string? LandName { get; set; }
 		public double? Size { get; set; }
 
 		public string? SoilType { get; set; }
+
+		public string? FarmerId { get; set; }
 		public string? IrrigationType { get; set; }
 		
 		public double Latitude { get; set; }

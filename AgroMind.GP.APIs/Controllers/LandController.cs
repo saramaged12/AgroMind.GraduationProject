@@ -14,6 +14,7 @@ namespace AgroMind.GP.APIs.Controllers
 	[Route("api/[controller]")]
 	[ApiController]
 
+	[Authorize(Roles = "Farmer")]
 	public class LandController : APIbaseController
 	{
 		private readonly IServiceManager _serviceManager;
