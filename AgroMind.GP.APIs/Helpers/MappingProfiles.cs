@@ -31,27 +31,39 @@ namespace AgroMind.GP.APIs.Helpers
 
 				CreateMap<Brand, BrandDTO>().ReverseMap();
 
-				// Mapping From Crop to CropDTO
-				CreateMap<Crop, CropDto>()
-					.ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Stages != null ? src.Stages.Sum(s => s.TotalCost) : 0)) // Map TotalCost dynamically
-					.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages)); // Map Stages
+			// Mapping From Crop to CropDTO
 
-				CreateMap<CropDto, Crop>()
-					.ForMember(dest => dest.Farmer, opt => opt.Ignore()) // Ignore Farmer navigation property
-					.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages)); // Map Stages
+			CreateMap<Crop, CropDto>().ReverseMap();
+			CreateMap<CropStage, CropStageDto>().ReverseMap();
+			CreateMap<Step,StepDto>().ReverseMap();
 
-				CreateMap<CropStage, CropStageDto>()
-					.ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Cost + (src.Steps != null ? src.Steps.Sum(step => step.Cost) : 0))) // Avoid null-propagating operator
-					.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)); // Map Steps
+			//CreateMap<CropStage, CropStageDto>()
+			//	//(NotCorrect) .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Cost + (src.Steps != null ? src.Steps.Sum(step => step.Cost) : 0))) // Avoid null-propagating operator
+			//	.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)); // Map Steps
 
-				CreateMap<CropStageDto, CropStage>()
-					.ForMember(dest => dest.TotalCost, opt => opt.Ignore()) // TotalCost is calculated, not mapped
-					.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)); // Map Steps
+			//CreateMap<CropStageDto, CropStage>()
+			//	//.ForMember(dest => dest.TotalCost, opt => opt.Ignore()) // TotalCost is calculated, not mapped
+			//	.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)); // Map Steps
 
-				CreateMap<Step, StepDto>()
-					.ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
-					.ReverseMap();
-			}
+			//CreateMap<Step, StepDto>()
+			//	.ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
+			//	.ReverseMap();
+
+
+			//CreateMap<Crop, CropDto>()
+			//		//This way use the value stored in the DB not a runtime sum. (This is not Correct)
+			//		//ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Stages != null ? src.Stages.Sum(s => s.TotalCost) : 0)) // Map TotalCost dynamically
+			//		.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages)); // Map Stages
+
+
+
+			//CreateMap<CropDto, Crop>()
+			//	.ForMember(dest => dest.Farmer, opt => opt.Ignore()) // Ignore Farmer navigation property
+			//	.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages)); // Map Stages
+
+			CreateMap<RecommendRequest, RecommendRequestDTO>()
+				.ReverseMap();
+		}
 		}
 	}
 

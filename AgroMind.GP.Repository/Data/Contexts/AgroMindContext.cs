@@ -77,6 +77,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 			modelBuilder.Entity<Brand>().HasIndex(b => b.IsDeleted);
 			modelBuilder.Entity<CropStage>().HasIndex(cs => cs.IsDeleted);
 			modelBuilder.Entity<Step>().HasIndex(s => s.IsDeleted);
+			modelBuilder.Entity<RecommendRequest>().HasIndex(r => r.IsDeleted);
 			
 			// User indexes (only on AppUser root entity)
 			modelBuilder.Entity<AppUser>().HasIndex(u => u.IsDeleted);
@@ -101,6 +102,9 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		public DbSet<Step> Step { get; set; }
 
 		public DbSet<Land> Land { get; set; }
+
+		public DbSet<RecommendRequest> RecommendPlan { get; set; }
+
 
 
 

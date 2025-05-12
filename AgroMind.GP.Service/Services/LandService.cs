@@ -5,6 +5,7 @@ using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Shared.DTOs;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,8 @@ namespace AgroMind.GP.Service.Services
 				if (landDto == null)
 					throw new ArgumentNullException(nameof(landDto));
 
-				var landEntity = _mapper.Map<Land>(landDto);
+			
+			var landEntity = _mapper.Map<Land>(landDto);
 				var repo = _unitOfWork.GetRepositories<Land, int>();
 
 				await repo.AddAsync(landEntity);

@@ -23,7 +23,11 @@ namespace AgroMind.GP.Core.Contracts.Specifications.Contract
 
         public List<Expression<Func<TEntity, object>>> Includes { get; set; }
 
-        Expression<Func<TEntity, object>> OrderBy { get; } //Order By
+		// List of string-based includes for nested relationships (ThenIncludes)
+		List<string> StringIncludes { get; set; }
+
+
+		Expression<Func<TEntity, object>> OrderBy { get; } //Order By
 
         Expression<Func<TEntity, object>> OrderByDescending { get; }
 

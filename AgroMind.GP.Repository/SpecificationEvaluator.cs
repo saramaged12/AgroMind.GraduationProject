@@ -1,6 +1,7 @@
 ﻿using AgroMind.GP.Core.Contracts.Specifications.Contract;
 using AgroMind.GP.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AgroMind.GP.Repository
 {
@@ -16,6 +17,7 @@ namespace AgroMind.GP.Repository
 		{
 			var Query = inputQuery; // context.Set<T>()
 
+			// Apply filtering (Criteria)
 			if (Spec.Criteria is not null) // P=>P.Id==id 
 			{
 				Query = Query.Where(Spec.Criteria); // context.Set<T>().where (P=>P.Id==id) 
@@ -40,6 +42,13 @@ namespace AgroMind.GP.Repository
 			//Include(p => p.Brand) => IncludeExpression
 			//CurrentQuery.Include(p => p.Brand) => CurrentQuery
 			//CuurentQuery.Include(p => p.BrandType)
+
+
+			// Apply string-based Includes (for ThenIncludes)
+			foreach (var include in Spec.StringIncludes)
+			{
+				Query = Query.Include(include);
+			}
 			return Query;
 		}
 	}

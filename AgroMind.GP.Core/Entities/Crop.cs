@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.Core.Entities.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace AgroMind.GP.Core.Entities
@@ -15,12 +16,14 @@ namespace AgroMind.GP.Core.Entities
 
 		
 		// Null-safe calculated property
-		public decimal TotalCost => Stages?.Sum(stage => stage.TotalCost) ?? 0;
+		//public decimal TotalCost => Stages?.Sum(stage => stage.TotalCost) ?? 0;
 
 		//TotalCost is a calculated property that dynamically computes the total cost of all stages in the Stages list.
 
 		//This ensures that the value of TotalCost is always up-to-date and reflects the current state of the Stages.
 
+	
+		public decimal TotalCost { get; set; }
 
 		public string? FarmerId { get; set; }
 		[JsonIgnore] // Prevent infinite loop during serialization

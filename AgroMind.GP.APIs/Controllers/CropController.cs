@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
@@ -7,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Shared.DTOs;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -93,6 +95,29 @@ namespace AgroMind.GP.APIs.Controllers
 		{
 			var deletedCrops = await _serviceManager.CropService.GetAllDeletedCropsAsync();
 			return Ok(deletedCrops);
+		}
+
+		[HttpPost("GetRecommendedCrops")]
+		public async Task<ActionResult<IReadOnlyList<CropDto>>> GetRecommendedCrops([FromBody] RecommendRequestDTO request)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			try
+			{
+				var crops = await _serviceManager.CropService.GetRecommendedCropsAsync(request);
+				return Ok(crops);
+			}
+			catch (RecommendationException ex)
+			{
+				return NotFound(new { Message = ex.Message, Reasons = ex.Reasons });
+			}
+			catch (Exception ex)
+			{
+				// Log the exception
+				Console.WriteLine($"Error in GetRecommendedCrops: {ex.Message}");
+				return StatusCode(500, "An unexpected error occurred.");
+			}
 		}
 	}
 
