@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared.DTOs
 {
-	public class RecommendReuestDTO
+	public class RecommendRequestDTO
 	{
 		public DateTime FromDate {  get; set; }
 

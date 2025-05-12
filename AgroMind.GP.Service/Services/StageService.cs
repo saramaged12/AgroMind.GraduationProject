@@ -74,13 +74,17 @@ namespace AgroMind.GP.Service.Services
 			var repo = _unitOfWork.GetRepositories<CropStage, int>();
 			await repo.AddAsync(stageEntity);
 
-			// Update the parent crop's TotalCost (no explicit assignment)
+			// Update  crop TotalCost 
 			if (stageEntity.CropId.HasValue)
 			{
 				var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
 				var crop = await cropRepo.GetByIdAsync(stageEntity.CropId.Value);
 				if (crop != null)
 				{
+					//crop.TotalCost = crop.Stages?.Sum(stage => stage.TotalCost) ?? 0;
+					crop.TotalCost = crop.Stages?.Sum(s =>
+					   s.Cost + (s.Steps?.Sum(step => step.Cost) ?? 0)) ?? 0;
+
 					cropRepo.Update(crop); // Save changes to the crop
 				}
 			}
@@ -103,15 +107,19 @@ namespace AgroMind.GP.Service.Services
 			_mapper.Map(stageDto, existingStage);
 
 			// Recalculate TotalCost for the stage
-			existingStage.TotalCost = existingStage.Cost + (existingStage.Steps?.Sum(step => step.Cost) ?? 0);
-
-			// Update the parent crop's TotalCost (no explicit assignment)
+			existingStage.TotalCost=existingStage.Cost + (existingStage.Steps?.Sum(step=> step.Cost) ?? 0);
+			// Update the crop TotalCost 
 			if (existingStage.CropId.HasValue)
 			{
 				var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
 				var crop = await cropRepo.GetByIdAsync(existingStage.CropId.Value);
 				if (crop != null)
 				{
+					//crop.TotalCost = crop.Stages?.Sum(stage => stage.TotalCost) ?? 0;
+
+					crop.TotalCost = crop.Stages?.Sum(s =>
+					   s.Cost + (s.Steps?.Sum(step => step.Cost) ?? 0)) ?? 0;
+
 					cropRepo.Update(crop); // Save changes to the crop
 				}
 			}
