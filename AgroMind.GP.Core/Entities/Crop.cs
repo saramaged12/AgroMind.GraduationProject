@@ -25,9 +25,7 @@ namespace AgroMind.GP.Core.Entities
 	
 		public decimal TotalCost { get; set; }
 
-		public string? FarmerId { get; set; }
-		[JsonIgnore] // Prevent infinite loop during serialization
-		public Farmer? Farmer { get; set; }
+		
 
 		public int? LandId { get; set; }
 		public Land? Land { get; set; }
