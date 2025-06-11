@@ -20,10 +20,15 @@ namespace AgroMind.GP.Repository.Data.Configurations
 				.HasForeignKey(c=>c.CropId)
 				.OnDelete(DeleteBehavior.Restrict);
 
-			builder.Property(c=>c.TotalCost)
-				.HasColumnType("decimal(18,2)"); 
+			builder.Property(c=>c.TotalActualCost)
+				.HasColumnType("decimal(18,2)");
 
-			
+			builder.Property(c => c.TotalEstimatedCost)
+				.HasColumnType("decimal(18,2)");
+
+			builder.Property(c => c.PlanType)
+				.HasConversion<string>(); // Store enum as string
+
 		}
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
+using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Repository.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ using static StackExchange.Redis.Role;
 
 namespace AgroMind.GP.Service.Services
 {
-	public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper) : IServiceManager
+	public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper,UserManager<AppUser>userManager ) : IServiceManager
 	{
 		
 		//Using Lazy Implementation
@@ -27,11 +29,11 @@ namespace AgroMind.GP.Service.Services
 
 		private readonly Lazy<ILandService> _LazyLandService = new Lazy<ILandService>(() => new LandService(unitOfWork, mapper));
 
-		private readonly Lazy<ICropService> _LazyCropService = new Lazy<ICropService>(() => new CropService(unitOfWork, mapper));
+		private readonly Lazy<ICropService> _LazyCropService = new Lazy<ICropService>(() => new CropService(unitOfWork, mapper,userManager));
 
-		private readonly Lazy<IStageService> _LazyStageService = new Lazy<IStageService>(() => new StageService(unitOfWork, mapper));
+		private readonly Lazy<IStageService> _LazyStageService = new Lazy<IStageService>(() => new StageService(unitOfWork, mapper,userManager));
 
-		private readonly Lazy<IStepService> _LazyStepService = new Lazy<IStepService>(() => new StepService(unitOfWork, mapper));
+		private readonly Lazy<IStepService> _LazyStepService = new Lazy<IStepService>(() => new StepService(unitOfWork, mapper,userManager));
 
 
 

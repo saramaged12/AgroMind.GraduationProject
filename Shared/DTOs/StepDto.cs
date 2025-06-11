@@ -12,9 +12,17 @@
 
 		public int? DurationDays { get; set; }
 
-		public string? Fertilizer { get; set; } 
-		public decimal Cost { get; set; } 
+		public string? Fertilizer { get; set; }
 
+		public decimal? EstimatedCost { get; set; } // Estimated Cost 
+		
 
+		public decimal? ActualCost { get; set; } // FOR DISPLAY / FOR SENDING BACK UPDATED ACTUALS
+		public DateTime? ActualStartDate { get; set; } 
+		public DateTime? PlannedStartDate { get; set; } 
+		
+		public string? CreatorId { get; set; }
+		
+		public int? StageId { get; set; } 
 	}
 }

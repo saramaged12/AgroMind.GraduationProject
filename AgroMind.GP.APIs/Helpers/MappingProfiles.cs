@@ -3,6 +3,8 @@ using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AutoMapper;
 using Shared.DTOs;
+using static Azure.Core.HttpHeader;
+using System.Text.RegularExpressions;
 
 namespace AgroMind.GP.APIs.Helpers
 {
@@ -11,60 +13,136 @@ namespace AgroMind.GP.APIs.Helpers
 		public MappingProfiles()
 		{
 
-				CreateMap<Land, LandDTO>().ReverseMap();
-
-
-
-			// Mapping From Product to ProductDTO
+			CreateMap<Land, LandDTO>().ReverseMap();
 			CreateMap<Product, ProductDTO>()
-				.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand != null ? s.Brand.BrandName : string.Empty)) // Handle null Brand
-				.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.CategoryName : string.Empty));// Handle null Category
-					//.ForMember(d => d.SupplierName, o => o.MapFrom(s => s.Supplier != null ? s.Supplier.FName : string.Empty)); // Handle null Supplier
+				.ForMember(d => d.BrandName, o => o.MapFrom(s => s.Brand != null ? s.Brand.BrandName : string.Empty))
+				.ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.CategoryName : string.Empty));
+			CreateMap<ProductDTO, Product>()
+				.ForMember(d => d.Brand, o => o.Ignore())
+				.ForMember(d => d.Category, o => o.Ignore())
+				.ForMember(d => d.Supplier, o => o.Ignore());
+			CreateMap<Category, CategoryDTO>().ReverseMap();
+			CreateMap<Brand, BrandDTO>().ReverseMap();
+		
 
-				// Mapping from ProductDTO to Product
-				CreateMap<ProductDTO, Product>()
-					.ForMember(d => d.Brand, o => o.Ignore()) // Ignore Brand navigation property
-					.ForMember(d => d.Category, o => o.Ignore()) // Ignore Category navigation property
-					.ForMember(d => d.Supplier, o => o.Ignore()); // Ignore Supplier navigation property
-
-				CreateMap<Category, CategoryDTO>().ReverseMap();
-
-				CreateMap<Brand, BrandDTO>().ReverseMap();
-
-			// Mapping From Crop to CropDTO
-
-			CreateMap<Crop, CropDto>().ReverseMap();
-			CreateMap<CropStage, CropStageDto>().ReverseMap();
-			CreateMap<Step,StepDto>().ReverseMap();
-
-			//CreateMap<CropStage, CropStageDto>()
-			//	//(NotCorrect) .ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Cost + (src.Steps != null ? src.Steps.Sum(step => step.Cost) : 0))) // Avoid null-propagating operator
-			//	.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)); // Map Steps
-
-			//CreateMap<CropStageDto, CropStage>()
-			//	//.ForMember(dest => dest.TotalCost, opt => opt.Ignore()) // TotalCost is calculated, not mapped
-			//	.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)); // Map Steps
-
-			//CreateMap<Step, StepDto>()
-			//	.ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost))
-			//	.ReverseMap();
+			
+			CreateMap<Crop, CropDto>();
+			CreateMap<CropStage, CropStageDto>();
+			CreateMap<Step, StepDto>();
 
 
-			//CreateMap<Crop, CropDto>()
-			//		//This way use the value stored in the DB not a runtime sum. (This is not Correct)
-			//		//ForMember(dest => dest.TotalCost, opt => opt.MapFrom(src => src.Stages != null ? src.Stages.Sum(s => s.TotalCost) : 0)) // Map TotalCost dynamically
-			//		.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages)); // Map Stages
+			// --- Definition DTO For Add and Update
+		
+			CreateMap<CropDefinitionDto, Crop>()
+				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				.ForMember(dest => dest.Land, opt => opt.Ignore());
+				
+
+			CreateMap<StageDefinitionDto, CropStage>()
+				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				.ForMember(dest => dest.Crop, opt => opt.Ignore());
+
+			CreateMap<StepDefinitionDto, Step>()
+				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.ActualStartDate, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				.ForMember(dest => dest.Stage, opt => opt.Ignore());
+
+
+			//FullEntity For --> UpdateActualsForCropAsync
+			
+			CreateMap<CropDto, Crop>()
+				.ForMember(dest => dest.Id, opt => opt.Ignore()) // Id is from route
+				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore()) // Calculated
+				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore()) // Calculated
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore()) // Set by DbContext
+				.ForMember(dest => dest.Creator, opt => opt.Ignore()) // Navigation
+				.ForMember(dest => dest.Land, opt => opt.Ignore()) // Navigation
+				.ForMember(dest => dest.PlanType, opt => opt.Ignore()) 
+				.ForMember(dest => dest.LandId, opt => opt.Ignore()) // Not updated via this path
+				.ForMember(dest => dest.Stages, opt => opt.Ignore()); // Collections managed manually in service
+
+			CreateMap<CropStageDto, CropStage>()
+				.ForMember(dest => dest.Id, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore()) // Calculated
+				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore()) // Calculated
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore()) //Audit
+				.ForMember(dest => dest.Creator, opt => opt.Ignore()) // Navigation
+				.ForMember(dest => dest.CropId, opt => opt.Ignore())
+				.ForMember(dest => dest.Crop, opt => opt.Ignore())
+				.ForMember(dest => dest.Steps, opt => opt.Ignore()); // Collections managed manually in service
+
+			CreateMap<StepDto, Step>()
+				 // ActualCost, ActualStartDate, EstimatedCost, PlannedStartDate Are Inputs
+				.ForMember(dest => dest.Id, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				.ForMember(dest => dest.Stage, opt => opt.Ignore()); // Navigation Property
+
+
+			// Deep Copy Mapping for (AdoptRecommendedCropAsync) 
+			
+			CreateMap<Crop, Crop>()
+				.ForMember(dest => dest.Id, opt => opt.Ignore())
+				.ForMember(dest => dest.LandId, opt => opt.Ignore())
+				.ForMember(dest => dest.Land, opt => opt.Ignore())
+				.ForMember(dest => dest.PlanType, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages));
+
+			CreateMap<CropStage, CropStage>()
+				.ForMember(dest => dest.Id, opt => opt.Ignore())
+				.ForMember(dest => dest.CropId, opt => opt.Ignore())
+				.ForMember(dest => dest.Crop, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())		
+				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore())
+				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps));
+
+			CreateMap<Step, Step>()
+				.ForMember(dest => dest.Id, opt => opt.Ignore())
+				.ForMember(dest => dest.StageId, opt => opt.Ignore())
+				.ForMember(dest => dest.Stage, opt => opt.Ignore())
+				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
+				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				
+				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
+				.ForMember(dest => dest.ActualStartDate, opt => opt.Ignore())
+			
+				.ConstructUsing((src, context) => new Step { });
+
+			
+			CreateMap<Crop, PlanInfoDto>()
+				.ForMember(dest => dest.Crop, opt => opt.MapFrom(src => src))
+				.ForMember(dest => dest.CreatorEmail, opt => opt.MapFrom(src => src.Creator.Email))
+				.ForMember(dest => dest.CreatorRole, opt => opt.Ignore())
+				.ForMember(dest => dest.PlanType, opt => opt.MapFrom(src => src.PlanType.ToString()));
 
 
 
-			//CreateMap<CropDto, Crop>()
-			//	.ForMember(dest => dest.Farmer, opt => opt.Ignore()) // Ignore Farmer navigation property
-			//	.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages)); // Map Stages
 
-			CreateMap<RecommendRequest, RecommendRequestDTO>()
-				.ReverseMap();
+
+
+
 		}
-		}
+	}
+
+
+	//ReverseMap() : For bidirectional mapping when names match.
+    //Ignore(): For properties that are calculated, set manually, or are navigation properties.
+    //MapFrom(): Only when names differ or complex transformations are needed.
 	}
 
 

@@ -3,8 +3,11 @@ using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTOs;
+using System.Security.Claims;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -24,20 +27,25 @@ namespace AgroMind.GP.APIs.Controllers
 		//Add Step
 
 		[HttpPost("AddStep")]
-		public async Task<ActionResult<StepDto>> AddStep([FromBody]StepDto stepDto)
+		//[Authorize] // Experts and Farmers can add steps
+		public async Task<ActionResult<StepDto>> AddStep([FromBody] StepDefinitionDto stepDto)
 		{
+			if (stepDto == null) return BadRequest("Step data is required.");
+			if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			if (stepDto == null)
-				return BadRequest(" Step data is required.");
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized("User ID not found.");
 
-			
-			var createdstep = await _serviceManager.StepService.AddStepAsync(stepDto);
-
-			if (createdstep == null)
-				return BadRequest("Failed to create the Crop.");
-
-			return CreatedAtAction(nameof(GetStepById), new { id = createdstep.Id }, createdstep);
-
+			try
+			{
+				var createdStep = await _serviceManager.StepService.AddStepAsync(stepDto, userId);
+				// CreatedAtAction uses GetStepById method to return the newly created resource
+				return CreatedAtAction(nameof(GetStepById), new { id = createdStep.Id }, createdStep);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while adding the step: {ex.Message}");
+			}
 		}
 
 		// Get Step By Id
@@ -55,11 +63,19 @@ namespace AgroMind.GP.APIs.Controllers
 		[HttpGet("GetStageById/{id}")]
 		public async Task<ActionResult<CropStageDto>> GetStageById(int id)
 		{
-			var stage = await _serviceManager.StageService.GetStageByIdAsync(id);
-			if (stage == null)
-				return NotFound($"Stage with ID {id} not found.");
-
-			return Ok(stage);
+			try
+			{
+				var step = await _serviceManager.StepService.GetStepByIdAsync(id);
+				return Ok(step);
+			}
+			catch (KeyNotFoundException)
+			{
+				return NotFound($"Step with ID {id} not found.");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred: {ex.Message}");
+			}
 		}
 		// Get All Crops
 		[HttpGet("GetSteps")]
@@ -69,37 +85,45 @@ namespace AgroMind.GP.APIs.Controllers
 			return Ok(steps);
 		}
 
-		// Update Step
-		[HttpPut("UpdateStep/{id}")]
-		public async Task<IActionResult> UpdateStep(int id, [FromBody] StepDto stepDto)
-		{
-			if (id != stepDto.Id)
-				return BadRequest("Step ID mismatch.");
-
-			var existingStep = await _serviceManager.StepService.GetStepByIdAsync(id);
-			if (existingStep == null)
-				return NotFound($"Step with ID {id} not found.");
-
-			await _serviceManager.StepService.UpdateStep(stepDto);
-			return NoContent();
-		}
+		
 
 		// Delete Step
 		[HttpDelete("DeleteStep/{id}")]
 		public async Task<IActionResult> DeleteStep(int id)
 		{
-			var step = await _serviceManager.StepService.GetStepByIdAsync(id);
-			if (step == null)
-				return NotFound($"Step with ID {id} not found.");
+			try
+			{
+				// Retrieve step first to ensure existence before passing DTO
+				var step = await _serviceManager.StepService.GetStepByIdAsync(id);
+				if (step == null) return NotFound($"Step with ID {id} not found.");
 
-			await _serviceManager.StepService.DeleteStep(new StepDto { Id = id });
-			return NoContent();
+				await _serviceManager.StepService.DeleteStep(new StepDto { Id = id }); // Pass minimal DTO
+				return NoContent();
+			}
+			catch (KeyNotFoundException)
+			{
+				return NotFound($"Step with ID {id} not found for deletion.");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while deleting the step: {ex.Message}");
+			}
 		}
+
 		[HttpGet("GetDeletedSteps")]
+		//[Authorize(Roles = "SystemAdministrator")]
+		
 		public async Task<ActionResult<IReadOnlyList<StepDto>>> GetDeletedSteps()
 		{
-			var deletedSteps =await _serviceManager.StepService.GetAllDeletedStepsAsync();
-			return Ok(deletedSteps);
+			try
+			{
+				var deletedSteps = await _serviceManager.StepService.GetAllDeletedStepsAsync();
+				return Ok(deletedSteps);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while retrieving deleted steps: {ex.Message}");
+			}
 		}
 	}
 }
