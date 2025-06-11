@@ -28,6 +28,7 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
+			builder.Services.AddHttpContextAccessor(); 
 			builder.Services.AddDbContext<AgroMindContext>(Options =>
 			{
 				//Configuration >- el property el maska el file el appsetting
@@ -65,8 +66,7 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			builder.Services.AddScoped<IServiceManager, ServiceManager>();
-
-
+			
 			builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
@@ -98,13 +98,12 @@ namespace AgroMind.GP.APIs
 
 
 			var Services = Scope.ServiceProvider;
-
-
+			
 			var context = Services.GetRequiredService<AgroMindContext>();
 			var loggerFactory = Services.GetRequiredService<ILoggerFactory>();
 			//var logger = Services.GetRequiredService<ILogger<Program>>();
 			var logger = loggerFactory.CreateLogger<Program>();
-
+		
 			var roleManager = Services.GetRequiredService<RoleManager<IdentityRole>>();
 			var userManager = Services.GetRequiredService<UserManager<AppUser>>();
 

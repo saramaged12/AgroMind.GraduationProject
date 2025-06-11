@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AgroMind.GP.Core.Entities.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,18 +15,23 @@ namespace AgroMind.GP.Core.Entities
 		public string? Description { get; set; }
 		public string? Tool { get; set; }
 		public string? ToolImage { get; set; } 
-		public int? DurationDays { get; set; } // Changed from DateTime? to int? (days)
+		public int? DurationDays { get; set; } 
 
 		public string? Fertilizer { get; set; }
-		//public int? FertilizerDuration { get; set; } 
-
-		public decimal Cost { get; set; } // Cost of this step
-
+		
 		public int? StageId { get; set; }
 		[JsonIgnore]
 		public CropStage? Stage { get; set; }
 
+		//Estimated And Actual Costs , Dates
+		public decimal? EstimatedCost { get; set; } // Estimated Cost 
+
+
+		public decimal? ActualCost { get; set; }
+		public DateTime? ActualStartDate { get; set; }
 		
+		public DateTime? PlannedStartDate { get; set; }
+
 
 	}
 

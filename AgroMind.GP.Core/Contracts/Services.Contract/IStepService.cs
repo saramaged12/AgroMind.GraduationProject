@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 {
 	public interface IStepService
 	{
-		Task<StepDto> AddStepAsync(StepDto stepDto);
+		Task<StepDto> AddStepAsync(StepDefinitionDto stepDto , string creatorUserId);
 
 		Task<IReadOnlyList<StepDto>> GetAllStepsAsync();
 
@@ -19,7 +20,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 
 
-		Task UpdateStep(StepDto stepDto);
+		//Task UpdateStep(StepDto stepDto);
 
 
 		Task DeleteStep(StepDto stepDto);

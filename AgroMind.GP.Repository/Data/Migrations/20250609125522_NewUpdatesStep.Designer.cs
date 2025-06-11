@@ -4,6 +4,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgroMind.GP.Repository.Data.Migrations
 {
     [DbContext(typeof(AgroMindContext))]
-    partial class AgroMindContextModelSnapshot : ModelSnapshot
+    [Migration("20250609125522_NewUpdatesStep")]
+    partial class NewUpdatesStep
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
@@ -91,6 +97,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<decimal?>("ActualCost")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
 
@@ -133,6 +142,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
@@ -271,6 +283,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
 
@@ -326,6 +341,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<string>("BrandName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
 
@@ -354,6 +372,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.Property<string>("CategoryName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
@@ -386,6 +407,9 @@ namespace AgroMind.GP.Repository.Data.Migrations
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
                         .HasColumnType("nvarchar(450)");
@@ -437,7 +461,7 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<decimal?>("ActualCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("ActualStartDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
@@ -455,14 +479,14 @@ namespace AgroMind.GP.Repository.Data.Migrations
                     b.Property<decimal?>("EstimatedCost")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime?>("EstimatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Fertilizer")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("PlannedStartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("StageId")
                         .HasColumnType("int");

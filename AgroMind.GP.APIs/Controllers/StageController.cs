@@ -3,8 +3,11 @@ using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTOs;
+using System.Security.Claims;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -22,34 +25,45 @@ namespace AgroMind.GP.APIs.Controllers
 			_serviceManager = serviceManager;
 		}
 
-
-		//AddStage
-
 		[HttpPost("AddStage")]
-		public async Task<ActionResult<CropStageDto>> AddStage([FromBody] CropStageDto stageDto)
+		//[Authorize] // Experts and Farmers can add stages
+		public async Task<ActionResult<CropStageDto>> AddStage([FromBody] StageDefinitionDto stageDto)
 		{
-			if (stageDto == null)
-				return BadRequest(" Stage data is required.");
+			if (stageDto == null) return BadRequest("Stage data is required.");
+			if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			
-			var createdStage = await _serviceManager.StageService.AddStageAsync(stageDto);
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(userId)) return Unauthorized("User ID not found.");
 
-			if (createdStage == null)
-				return BadRequest("Failed to create the Stage.");
-
-			return CreatedAtAction(nameof(GetStageById), new { id = createdStage.Id }, createdStage);
-
+			try
+			{
+				var createdStage = await _serviceManager.StageService.AddStageAsync(stageDto, userId);
+				// CreatedAtAction uses GetStageById method to return the newly created resource
+				return CreatedAtAction(nameof(GetStageById), new { id = createdStage.Id }, createdStage);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while adding the stage: {ex.Message}");
+			}
 		}
 
 		// Get Stage By Id
 		[HttpGet("GetStageById/{id}")]
 		public async Task<ActionResult<CropStageDto>> GetStageById(int id)
 		{
-			var stage = await _serviceManager.StageService.GetStageByIdAsync(id);
-			if (stage == null)
+			try
+			{
+				var stage = await _serviceManager.StageService.GetStageByIdAsync(id);
+				return Ok(stage);
+			}
+			catch (KeyNotFoundException)
+			{
 				return NotFound($"Stage with ID {id} not found.");
-
-			return Ok(stage);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred: {ex.Message}");
+			}
 		}
 		// Get All Stages
 		[HttpGet("GetStages")]
@@ -59,38 +73,45 @@ namespace AgroMind.GP.APIs.Controllers
 			return Ok(stages);
 		}
 
-		// Update Stage
-		[HttpPut("UpdateSatge/{id}")]
-		public async Task<IActionResult> UpdateStage(int id, [FromBody] CropStageDto stageDto)
-		{
-			if (id != stageDto.Id)
-				return BadRequest("Stage ID mismatch.");
+		//Delete Stage
 
-			var existingStage = await _serviceManager.StageService.GetStageByIdAsync(id);
-			if (existingStage == null)
-				return NotFound($"Stage with ID {id} not found.");
-
-			await _serviceManager.StageService.UpdateStage(stageDto);
-			return NoContent();
-		}
-
-		// Delete Stage
 		[HttpDelete("DeleteStage/{id}")]
+		//[Authorize] // Experts and Farmers can delete stages
 		public async Task<IActionResult> DeleteStage(int id)
 		{
-			var stage = await _serviceManager.StageService.GetStageByIdAsync(id);
-			if (stage == null)
-				return NotFound($"Stage with ID {id} not found.");
+			try
+			{
+				// Retrieve stage first to ensure existence before passing DTO
+				var stage = await _serviceManager.StageService.GetStageByIdAsync(id);
+				if (stage == null) return NotFound($"Stage with ID {id} not found.");
 
-			await _serviceManager.StageService.DeleteStage(new CropStageDto { Id = id });
-			return NoContent();
+				await _serviceManager.StageService.DeleteStage(new CropStageDto { Id = id }); // Pass minimal DTO
+				return NoContent();
+			}
+			catch (KeyNotFoundException)
+			{
+				return NotFound($"Stage with ID {id} not found for deletion.");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while deleting the stage: {ex.Message}");
+			}
 		}
 
+		//Get Deleted Stages
 		[HttpGet("DeletedStages")]
-		public async Task<ActionResult<IReadOnlyList<CropStageDto>>> GetDeletedStages() 
+		//[Authorize(Roles = "SystemAdministrator")] // Example: Only System Admins can view deleted items
+		public async Task<ActionResult<IReadOnlyList<CropStageDto>>> GetDeletedStages()
 		{
-		    var DeletedStages= await _serviceManager.StageService.GetAllDeletedStagesAsync();
-			return Ok(DeletedStages);
+			try
+			{
+				var deletedStages = await _serviceManager.StageService.GetAllDeletedStagesAsync();
+				return Ok(deletedStages);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while retrieving deleted stages: {ex.Message}");
+			}
 		}
 	}
 }

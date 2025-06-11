@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.APIs.DTOs;
+using Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 {
 	public interface IStageService
 	{
-		Task<CropStageDto> AddStageAsync(CropStageDto stageDto);
+		Task<CropStageDto> AddStageAsync(StageDefinitionDto stageDto, string creatorUserId);
 
 		Task<IReadOnlyList<CropStageDto>> GetAllStagesAsync();
 
@@ -19,7 +20,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 
 
-		Task UpdateStage(CropStageDto stageDto);
+		//Task UpdateStage(CropStageDto stageDto);
 
 
 		Task DeleteStage(CropStageDto stageDto);
