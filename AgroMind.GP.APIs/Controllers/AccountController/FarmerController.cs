@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AgroMind.GP.APIs.Controllers.AccountController
 {
 
-    [Authorize (Roles ="Farmer")]
+  //  [Authorize (Roles ="Farmer")]
 	public class FarmerController : APIbaseController
 	{
 		private readonly ICartRepository _cartRepository;

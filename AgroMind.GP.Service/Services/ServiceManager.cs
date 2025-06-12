@@ -27,7 +27,7 @@ namespace AgroMind.GP.Service.Services
 
 		private readonly Lazy<IBrandService> _LazyBrandService = new Lazy<IBrandService>(() => new BrandService(unitOfWork, mapper));
 
-		private readonly Lazy<ILandService> _LazyLandService = new Lazy<ILandService>(() => new LandService(unitOfWork, mapper));
+		private readonly Lazy<ILandService> _LazyLandService = new Lazy<ILandService>(() => new LandService(unitOfWork, mapper,userManager));
 
 		private readonly Lazy<ICropService> _LazyCropService = new Lazy<ICropService>(() => new CropService(unitOfWork, mapper,userManager));
 

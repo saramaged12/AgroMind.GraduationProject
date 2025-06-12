@@ -89,7 +89,7 @@ namespace AgroMind.GP.APIs
 
 			var app = builder.Build();
 
-			app.UseCors("AllowAll");
+			
 
 			#region Update DB
 			//To Allow CLR To Inject Object From AgroMindDbContext
@@ -135,12 +135,19 @@ namespace AgroMind.GP.APIs
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+			app.UseHttpsRedirection();// Redirects HTTP to HTTPS
+			app.UseCors("AllowAll"); // Place CORS
 
-			app.UseHttpsRedirection();
+		
+			app.UseRouting();
+			
 			//app.UseStaticFiles();
-			app.UseAuthentication();
-			app.UseAuthorization();
-			app.MapControllers();
+			app.UseAuthentication();// Processes JWT token
+			app.UseAuthorization();// Checks roles based on processed token
+			app.MapControllers();// Maps routes
+
+
+			
 
 
 			app.Run();
