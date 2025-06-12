@@ -83,8 +83,8 @@ namespace AgroMind.GP.APIs.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             //  Get FarmerId from Authenticated User's Token
-            var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(farmerId))
+            var farmerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(farmerId))
             {
                 
                 return Unauthorized("Farmer ID not found in token. Please log in as a Farmer.");
@@ -94,9 +94,7 @@ namespace AgroMind.GP.APIs.Controllers
             var user = await _userManager.FindByIdAsync(farmerId);
             if (user == null) return NotFound("Authenticated user (Farmer) not found in the system."); // Should not happen if token is valid
                                                                                                        // You can add an explicit role check here if needed, but [Authorize(Roles="Farmer")] handles it.
-            Console.WriteLine("Reached AddLand controller action!"); // Add this line for debugging                                                                                   // if (!await _userManager.IsInRoleAsync(user, "Farmer")) return Forbid("User is not a Farmer.");
-
-
+           
             // Assign the FarmerId to the DTO (Override any value sent by client for security)
             landDto.FarmerId = farmerId; //  ASSIGN FROM TOKEN, NOT BODY
 
@@ -108,11 +106,14 @@ namespace AgroMind.GP.APIs.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in AddLand: {ex.Message}");
-                if (ex.InnerException != null) Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                // For specific DB issues like FK not found, you can return 400 or 404/409 based on exact error
-                if (ex is UnauthorizedAccessException) return Forbid(ex.Message); // Example: if service throws it
-                if (ex is KeyNotFoundException) return NotFound(ex.Message); // Example: if service throws it
+               
+                if (ex.InnerException != null) 
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+               
+                if (ex is UnauthorizedAccessException) 
+                    return Forbid(ex.Message); 
+                if (ex is KeyNotFoundException)
+                    return NotFound(ex.Message); 
                 return StatusCode(500, $"An error occurred while creating the Land: {ex.Message}");
             }
         }
@@ -123,11 +124,14 @@ namespace AgroMind.GP.APIs.Controllers
         [Authorize(Roles = "Farmer")] // Only the owning farmer can update their land
         public async Task<IActionResult> UpdateLand(int id, [FromBody] LandDTO landDto)
         {
-            if (id != landDto.Id) return BadRequest("Land ID mismatch.");
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (id != landDto.Id) 
+                return BadRequest("Land ID mismatch.");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Get ID of user trying to update
-            if (string.IsNullOrEmpty(farmerId)) return Unauthorized("Farmer ID not found in token.");
+            if (string.IsNullOrEmpty(farmerId))
+                return Unauthorized("Farmer ID not found in token.");
 
             
             
@@ -158,7 +162,8 @@ namespace AgroMind.GP.APIs.Controllers
         public async Task<IActionResult> DeleteLand(int id)
         {
             var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(farmerId)) return Unauthorized("Farmer ID not found in token.");
+            if (string.IsNullOrEmpty(farmerId))
+                return Unauthorized("Farmer ID not found in token.");
 
             try
             {

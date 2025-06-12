@@ -53,6 +53,10 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddSingleton<IConnectionMultiplexer>(Options =>
 			{
 				var connection = builder.Configuration.GetConnectionString("RedisConnection");
+				if (string.IsNullOrWhiteSpace(connection))
+				{
+					throw new InvalidOperationException("Redis connection string 'RedisConnection' is not configured.");
+				}
 				return ConnectionMultiplexer.Connect(connection);
 			});
 
@@ -66,7 +70,8 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			builder.Services.AddScoped<IServiceManager, ServiceManager>();
-			
+			builder.Services.AddScoped<ITokenService, TokenService>(); //  to register TokenService
+
 			builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
@@ -106,6 +111,16 @@ namespace AgroMind.GP.APIs
 		
 			var roleManager = Services.GetRequiredService<RoleManager<IdentityRole>>();
 			var userManager = Services.GetRequiredService<UserManager<AppUser>>();
+
+			//var validationKeyFromConfig = app.Configuration["JWT:key"]; // Use app.Configuration to access settings after build
+			//if (string.IsNullOrEmpty(validationKeyFromConfig))
+			//{
+			//	logger.LogError("Program.cs: JWT:key is missing or empty in the configuration for validation!");
+			//}
+			//else
+			//{
+			//	logger.LogInformation($"Program.cs: JWT Key from config for validation: '{validationKeyFromConfig}' (Length: {validationKeyFromConfig.Length})");
+			//}
 
 
 			try // if DB kant Mawgoda

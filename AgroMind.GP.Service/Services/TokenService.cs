@@ -2,6 +2,7 @@
 using AgroMind.GP.Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace AgroMind.GP.Service.Services
 {
@@ -22,9 +24,12 @@ namespace AgroMind.GP.Service.Services
 		//Keys
 
 		private readonly IConfiguration _configuration;
-		public TokenService(IConfiguration configuration)
+		private readonly ILogger<TokenService> _logger;
+
+		public TokenService(IConfiguration configuration, ILogger<TokenService> logger)
 		{
 			_configuration = configuration;
+			_logger = logger;
 		}
 		public async Task<string> CreateTokenAsync(AppUser user,UserManager<AppUser> userManager)
 		{
@@ -55,8 +60,12 @@ namespace AgroMind.GP.Service.Services
 			var jwtKey = _configuration["JWT:key"];
 			if (string.IsNullOrEmpty(jwtKey))
 			{
+				_logger.LogError("JWT:key is missing or empty in the configuration!"); // Log this error
 				throw new InvalidOperationException("JWT:key is missing in the configuration.");
 			}
+
+			//  log the key being used 
+			_logger.LogInformation($"JWT Key used for token creation: '{jwtKey}' (Length: {jwtKey.Length})");
 
 			var AuthKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
