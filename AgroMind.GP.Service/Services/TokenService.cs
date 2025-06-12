@@ -38,9 +38,8 @@ namespace AgroMind.GP.Service.Services
 				new Claim(ClaimTypes.NameIdentifier, user.Id),
 				new Claim(ClaimTypes.Email,user.Email),
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
-				new Claim(ClaimTypes.GivenName,user.UserName),
-				new Claim(ClaimTypes.Role, roles.FirstOrDefault()) // Add the user's role to the token
-
+				new Claim(ClaimTypes.Name,user.UserName),
+			
 			};
 			var userRoles= await userManager.GetRolesAsync(user); //Take User and Return El Role
 			foreach(var role in userRoles)

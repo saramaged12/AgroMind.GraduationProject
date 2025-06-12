@@ -22,10 +22,12 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		
 
-		Task UpdateLands(LandDTO landDTO);
+		Task UpdateLands(LandDTO landDTO, string farmerId);
 
-		Task DeleteLands(LandDTO landDTO);
+		Task DeleteLands(LandDTO landDTO, string farmerId);
 
 		Task<IReadOnlyList<LandDTO>> GetAllDeletedLandsAsync();
+
+		Task<IReadOnlyList<LandDTO>> GetMyLandsAsync(string farmerUserId);
 	}
 }

@@ -1,5 +1,6 @@
 ﻿
 using AgroMind.GP.Core.Contracts.Services.Contract;
+using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Service.Services;
@@ -16,6 +17,7 @@ namespace AgroMind.GP.APIs.Extensions
 		{
 			services.AddScoped<ITokenService, TokenService>();
 
+			// Configure Identity (User and Role management)
 			services.AddIdentity<AppUser, IdentityRole>(options =>
 			{
 
@@ -25,14 +27,16 @@ namespace AgroMind.GP.APIs.Extensions
 				options.Password.RequireUppercase = true; //ABC
 				options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
 			})
-			.AddEntityFrameworkStores<AgroMindContext>()
-			.AddDefaultTokenProviders();
+			.AddEntityFrameworkStores<AgroMindContext>()  // Link Identity to  DbContext
 
+			.AddDefaultTokenProviders(); // Provides default token providers for password reset, email confirmation
+
+			// Configure JWT Bearer Authentication
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 				.AddJwtBearer(options =>
 				{
-					options.RequireHttpsMetadata = false;
-					options.SaveToken = true;
+					options.RequireHttpsMetadata = false; //True in Case Production
+					options.SaveToken = true; // Saves the token in HttpContext.Features (useful for debugging)
 					options.TokenValidationParameters = new TokenValidationParameters
 					{
 						ValidateIssuer = true,
@@ -41,9 +45,11 @@ namespace AgroMind.GP.APIs.Extensions
 						ValidateIssuerSigningKey = true,
 						ValidIssuer = configuration["JWT:ValidIssuer"],
 						ValidAudience = configuration["JWT:ValidAudience"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:key"]))
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:key"])),
+					    ClockSkew = TimeSpan.Zero // ClockSkew to allow for small clock differences between servers
 					};
 				});
+
 
 			return services;
 		}

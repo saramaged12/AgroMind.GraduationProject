@@ -1,158 +1,200 @@
-﻿using AgroMind.GP.APIs.DTOs;
-using AgroMind.GP.Core.Contracts.Repositories.Contract;
+﻿
+using AgroMind.GP.APIs.DTOs;
 using AgroMind.GP.Core.Contracts.Services.Contract;
-using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
-using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using System;
 
 namespace AgroMind.GP.APIs.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LandController : APIbaseController
+    {
+        private readonly IServiceManager _serviceManager;
+        private readonly UserManager<AppUser> _userManager; // Inject UserManager to get user ID and check roles
 
-	//[Authorize(Roles = "Farmer")]
-	public class LandController : APIbaseController
-	{
-		private readonly IServiceManager _serviceManager;
+        public LandController(IServiceManager serviceManager, UserManager<AppUser> userManager)
+        {
+            _serviceManager = serviceManager;
+            _userManager = userManager;
+        }
 
-		private readonly UserManager<AppUser> _userManager;
+        // GET ALL LANDS
+        
+        [HttpGet("GetAllLands")]
+        public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetLands()
+        {
+            var lands = await _serviceManager.LandService.GetAllLandsAsync();
+            return Ok(lands);
+        }
 
-		public LandController(IServiceManager serviceManager, UserManager<AppUser> userManager)
+        // GET LAND BY ID 
+       
+        [HttpGet("GetLandById/{id}")]
+        public async Task<ActionResult<LandDTO>> GetLandById(int id)
+        {
+            try
+            {
+                var land = await _serviceManager.LandService.GetLandByIdAsync(id);
+                return Ok(land);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Land with ID {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+		[HttpGet("GetMyLands")]
+		[Authorize(Roles = "Farmer")]
+		public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetMyLands()
 		{
-			_serviceManager = serviceManager;
-			_userManager = userManager;
+			var farmerUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(farmerUserId)) return Unauthorized("Farmer ID not found in token.");
+
+			try
+			{
+				var myLands = await _serviceManager.LandService.GetMyLandsAsync(farmerUserId);
+				return Ok(myLands);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"An error occurred while retrieving your lands: {ex.Message}");
+			}
 		}
 
-		// Get All Lands
-		[HttpGet("GetAllLands")]
-		public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetLands()
-		{
-			var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(farmerId))
-				return Unauthorized("Invalid user token");
+		//  ADD LAND 
 
-
-			var lands = await _serviceManager.LandService.GetAllLandsAsync();
-			return Ok(lands);
-		}
-
-		// Get Land By Id
-		[HttpGet("GetLandById/{id}")]
-		public async Task<ActionResult<LandDTO>> GetLandById(int id)
-		{
-			var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(farmerId))
-				return Unauthorized("Invalid user token");
-
-
-			var land = await _serviceManager.LandService.GetLandByIdAsync(id);
-			if (land == null)
-				return NotFound($"Land with ID {id} not found.");
-
-			if (land.FarmerId != farmerId)
-				return Forbid("You don't have permission to access this land");
-
-
-			return Ok(land);
-		}
-
-		// Add Land
 		[HttpPost("AddLand")]
-		public async Task<ActionResult<LandDTO>> AddLand([FromBody] LandDTO landDto)
-		{
-			if (landDto is null)
-				return BadRequest("Land data is required.");
+        [Authorize(Roles = "Farmer")] 
+        public async Task<ActionResult<LandDTO>> AddLand([FromBody] LandDTO landDto)
+        {
+            if (landDto == null) return BadRequest("Land data is required.");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            //  Get FarmerId from Authenticated User's Token
+            var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(farmerId))
+            {
+                
+                return Unauthorized("Farmer ID not found in token. Please log in as a Farmer.");
+            }
+
+            
+            var user = await _userManager.FindByIdAsync(farmerId);
+            if (user == null) return NotFound("Authenticated user (Farmer) not found in the system."); // Should not happen if token is valid
+                                                                                                       // You can add an explicit role check here if needed, but [Authorize(Roles="Farmer")] handles it.
+            Console.WriteLine("Reached AddLand controller action!"); // Add this line for debugging                                                                                   // if (!await _userManager.IsInRoleAsync(user, "Farmer")) return Forbid("User is not a Farmer.");
 
 
-			var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(farmerId))
-				return Unauthorized("Invalid user token");
+            // Assign the FarmerId to the DTO (Override any value sent by client for security)
+            landDto.FarmerId = farmerId; //  ASSIGN FROM TOKEN, NOT BODY
 
-			// Verify farmer exists
-			var farmer = await _userManager.FindByIdAsync(farmerId);
-			if (farmer == null)
-				return NotFound("Farmer not found");
+        
+            try
+            {
+                var createdLand = await _serviceManager.LandService.AddAsync(landDto);
+                return Ok(createdLand);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in AddLand: {ex.Message}");
+                if (ex.InnerException != null) Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                // For specific DB issues like FK not found, you can return 400 or 404/409 based on exact error
+                if (ex is UnauthorizedAccessException) return Forbid(ex.Message); // Example: if service throws it
+                if (ex is KeyNotFoundException) return NotFound(ex.Message); // Example: if service throws it
+                return StatusCode(500, $"An error occurred while creating the Land: {ex.Message}");
+            }
+        }
 
-			// Assign land to current farmer
-			landDto.FarmerId = farmerId;
-
-
-			var Land = await _serviceManager.LandService.AddAsync(landDto);
-
-			if (Land == null)
-				return BadRequest("Failed to create the Land.");
-
-			return CreatedAtAction(nameof(GetLandById), new { id = Land.Id }, Land);
-		}
-
-
-
-		// Update Land
+			// UPDATE LAND
+			
 		[HttpPut("UpdateLandById/{id}")]
-		public async Task<IActionResult> UpdateLand(int id, [FromBody] LandDTO landDto)
-		{
-			if (id != landDto.Id)
-				return BadRequest("Land ID mismatch.");
+        [Authorize(Roles = "Farmer")] // Only the owning farmer can update their land
+        public async Task<IActionResult> UpdateLand(int id, [FromBody] LandDTO landDto)
+        {
+            if (id != landDto.Id) return BadRequest("Land ID mismatch.");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-			var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(farmerId))
-				return Unauthorized("Invalid user token");
+            var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Get ID of user trying to update
+            if (string.IsNullOrEmpty(farmerId)) return Unauthorized("Farmer ID not found in token.");
 
-			// Verify land exists and belongs to this farmer
-			var existingLand = await _serviceManager.LandService.GetLandByIdAsync(id);
-			if (existingLand == null)
-				return NotFound($"Land with ID {id} not found.");
+            
+            
+            try
+            {
+                // Pass farmerId to service for authorization check
+                await _serviceManager.LandService.UpdateLands(landDto, farmerId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Land with ID {id} not found.");
+            }
+            catch (UnauthorizedAccessException ex) // Thrown by service if not authorized
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the Land: {ex.Message}");
+            }
+        }
 
-			if (existingLand.FarmerId != farmerId)
-				return Forbid("You don't have permission to update this land");
+        // DELETE LAND 
 
-			// Ensure the farmerId can't be changed
-			landDto.FarmerId = farmerId;
+        [HttpDelete("DeletLand/{id}")]
+        [Authorize(Roles = "Farmer")] // Only the owning farmer can delete their land
+        public async Task<IActionResult> DeleteLand(int id)
+        {
+            var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(farmerId)) return Unauthorized("Farmer ID not found in token.");
 
-			await _serviceManager.LandService.UpdateLands(landDto);
-			return NoContent();
-		}
+            try
+            {
+                // Pass farmerId to service for authorization check
+                await _serviceManager.LandService.DeleteLands(new LandDTO { Id = id }, farmerId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Land with ID {id} not found.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the Land: {ex.Message}");
+            }
+        }
 
 
-
-		// Delete Land
-		[HttpDelete("DeletLand/{id}")]
-		public async Task<IActionResult> DeleteLand(int id)
-		{
-			var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(farmerId))
-				return Unauthorized("Invalid user token");
-
-			var land = await _serviceManager.LandService.GetLandByIdAsync(id);
-			if (land == null)
-				return NotFound($"Land with ID {id} not found.");
-
-			if (land.FarmerId != farmerId)
-				return Forbid("You don't have permission to delete this land");
-
-			await _serviceManager.LandService.DeleteLands(land);
-			return NoContent();
-		}
-
-		
-		[HttpGet("DeletedLands")]
-		//[Authorize(Roles = "SystemAdministratot")]
-		public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetDeletedLands()
-		{
-			var farmerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(farmerId))
-				return Unauthorized("Invalid user token");
-
-			var deletedLand = await _serviceManager.LandService.GetAllDeletedLandsAsync();
-			return Ok(deletedLand);
-		}
-
-	}
+        // GET DELETED LANDS 
+        [HttpGet("DeletedLands")]
+        [Authorize(Roles = "SystemAdministrator")] //  only System Admins can see deleted lands
+        public async Task<ActionResult<IReadOnlyList<LandDTO>>> GetDeletedLands()
+        {
+            try
+            {
+                var deletedLand = await _serviceManager.LandService.GetAllDeletedLandsAsync();
+                return Ok(deletedLand);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An unexpected error occurred: {ex.Message}");
+            }
+        }
+    }
 }
