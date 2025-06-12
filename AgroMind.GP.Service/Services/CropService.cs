@@ -191,7 +191,7 @@ namespace AgroMind.GP.Service.Services
 				if (creatorRole == "AgriculturalExpert") 
 				 cropEntity.PlanType = CropPlanType.ExpertTemplate; 
 				else
-					throw new UnauthorizedAccessException("Only Agricultural Experts can create general crop templates without a specific land."); 
+				 throw new UnauthorizedAccessException("Only Agricultural Experts can create general crop templates without a specific land."); 
 			}
 
 			// Initialize actual cost fields for new definitions to 0 or null
