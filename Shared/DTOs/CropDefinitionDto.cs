@@ -19,7 +19,7 @@ namespace Shared.DTOs
 		public DateTime LastStartDate { get; set; }
 		public int Duration { get; set; }
 
-		public CropPlanType? PlanType { get; set; } // يمكن تلميحها، لكن الخدمة تحدد النوع النهائي
-		public int? LandId { get; set; } // لخطط المزارعين
+		public CropPlanType? PlanType { get; set; } 
+		public int? LandId { get; set; } 
 	}
 }
