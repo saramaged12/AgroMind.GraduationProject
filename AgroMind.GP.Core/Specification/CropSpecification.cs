@@ -81,18 +81,36 @@ namespace AgroMind.GP.Core.Specification
 			}
 		}
 
+		//// Specification for GetMyPlansAsync
+		//public CropSpecification(string farmerUserId, bool forMyPlans) : base(c => !c.IsDeleted)
+		//{
+		//	if (forMyPlans) // This boolean flag distinguishes it from other constructors
+		//	{
+		//		Criteria = c => c.PlanType == CropPlanType.FarmerPlan && c.Land != null && c.Land.FarmerId == farmerUserId && !c.IsDeleted;
+		//		AddInclude(c => c.Land); // Include Land to confirm FarmerId
+		//		AddInclude(c => c.Stages);
+		//		StringIncludes.Add("Stages.Steps");
+
+		//	}
+		//	// If forMyPlans is false, it behaves like default constructor or can throw error
+		//}
+
+
 		// Specification for GetMyPlansAsync
-		public CropSpecification(string farmerUserId, bool forMyPlans) : base(c => !c.IsDeleted)
+		public CropSpecification(string farmerUserId, bool forMyPlans)
+			// The entire filtering logic is in the base constructor call.
+			: base(crop =>
+				!crop.IsDeleted &&
+				crop.PlanType == CropPlanType.FarmerPlan &&
+		    	crop.Land != null &&
+				crop.Land.FarmerId == farmerUserId
+
+			)
 		{
-			if (forMyPlans) // This boolean flag distinguishes it from other constructors
-			{
-				Criteria = c => c.PlanType == CropPlanType.FarmerPlan && c.Land != null && c.Land.FarmerId == farmerUserId && !c.IsDeleted;
-				AddInclude(c => c.Land); // Include Land to confirm FarmerId
-				AddInclude(c => c.Stages);
-				StringIncludes.Add("Stages.Steps");
-				
-			}
-			// If forMyPlans is false, it behaves like default constructor or can throw error
+			
+			AddInclude(c => c.Stages);
+			StringIncludes.Add("Stages.Steps");
+			AddInclude(c => c.Land);
 		}
 
 		// 7. Constructor for Loading Full Crop Graph for Update/Recalculation (used by UpdateCrops, AdoptRecommendedCropAsync, UpdateActualsForCropAsync)
