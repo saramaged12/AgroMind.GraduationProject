@@ -18,11 +18,16 @@ namespace AgroMind.GP.Repository.Data.SeedingData
 				var Brands = JsonSerializer.Deserialize<List<Brand>>(BrandsData); //Deseralize "Convert from Json File To string"
 				if (Brands?.Count > 0)
 				{
-					foreach (var brand in Brands)  //to add in database
-					{
-						await dbcontext.Set<Brand>().AddAsync(brand); //This add locally need to save changes 
-					}
-					await dbcontext.SaveChangesAsync(); //After foreach( meaning : after adding all Brands Save Change )
+						foreach (var brand in Brands)  //to add in database
+						{
+							var imageName = $"{brand.BrandName?.ToLower().Replace(" ", "")}.jpg";
+							var imageUrl = $"/Images/Brands/{imageName}";
+
+							brand.PictureUrl = imageUrl; // Set the URL in the entity
+							await dbcontext.Set<Brand>().AddAsync(brand); //This add locally need to save changes 
+						}
+						await dbcontext.SaveChangesAsync(); //After foreach( meaning : after adding all Brands Save Change )
+					
 				}
 			}
 			//Categories
