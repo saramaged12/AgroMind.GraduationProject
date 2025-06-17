@@ -1,14 +1,30 @@
 [
   {
-    
-    "CategoryName": "Seeds"
+
+    "CategoryName": "All Products"
   },
   {
-   
-    "CategoryName": "Fertilizers"
+
+    "CategoryName": "Crop"
   },
   {
-   
-    "CategoryName": "Irrigation"
+
+    "CategoryName": "Vegetable"
+  },
+  {
+
+    "CategoryName": "Fruit"
+  },
+  {
+
+    "CategoryName": "Herb"
+  },
+  {
+
+    "CategoryName": "Organic Pesticide"
+  },
+  {
+
+    "CategoryName": "Herbicide"
   }
 ]

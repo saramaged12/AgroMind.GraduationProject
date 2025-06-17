@@ -281,8 +281,8 @@ namespace AgroMind.GP.Service.Services
 				throw new KeyNotFoundException($"Recommended Crop with ID {recommendedCropId} not found or is deleted.");
 
 
-			if (recommendedCrop.PlanType != CropPlanType.ExpertTemplate)
-				throw new InvalidOperationException($"Only Expert Templates can be adopted. This crop is of type: {recommendedCrop.PlanType}");
+			//if (recommendedCrop.PlanType != CropPlanType.ExpertTemplate)
+			//	throw new InvalidOperationException($"Only Expert Templates can be adopted. This crop is of type: {recommendedCrop.PlanType}");
 
 			var farmer = await _userManager.FindByIdAsync(farmerUserId) as Farmer;
 			if (farmer == null || !farmer.Lands.Any())
@@ -312,7 +312,8 @@ namespace AgroMind.GP.Service.Services
 					{
 						foreach (var step in stage.Steps)
 						{
-							step.Id = 0; step.CreatorId = farmerUserId; 
+							step.Id = 0; 
+							step.CreatorId = farmerUserId; 
 							step.ActualCost = null;
 							step.ActualStartDate = null;
 						}

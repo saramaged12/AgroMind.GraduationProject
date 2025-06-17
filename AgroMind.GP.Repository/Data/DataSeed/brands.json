@@ -1,14 +1,32 @@
 [
   {
     
-    "BrandName": "GreenGrow"
+    "BrandName": "Syngenta",
+    "PictureUrl": "/Images/Brands/BrandsLogo.jpg"
   },
   {
     
-    "BrandName": "EcoAgro"
+    "BrandName": "Bayer",
+    "PictureUrl": "/Images/Brands/BrandLogo.jpg"
+  },
+  {
+    
+    "BrandName": "BASF",
+    "PictureUrl": "/Images/Brands/LogoBrand.jpg"
+  },
+  {
+    
+    "BrandName": "Corteva",
+    "PictureUrl": "/Images/Brands/Logo.jpg"
   },
   {
    
-    "BrandName": "AgriTech"
+    "BrandName": "John Deere",
+    "PictureUrl": "/Images/Brands/johndeere.jpg"
+  },
+  {
+    
+    "BrandName": "Kubota",
+    "PictureUrl": "/Images/Brands/kubota.jpg"
   }
 ]
