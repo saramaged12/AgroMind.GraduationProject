@@ -191,7 +191,7 @@ namespace AgroMind.GP.Service.Services
 				if (creatorRole == "AgriculturalExpert") 
 				 cropEntity.PlanType = CropPlanType.ExpertTemplate; 
 				else
-				 throw new UnauthorizedAccessException("Only Agricultural Experts can create general crop templates without a specific land."); 
+					throw new UnauthorizedAccessException("Only Agricultural Experts can create general crop templates without a specific land."); 
 			}
 
 			// Initialize actual cost fields for new definitions to 0 or null
@@ -448,65 +448,216 @@ namespace AgroMind.GP.Service.Services
 		}
 
 
-		public async Task UpdateCrops(CropDefinitionDto cropDto, string modifierUserId) 
+		//public async Task UpdateCrops(CropDefinitionDto cropDto, string modifierUserId) 
+		//{
+		//	if (cropDto == null) 
+		//		throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
+
+		//	var repo = _unitOfWork.GetRepositories<Crop, int>();
+		//	var spec = new CropSpecification(forUpdate: true ,cropDto.Id);
+		//	var existingCrop = await repo.GetByIdAWithSpecAsync(spec);
+
+		//	if (existingCrop == null)
+		//		throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
+
+		//	_mapper.Map(cropDto, existingCrop);
+
+		//	var currentUserId = modifierUserId; 
+		//	if (string.IsNullOrEmpty(currentUserId)) 
+		//		throw new UnauthorizedAccessException("Modifier user ID is missing."); // More specific error message
+
+		//	// Collection Management for Nested Stages and Steps
+
+
+
+		//	// Step 1: Manage Stages (Add/Update/Remove)
+
+		//	var stagesToKeep = new List<CropStage>();
+
+		//	foreach (var dtoStage in cropDto.Stages)
+		//	{
+		//		var existingStage = existingCrop.Stages.FirstOrDefault(s => s.Id == dtoStage.Id);
+		//		if (existingStage == null || dtoStage.Id == 0) // New stage (not found by ID, or ID is 0)
+		//		{
+		//			existingStage = _mapper.Map<CropStage>(dtoStage); // Maps from CropStageDefinitionDto
+		//			existingStage.CreatorId = currentUserId; // Set CreatorId for new stage
+		//			existingStage.ActualCost = 0;
+		//			existingStage.TotalActualCost = 0;
+		//			existingStage.Id = 0; // Ensure ID is 0 for new entities for EF Core
+		//			existingCrop.Stages.Add(existingStage);
+		//		}
+		//		else // Existing stage, update its properties
+		//			_mapper.Map(dtoStage, existingStage); // Update scalar properties of existing stage
+
+		//		stagesToKeep.Add(existingStage); // Add to a temporary list of stages we will keep
+
+		//		// Step 2: Manage Steps within this (new or existing) stage
+
+		//		var stepsToKeep = new List<Step>();
+		//		foreach (var dtoStep in dtoStage.Steps)
+		//		{
+		//			var existingStep = existingStage.Steps.FirstOrDefault(st => st.Id == dtoStep.Id);
+		//			if (existingStep == null || dtoStep.Id == 0) // New step
+		//			{
+		//				existingStep = _mapper.Map<Step>(dtoStep); // Maps from StepDefinitionDto
+		//				existingStep.CreatorId = currentUserId; // Set CreatorId for new step
+		//				existingStep.ActualCost = null;
+		//				existingStep.ActualStartDate = null;
+		//				existingStep.Id = 0; // Ensure ID is 0 for new entities
+		//				existingStage.Steps.Add(existingStep); // Add to the parent stage's collection
+		//			}
+		//			else // Existing step, update its properties
+		//				_mapper.Map(dtoStep, existingStep);
+
+		//			stepsToKeep.Add(existingStep); // Add to temporary list of steps we will keep
+		//		}
+
+		//		// Mark steps for removal: any step in existingStage.Steps that is NOT in stepsToKeep
+		//		var currentSteps = existingStage.Steps.ToList(); // Take a copy to modify original collection
+		//		foreach (var stepToRemove in currentSteps)
+		//		{
+		//			if (!stepsToKeep.Contains(stepToRemove))
+		//			{
+		//				existingStage.Steps.Remove(stepToRemove);
+		//				_unitOfWork.GetRepositories<Step, int>().SoftDelete(stepToRemove);
+		//			}
+		//		}
+
+		//	}
+		//	// Mark stages for removal: any stage in existingCrop.Stages that is NOT in stagesToKeep
+		//	var currentStages = existingCrop.Stages.ToList();
+		//	foreach (var stageToRemove in currentStages)
+		//	{
+		//		if (!stagesToKeep.Contains(stageToRemove))
+		//		{
+		//			existingCrop.Stages.Remove(stageToRemove);
+		//			_unitOfWork.GetRepositories<CropStage, int>().SoftDelete(stageToRemove); // Mark for soft deletion
+		//		}
+		//	}
+
+		//	RecalculateCropCosts(existingCrop);
+
+		//	repo.Update(existingCrop);
+		//	await _unitOfWork.SaveChangesAsync();
+		//}
+
+
+		public async Task UpdateCrops(CropDefinitionDto cropDto, string modifierUserId)
 		{
-			if (cropDto == null) 
+			if (cropDto == null)
 				throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
 
 			var repo = _unitOfWork.GetRepositories<Crop, int>();
-			var spec = new CropSpecification(forUpdate: true ,cropDto.Id);
+			// Load the existing entity from the database, including all its children.
+			var spec = new CropSpecification(forUpdate: true, cropDto.Id);
 			var existingCrop = await repo.GetByIdAWithSpecAsync(spec);
 
 			if (existingCrop == null)
 				throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
 
-			_mapper.Map(cropDto, existingCrop);
+			if (existingCrop.CreatorId != modifierUserId)
+				throw new UnauthorizedAccessException("User is not authorized to update this crop plan.");
 
-			var currentUserId = modifierUserId; 
-			if (string.IsNullOrEmpty(currentUserId)) 
-				throw new UnauthorizedAccessException("Modifier user ID is missing."); // More specific error message
+			// --- START OF THE NEW, FOOLPROOF LOGIC ---
 
-			// Collection Management for Nested Stages and Steps
-			existingCrop.Stages.RemoveAll(s => !cropDto.Stages.Any(dtoS => dtoS.Id == s.Id));
-			foreach (var existingStage in existingCrop.Stages.ToList())
+			// 1. Manually update the primitive properties of the Crop.
+			existingCrop.CropName = cropDto.CropName;
+			existingCrop.PictureUrl = cropDto.PictureUrl;
+			existingCrop.CropDescription = cropDto.CropDescription;
+			existingCrop.StartDate = cropDto.StartDate;
+			existingCrop.LastStartDate = cropDto.LastStartDate;
+			existingCrop.Duration = cropDto.Duration;
+			existingCrop.LandId = cropDto.LandId;
+
+			// 2. Synchronize the Stages collection.
+			var stagesInDtoById = cropDto.Stages?.ToDictionary(s => s.Id) ?? new Dictionary<int, StageDefinitionDto>();
+
+			// Remove stages that are no longer present in the DTO.
+			foreach (var stageInDb in existingCrop.Stages.ToList())
 			{
-				var dtoStage = cropDto.Stages.FirstOrDefault(s => s.Id == existingStage.Id);
-				if (dtoStage != null) { existingStage.Steps.RemoveAll(st => !dtoStage.Steps.Any(dtoSt => dtoSt.Id == st.Id)); }
+				if (stageInDb.Id != 0 && !stagesInDtoById.ContainsKey(stageInDb.Id))
+				{
+					_unitOfWork.GetRepositories<CropStage, int>().SoftDelete(stageInDb);
+				}
 			}
 
-			foreach (var dtoStage in cropDto.Stages)
+			// Update existing stages and add new ones.
+			if (cropDto.Stages != null)
 			{
-				var existingStage = existingCrop.Stages.FirstOrDefault(s => s.Id == dtoStage.Id);
-				if (existingStage == null) // This is a new stage being added
+				foreach (var stageDto in cropDto.Stages)
 				{
-					existingStage = _mapper.Map<CropStage>(dtoStage);
-					existingStage.CreatorId = currentUserId; // Set CreatorId for new stage
-					existingStage.ActualCost = 0; existingStage.TotalActualCost = 0;
-					existingCrop.Stages.Add(existingStage);
-				}
-				_mapper.Map(dtoStage, existingStage);
+					var existingStage = existingCrop.Stages.FirstOrDefault(s => s.Id == stageDto.Id && s.Id != 0);
 
-				foreach (var dtoStep in dtoStage.Steps)
-				{
-					var existingStep = existingStage.Steps.FirstOrDefault(st => st.Id == dtoStep.Id);
-					if (existingStep == null) // New step
+					if (existingStage != null)
 					{
-						existingStep = _mapper.Map<Step>(dtoStep);
-						existingStep.CreatorId = currentUserId; // Set CreatorId for new step
-						existingStep.ActualCost = null;
-						existingStep.ActualStartDate = null;
-						existingStage.Steps.Add(existingStep);
+						// --- UPDATE EXISTING STAGE ---
+						// Manually update the properties instead of using AutoMapper.
+						existingStage.StageName = stageDto.StageName;
+						existingStage.OptionalLink = stageDto.OptionalLink;
+						existingStage.EstimatedCost = stageDto.EstimatedCost;
+
+						// Synchronize the nested Steps for this stage.
+						var stepsInDtoById = stageDto.Steps?.ToDictionary(st => st.Id) ?? new Dictionary<int, StepDefinitionDto>();
+						foreach (var stepInDb in existingStage.Steps.ToList())
+						{
+							if (stepInDb.Id != 0 && !stepsInDtoById.ContainsKey(stepInDb.Id))
+							{
+								_unitOfWork.GetRepositories<Step, int>().SoftDelete(stepInDb);
+							}
+						}
+
+						if (stageDto.Steps != null)
+						{
+							foreach (var stepDto in stageDto.Steps)
+							{
+								var existingStep = existingStage.Steps.FirstOrDefault(st => st.Id == stepDto.Id && st.Id != 0);
+								if (existingStep != null)
+								{
+									// Manually update existing step properties.
+									existingStep.StepName = stepDto.StepName;
+									existingStep.Description = stepDto.Description;
+									existingStep.Tool = stepDto.Tool;
+									existingStep.ToolImage = stepDto.ToolImage;
+									existingStep.DurationDays = stepDto.DurationDays;
+									existingStep.Fertilizer = stepDto.Fertilizer;
+									existingStep.EstimatedCost = stepDto.EstimatedCost;
+									existingStep.PlannedStartDate = stepDto.PlannedStartDate;
+								}
+								else
+								{
+									// Add new step (mapping is safe here as it's a new object).
+									var newStep = _mapper.Map<Step>(stepDto);
+									newStep.CreatorId = modifierUserId;
+									existingStage.Steps.Add(newStep);
+								}
+							}
+						}
 					}
-					_mapper.Map(dtoStep, existingStep);
+					else
+					{
+						// --- ADD NEW STAGE ---
+						// Mapping is safe here because it's a completely new entity graph.
+						var newStage = _mapper.Map<CropStage>(stageDto);
+						newStage.CreatorId = modifierUserId;
+						if (newStage.Steps != null)
+						{
+							foreach (var step in newStage.Steps)
+							{
+								step.CreatorId = modifierUserId;
+							}
+						}
+						existingCrop.Stages.Add(newStage);
+					}
 				}
 			}
 
+			// 3. Recalculate costs.
 			RecalculateCropCosts(existingCrop);
 
+			// 4. Save Changes.
 			repo.Update(existingCrop);
 			await _unitOfWork.SaveChangesAsync();
 		}
-
 
 
 	}
