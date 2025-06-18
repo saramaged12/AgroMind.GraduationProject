@@ -49,7 +49,7 @@ namespace AgroMind.GP.APIs
 			//});
 			builder.Services.AddIdentityServices(builder.Configuration); //Extension Method have Services of Identity
 			#endregion
-			//builder.Services.AddScoped<ICartRepository, CartRepository>();
+			
 			builder.Services.AddSingleton<IConnectionMultiplexer>(Options =>
 			{
 				var connection = builder.Configuration.GetConnectionString("RedisConnection");
@@ -60,8 +60,7 @@ namespace AgroMind.GP.APIs
 				return ConnectionMultiplexer.Connect(connection);
 			});
 
-			//builder.Services.AddScoped<IGenericRepositories<Product, int>, GenericRepository<Product, int>>();
-
+			builder.Services.AddScoped<ICartRepository, CartRepository>();
 			//This AddScoped For Generic to didn't Add Service for each Repository
 			builder.Services.AddScoped(typeof(IGenericRepositories<,>), typeof(GenericRepository<,>));
 			//builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
@@ -69,7 +68,17 @@ namespace AgroMind.GP.APIs
 
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+
+			
 			builder.Services.AddScoped<IServiceManager, ServiceManager>();
+
+			builder.Services.AddScoped<IProductService, ProductService>();
+
+			builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+			builder.Services.AddScoped<IBrandService, BrandService>();
+			builder.Services.AddScoped<ICartService, CartService>();
+
 			builder.Services.AddScoped<ITokenService, TokenService>(); //  to register TokenService
 
 			builder.Services.AddControllers()
