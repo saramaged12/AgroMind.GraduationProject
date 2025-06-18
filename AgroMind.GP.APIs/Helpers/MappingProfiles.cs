@@ -23,10 +23,37 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(d => d.Supplier, o => o.Ignore());
 			CreateMap<Category, CategoryDTO>().ReverseMap();
 			CreateMap<Brand, BrandDTO>().ReverseMap();
+
+
+			CreateMap<Cart, CartDto>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.TotalPrice, opt => opt.Ignore()) // Calculated in service
+				.ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items)); // Map nested items
+
+			// CartItem Entity to CartItemDto (for display)
+			// Note: ProductName, PictureUrl, BrandName, CategoryName, Price, LinePrice will be filled in service.
+			CreateMap<CartItem, CartItemDto>()
+				.ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceAtAddition)) // Default price
+				.ForMember(dest => dest.ProductName, opt => opt.Ignore()) // Populated in service
+				.ForMember(dest => dest.PictureUrl, opt => opt.Ignore()) // Populated in service
+				.ForMember(dest => dest.BrandName, opt => opt.Ignore()) // Populated in service
+				.ForMember(dest => dest.CategoryName, opt => opt.Ignore()) // Populated in service
+				.ForMember(dest => dest.LinePrice, opt => opt.Ignore()); // Calculated in service
+
+			// AddToCartDto to CartItem (for creating/updating cart items in service)
+			CreateMap<AddToCartDto, CartItem>()
+				.ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+				.ForMember(dest => dest.PriceAtAddition, opt => opt.Ignore()) // Fetched from ProductService
+				.ForMember(dest => dest.PictureUrlAtAddition, opt => opt.Ignore()); // Fetched from ProductService
 		
 
-			
-			CreateMap<Crop, CropDto>();
+
+
+
+		CreateMap<Crop, CropDto>();
 			CreateMap<CropStage, CropStageDto>();
 			CreateMap<Step, StepDto>();
 
