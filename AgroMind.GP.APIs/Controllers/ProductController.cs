@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
+using Shared.DTOs;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -24,7 +25,7 @@ namespace AgroMind.GP.APIs.Controllers
 
 			// Get All Products
 			[HttpGet("GetProducts")]
-			public async Task<ActionResult<IReadOnlyList<ProductDTO>>> GetProducts([FromQuery]ProductQueryParams QueryParams)
+			public async Task<ActionResult<PaginatedResultDTO<ProductDTO>>> GetProducts([FromQuery]ProductQueryParams QueryParams)
 			{
 				var products = await _serviceManager.ProductService.GetAllProductsAsync(QueryParams);
 				return Ok(products);

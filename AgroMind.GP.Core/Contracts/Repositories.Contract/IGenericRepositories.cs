@@ -31,6 +31,8 @@ namespace AgroMind.GP.Core.Contracts.Repositories.Contract
 
         #endregion
 
+        Task<int> CountAsync(ISpecification<TEntity,Tkey> Specifications);
+
 
     }
 }

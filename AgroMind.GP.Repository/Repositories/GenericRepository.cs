@@ -74,7 +74,12 @@ namespace AgroMind.GP.Repository.Repositories
 		{
 			return SpecificationEvaluator<TEntity, Tkey>.GetQuery(_context.Set<TEntity>(), Spec);
 		}
+
 		#endregion
+		public async Task<int> CountAsync(ISpecification<TEntity, Tkey> Specifications)
+	   => await SpecificationEvaluator<TEntity, Tkey>.GetQuery(_context.Set<TEntity>(), Specifications).CountAsync();
+
+
 
 	}
 }
