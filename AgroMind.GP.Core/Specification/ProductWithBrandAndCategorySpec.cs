@@ -37,6 +37,8 @@ namespace AgroMind.GP.Core.Specification
 				default:
 					break;
 			}
+
+			ApplyPagination (queryParams.PageSize,queryParams.PageIndex );
 			
 			
 		}

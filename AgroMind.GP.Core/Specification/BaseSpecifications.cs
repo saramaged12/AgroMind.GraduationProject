@@ -55,7 +55,24 @@ namespace AgroMind.GP.Core.Specification
 			//Includes=new List<Expression<Func<TEntity,object>>>();	
 		}
 
-		
+		#region Pagination
+		 public int Take {  get; private set; }
+
+		 public int Skip { get; private set; }
+
+		public bool IsPagingEnabled { get; set; } 
+
+		protected void ApplyPagination(int PageSize, int PageIndex)
+		{
+			
+			IsPagingEnabled = true; // Enable paging
+			Take = PageSize;
+			Skip = PageSize * (PageIndex - 1);
+		}
+
+		#endregion
+
+
 	}
 
 
