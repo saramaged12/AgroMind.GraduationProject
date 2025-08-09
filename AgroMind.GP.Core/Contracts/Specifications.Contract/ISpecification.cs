@@ -27,14 +27,22 @@ namespace AgroMind.GP.Core.Contracts.Specifications.Contract
 		List<string> StringIncludes { get; set; }
 
 
-		Expression<Func<TEntity, object>> OrderBy { get; } //Order By
+        #region Sorting
+        Expression<Func<TEntity, object>> OrderBy { get; } //Order By
 
         Expression<Func<TEntity, object>> OrderByDescending { get; }
 
-		// New methods for Add, Update, and Delete
-		//void ApplyAdd(TEntity entity);
-		//void ApplyUpdate(TEntity existingEntity, TEntity updatedEntity);
-		//void ApplyDelete(TEntity entity);
+        #endregion
 
-	}
+        #region Pagination
+
+       public int Skip { get; } 
+
+       public int Take { get; }
+
+       public  bool IsPagingEnabled { get; } //If Paging is Enabled or Not
+        #endregion
+
+
+    }
 }

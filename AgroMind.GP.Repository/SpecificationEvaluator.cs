@@ -32,9 +32,14 @@ namespace AgroMind.GP.Repository
 			{
 				Query = Query.OrderByDescending(Spec.OrderByDescending); // context.Set<T>().where (P=>P.Id==id).OrderByDescending(P=>P.Name)
 			}
-			//p => p.Brand
 
-			//p => p.BrandType
+
+			if (Spec.IsPagingEnabled) // mean true : will Enter Function of : ApplyPagination
+			{
+				Query = Query.Skip(Spec.Skip).Take(Spec.Take); // context.Set<T>().Skip(Spec.Skip).Take(Spec.Take)
+			}
+
+
 
 			Query = Spec.Includes.Aggregate(Query, (CurrentQuery, IncludeExpression) => CurrentQuery.Include(IncludeExpression));
 
