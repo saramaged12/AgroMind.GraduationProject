@@ -70,7 +70,9 @@ namespace AgroMind.GP.Service.Services
 			var Products= await Repo.GetAllWithSpecASync(Specification);
 			var Data = _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductDTO>>(Products);
 			var ProductCount=Data.Count();
-			return new PaginatedResultDTO<ProductDTO>(ProductCount,queryParams.PageIndex,0,Data);
+			var CountSpec = new ProductCountSpecification(queryParams);
+			var TotalCount= await Repo.CountAsync(CountSpec);
+			return new PaginatedResultDTO<ProductDTO>(ProductCount,queryParams.PageIndex,TotalCount,Data);
 			
 		}
 
