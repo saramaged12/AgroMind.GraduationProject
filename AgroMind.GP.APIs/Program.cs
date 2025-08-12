@@ -1,4 +1,5 @@
 
+using AgroMind.GP.APIs.CustomMiddleWares;
 using AgroMind.GP.APIs.Extensions;
 using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
@@ -151,7 +152,7 @@ namespace AgroMind.GP.APIs
 			//builder.Logging.AddConsole();
 			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
-
+			app.UseMiddleware<CustomExceptionHandlerMiddleWare>(); // Custom Middleware for Exception Handling
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
