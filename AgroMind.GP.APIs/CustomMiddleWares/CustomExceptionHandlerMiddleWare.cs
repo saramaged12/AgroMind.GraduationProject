@@ -23,43 +23,64 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			try
 			{
 				await _next.Invoke(httpContext);
+				await HandleNotFoundEndPointAsync(httpContext);
+
 			}
 			catch (Exception ex)
 			{
 
-				_logger.LogError(ex,"Something Went Wrong");
+				_logger.LogError(ex, "Something Went Wrong");
+				await HandleException(httpContext, ex);
+			}
+		}
 
-				//1-Set Status Code for Response
+		private static async Task HandleException(HttpContext httpContext, Exception ex)
+		{
+			//1-Set Status Code for Response
 
-				//httpContext.Response.StatusCode= (int)HttpStatusCode.InternalServerError; // 500 Internal Server Error
-				//httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError; // the header of Request it self
+			//httpContext.Response.StatusCode= (int)HttpStatusCode.InternalServerError; // 500 Internal Server Error
+			//httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError; // the header of Request it self
 
-				httpContext.Response.StatusCode=ex switch
+			httpContext.Response.StatusCode = ex switch
+			{
+				// You can customize the status code based on the exception type
+				NotFoundException => StatusCodes.Status404NotFound,
+
+				_ => StatusCodes.Status500InternalServerError // Default to Internal Server Error
+			};
+
+			//2-Set Content-Type for Response
+
+			//httpContext.Response.ContentType = "application/json"; not be needed if Use "WriteAsJsonAsync"
+
+			//3-Response Object (StatusCode , ErrorMessage)
+			var Response = new ErrorToReturn()
+			{
+				StatusCode = httpContext.Response.StatusCode, //will show in the response body
+				ErrorMessage = ex.Message // You can customize the error message as needed
+			};
+
+
+			//4-Return Object As Json
+
+			//var ResponseToReturn = JsonSerializer.Serialize(Response);
+			//await httpContext.Response.WriteAsync(ResponseToReturn);
+
+			await httpContext.Response.WriteAsJsonAsync(Response);//convert the object to JSON and write it to the response body
+		}
+
+		private static async Task HandleNotFoundEndPointAsync(HttpContext httpContext)
+		{
+			if (httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
+			{
+				//Handle Not Found EndPoint
+				var Response = new ErrorToReturn()
 				{
-					// You can customize the status code based on the exception type
-					 NotFoundException => StatusCodes.Status404NotFound, 
-					
-					_ => StatusCodes.Status500InternalServerError // Default to Internal Server Error
-				};
-				
-				//2-Set Content-Type for Response
-
-				//httpContext.Response.ContentType = "application/json"; not be needed if Use "WriteAsJsonAsync"
-				
-				//3-Response Object (StatusCode , ErrorMessage)
-				var Response= new ErrorToReturn()
-				{
-					StatusCode=httpContext.Response.StatusCode, //will show in the response body
-					ErrorMessage = ex.Message // You can customize the error message as needed
+					StatusCode = StatusCodes.Status404NotFound,
+					ErrorMessage = $"The requested resource {httpContext.Request.Path} was not found."
 				};
 
-
-				//4-Return Object As Json
-
-				//var ResponseToReturn = JsonSerializer.Serialize(Response);
-				//await httpContext.Response.WriteAsync(ResponseToReturn);
-				
-				await httpContext.Response.WriteAsJsonAsync(Response);//convert the object to JSON and write it to the response body
+				await httpContext.Response.WriteAsJsonAsync(Response); //convert the object to JSON and write it to the response body
 			}
 		}
 	}
