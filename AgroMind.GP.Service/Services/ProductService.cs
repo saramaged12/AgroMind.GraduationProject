@@ -3,6 +3,7 @@ using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Exceptions;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -81,7 +82,8 @@ namespace AgroMind.GP.Service.Services
 			var Specifications= new ProductWithBrandAndCategorySpec(id);	
 			var product= await _unitOfWork.GetRepositories<Product, int>().GetByIdAWithSpecAsync(Specifications);
 			if (product == null)
-				throw new KeyNotFoundException($"Product with ID {id} not found.");
+				//throw new KeyNotFoundException($"Product with ID {id} not found.");
+				throw new ProductNotFoundException(id);
 
 			return _mapper.Map<Product, ProductDTO>(product);	
 		}

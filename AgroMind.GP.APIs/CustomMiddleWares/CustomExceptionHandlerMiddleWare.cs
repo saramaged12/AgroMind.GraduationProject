@@ -1,4 +1,5 @@
-﻿using Shared.ErrorModels;
+﻿using AgroMind.GP.Core.Exceptions;
+using Shared.ErrorModels;
 using System.Net;
 using System.Text.Json;
 
@@ -31,23 +32,27 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 				//1-Set Status Code for Response
 
 				//httpContext.Response.StatusCode= (int)HttpStatusCode.InternalServerError; // 500 Internal Server Error
+				//httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError; // the header of Request it self
 
-
-				httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError; // the header of Request it self
+				httpContext.Response.StatusCode=ex switch
+				{
+					// You can customize the status code based on the exception type
+					 NotFoundException => StatusCodes.Status404NotFound, 
+					
+					_ => StatusCodes.Status500InternalServerError // Default to Internal Server Error
+				};
 				
 				//2-Set Content-Type for Response
 
 				//httpContext.Response.ContentType = "application/json"; not be needed if Use "WriteAsJsonAsync"
 				
 				//3-Response Object (StatusCode , ErrorMessage)
-				var Response= new ErrorToReturn
+				var Response= new ErrorToReturn()
 				{
-					StatusCode = StatusCodes.Status500InternalServerError, //will show in the response body
+					StatusCode=httpContext.Response.StatusCode, //will show in the response body
 					ErrorMessage = ex.Message // You can customize the error message as needed
 				};
-				{
 
-				}
 
 				//4-Return Object As Json
 

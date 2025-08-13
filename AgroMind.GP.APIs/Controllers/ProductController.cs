@@ -36,9 +36,6 @@ namespace AgroMind.GP.APIs.Controllers
 			public async Task<ActionResult<ProductDTO>> GetProductById(int id)
 			{
 				var product = await _serviceManager.ProductService.GetProductByIdAsync(id);
-				if (product == null)
-					return NotFound($"Product with ID {id} not found.");
-
 				return Ok(product);
 			}
 
