@@ -1,6 +1,7 @@
 
 using AgroMind.GP.APIs.CustomMiddleWares;
 using AgroMind.GP.APIs.Extensions;
+using AgroMind.GP.APIs.Factories;
 using AgroMind.GP.APIs.Helpers;
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
@@ -11,7 +12,9 @@ using AgroMind.GP.Repository.Data.SeedingData;
 using AgroMind.GP.Repository.Repositories;
 using AgroMind.GP.Service.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shared.ErrorModels;
 using StackExchange.Redis;
 
 namespace AgroMind.GP.APIs
@@ -81,6 +84,11 @@ namespace AgroMind.GP.APIs
 			builder.Services.AddScoped<ICartService, CartService>();
 
 			builder.Services.AddScoped<ITokenService, TokenService>(); //  to register TokenService
+
+			builder.Services.Configure<ApiBehaviorOptions>((options) =>
+			{
+				options.InvalidModelStateResponseFactory = APIResponseFactory.GenerateApiValidationErrorResponse;
+			});
 
 			builder.Services.AddControllers()
 	.AddJsonOptions(options =>
