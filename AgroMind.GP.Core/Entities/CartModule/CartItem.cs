@@ -2,15 +2,21 @@
 {
 	public class CartItem
 	{
-		public int ProductId { get; set; }
+		public int Id { get; set; } //Product
+
+		public required string ProductName { get; set; }
 
 		public int Quantity { get; set; }
 
 		
-		public string? PictureUrlAtAddition { get; set; }   // Picture URL when item was added/updated
+		public string? PictureUrl { get; set; }  
 
 
-		public decimal PriceAtAddition { get; set; } // Price when item was added/updated
+		public decimal Price { get; set; } 
+
+		public string? Brand { get; set; }
+
+		public string? Category { get; set; }
 
 	}
 }

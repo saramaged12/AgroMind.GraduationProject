@@ -4,25 +4,9 @@
 	{
 		
 		public string Id { get; set; }  // will be the Redis Key ( Farmer.Id or a GUID for anonymous)
-		public List<CartItem> Items { get; set; } = new List<CartItem>();
+		public required  IEnumerable<CartItem> Items { get; set; } 
 
-		
-
-		
-
-		// Constructor for a new cart
-		public Cart(string id)
-		{
-
-			Id = id;
-
-		}
-
-		// parameterless constructor for deserialization
-		public Cart()
-		{
-
-		}
+	
 
 
 	}
