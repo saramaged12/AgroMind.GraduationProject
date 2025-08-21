@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Entities.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Pipelines.Sockets.Unofficial;
+using Shared.DTOs.CartDtos;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -43,30 +44,17 @@ namespace AgroMind.GP.Repository.Repositories
 			return cartJson.IsNullOrEmpty ? null : JsonSerializer.Deserialize<Cart>(cartJson!);
 		}
 
-		//public async Task<Cart?> RemoveFromCart(string FarmerId, int ItemId)
-		//{
-		//	var Cart= await GetCartAsync(FarmerId);
-		//	if (Cart is null) return null;
-
-		//	bool itemRemoved = Cart.Items.RemoveAll(item => item.Id == ItemId) > 0;
-
-		//	return itemRemoved ? await UpdateCartAsync(Cart) : Cart;
-		//	//return Cart; // it means No Changes of Item is not found
-		//}
-
+		
 		//Updates cart or creates if it doesn't exist
-		//Serializes the Cart object to JSON and stores it in Redis with a 5-day expiration time.
+		
 		public async Task<Cart?> UpdateCartAsync(Cart cart, TimeSpan timeToLive)
 		{
-
-			
 
 				var serializedCart = JsonSerializer.Serialize(cart); //convert from object to Json to store in redis
 				bool isSaved = await _database.StringSetAsync(cart.Id, serializedCart, timeToLive); //Stores the serialized JSON string in Redis //RedisKey>id bta3 el cart ,jsoncart >"el cart after serialize
 																									//expire time for object
 				return isSaved ? cart : null;  //get cart after update or create																		//StringSetAsync>- b t return boolean
-			
-
+		
 		}
 
 		public async Task DeleteCartAsync(string Id)=>

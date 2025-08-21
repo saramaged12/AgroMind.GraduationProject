@@ -12,6 +12,8 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 
 		public IProductService ProductService { get; }
 
+		public ICartService CartService { get; }
+
 		public ICategoryService CategoryService { get; }
 
 		public IBrandService BrandService { get; }
