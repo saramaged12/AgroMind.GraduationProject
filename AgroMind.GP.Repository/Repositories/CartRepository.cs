@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Entities.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Pipelines.Sockets.Unofficial;
+using Shared.DTOs.CartDtos;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -32,70 +33,36 @@ namespace AgroMind.GP.Repository.Repositories
 
 		}
 
-		public async Task<bool> DeleteCartAsync(string FarmerId)
-		{
-			if (string.IsNullOrWhiteSpace(FarmerId))
-				throw new ArgumentException("Cart ID cannot be null or empty.", nameof(FarmerId));
 
-			return await _database.KeyDeleteAsync(FarmerId); //KeyDeleteAsync bta5od rediusKey(CartId)
-														   //Redis keys represent the stored cart objects
-		}
 
 		//Redis Values >- Stored as Json
-		public async Task<Cart?> GetCartAsync(string FarmerId)
+		public async Task<Cart?> GetCartAsync(string Id)
 		{
-			if (string.IsNullOrWhiteSpace(FarmerId))
-				throw new ArgumentException("Cart ID cannot be null or empty");
 
-			var cartJson = await _database.StringGetAsync(FarmerId); //redis Value  //as json
-																 // convert json To Cart
-																 //if (basket.IsNull) return null; // Law El id el b3toh Not there
-																 //else convert json into object or valueType
-			if (cartJson.IsNullOrEmpty)
-				return new Cart(FarmerId); // Return empty cart if not found	
-			try
-			{
-				return JsonSerializer.Deserialize<Cart>(cartJson);  //convert json into object or valueType
-			}
-			catch (JsonException ex)
-			{
-				// Log the exception 
-				Console.WriteLine($"Error deserializing cart data: {ex.Message}");
-				return new Cart(FarmerId); // Return empty cart on deserialization error to prevent crash
-			}
+			var cartJson = await _database.StringGetAsync(Id); //redis Value  //as json
+																	 // convert json To Cart
+			return cartJson.IsNullOrEmpty ? null : JsonSerializer.Deserialize<Cart>(cartJson!);
 		}
 
-		//public async Task<Cart?> RemoveFromCart(string FarmerId, int ItemId)
-		//{
-		//	var Cart= await GetCartAsync(FarmerId);
-		//	if (Cart is null) return null;
-
-		//	bool itemRemoved = Cart.Items.RemoveAll(item => item.Id == ItemId) > 0;
-
-		//	return itemRemoved ? await UpdateCartAsync(Cart) : Cart;
-		//	//return Cart; // it means No Changes of Item is not found
-		//}
-
+		
 		//Updates cart or creates if it doesn't exist
-		public async Task<Cart?> UpdateCartAsync(Cart cart)
+		
+		public async Task<Cart?> UpdateCartAsync(Cart cart, TimeSpan timeToLive)
 		{
 
-			if (cart == null || string.IsNullOrEmpty(cart.Id))
-				throw new ArgumentException("Invalid Cart Data");
-			try
-			{
-				var CartJson = JsonSerializer.Serialize(cart); //convert from object to Json to store in redis
-				bool isSaved = await _database.StringSetAsync(cart.Id, CartJson, TimeSpan.FromDays(5)); //Stores the serialized JSON string in Redis //RedisKey>id bta3 el cart ,jsoncart >"el cart after serialize
-																											  //expire time for object
-				return isSaved ?  await GetCartAsync(cart.Id): null;  //get cart after update or create																		//StringSetAsync>- b t return boolean
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Error updating cart: {ex.Message}");
-				return null;
-			}
-
+				var serializedCart = JsonSerializer.Serialize(cart); //convert from object to Json to store in redis
+				bool isSaved = await _database.StringSetAsync(cart.Id, serializedCart, timeToLive); //Stores the serialized JSON string in Redis //RedisKey>id bta3 el cart ,jsoncart >"el cart after serialize
+																									//expire time for object
+				return isSaved ? cart : null;  //get cart after update or create																		//StringSetAsync>- b t return boolean
+		
 		}
+
+		public async Task DeleteCartAsync(string Id)=>
+		
+			
+			 await _database.KeyDeleteAsync(Id); //KeyDeleteAsync bta5od rediusKey(CartId)
+											     //Redis keys represent the stored cart objects
+		
 
 	}
 }

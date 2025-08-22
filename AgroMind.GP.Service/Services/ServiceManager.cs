@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Repository.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using static StackExchange.Redis.Role;
 
 namespace AgroMind.GP.Service.Services
 {
-	public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper,UserManager<AppUser>userManager ) : IServiceManager
+	public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper,UserManager<AppUser>userManager,Func<ICartService> cartServiceFactory ) : IServiceManager
 	{
 		
 		//Using Lazy Implementation
@@ -35,6 +36,8 @@ namespace AgroMind.GP.Service.Services
 
 		private readonly Lazy<IStepService> _LazyStepService = new Lazy<IStepService>(() => new StepService(unitOfWork, mapper,userManager));
 
+		private readonly Lazy<ICartService> _LazyCartService = new Lazy<ICartService>(cartServiceFactory);
+
 
 
 
@@ -42,6 +45,8 @@ namespace AgroMind.GP.Service.Services
 
 
 		public IProductService ProductService => _LazyproductService.Value;
+
+		public ICartService CartService => _LazyCartService.Value;
 
 		public ICategoryService CategoryService => _LazycategoryService.Value;
 

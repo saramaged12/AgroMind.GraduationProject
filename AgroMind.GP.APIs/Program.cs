@@ -11,6 +11,7 @@ using AgroMind.GP.Repository.Data.Contexts;
 using AgroMind.GP.Repository.Data.SeedingData;
 using AgroMind.GP.Repository.Repositories;
 using AgroMind.GP.Service.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -76,12 +77,19 @@ namespace AgroMind.GP.APIs
 			
 			builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
-			builder.Services.AddScoped<IProductService, ProductService>();
+			//builder.Services.AddScoped<IProductService, ProductService>();
 
-			builder.Services.AddScoped<ICategoryService, CategoryService>();
+			//builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-			builder.Services.AddScoped<IBrandService, BrandService>();
-			builder.Services.AddScoped<ICartService, CartService>();
+			//builder.Services.AddScoped<IBrandService, BrandService>();
+			
+			builder.Services.AddScoped(typeof(Func<ICartService>), (serviceProvider) =>
+			{
+				var mapper = serviceProvider.GetRequiredService<IMapper>();
+				var CartRepo = serviceProvider.GetRequiredService<ICartRepository>();
+				var Config = serviceProvider.GetRequiredService<IConfiguration>();
+				return () => new CartService(CartRepo,mapper,Config);
+			});
 
 			builder.Services.AddScoped<ITokenService, TokenService>(); //  to register TokenService
 
