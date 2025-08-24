@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Core.Exceptions
 {
-	public abstract class NotFoundException(string message) :Exception(message)
+	public  class NotFoundException : SystemException
 	{
+		public  NotFoundException(string name, object key) //entity name , id of entity
+			: base($"The {name} with id : ({key}) is not found.")
+		
+		{
+		}
 	}
 }

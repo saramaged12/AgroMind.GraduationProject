@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.Core.Exceptions;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Shared.ErrorModels;
 using System.Net;
 using System.Text.Json;
@@ -24,6 +25,7 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			{
 				await _next.Invoke(httpContext);
 				await HandleNotFoundEndPointAsync(httpContext);
+				await HandleUnauthorized(httpContext);
 
 			}
 			catch (Exception ex)
@@ -31,6 +33,7 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 
 				_logger.LogError(ex, "Something Went Wrong");
 				await HandleException(httpContext, ex);
+				
 			}
 		}
 
@@ -43,9 +46,9 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 
 			httpContext.Response.StatusCode = ex switch
 			{
-				// You can customize the status code based on the exception type
+				
 				NotFoundException => StatusCodes.Status404NotFound,
-
+				
 				_ => StatusCodes.Status500InternalServerError // Default to Internal Server Error
 			};
 
@@ -77,10 +80,25 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 				var Response = new ErrorToReturn()
 				{
 					StatusCode = StatusCodes.Status404NotFound,
-					ErrorMessage = $"The requested resource {httpContext.Request.Path} was not found."
+					ErrorMessage = $"The requested resource {httpContext.Request.Path} is not found."
 				};
 
-				await httpContext.Response.WriteAsJsonAsync(Response); //convert the object to JSON and write it to the response body
+				await httpContext.Response.WriteAsJsonAsync(Response); 
+			}
+		}
+
+		private static async Task HandleUnauthorized(HttpContext httpContext)
+		{
+			if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized)
+			{
+				//Handle Not Found EndPoint
+				var Response = new ErrorToReturn()
+				{
+					StatusCode = StatusCodes.Status401Unauthorized,
+					ErrorMessage = "You are not authorized to access this resource."
+				};
+
+				await httpContext.Response.WriteAsJsonAsync(Response);
 			}
 		}
 	}
