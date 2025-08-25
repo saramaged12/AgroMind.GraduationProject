@@ -20,7 +20,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		// UPDATE (Actuals - comprehensive update for ALL estimated/actuals)
 		Task UpdateActualsForCropAsync(int cropId, CropDto cropDtoWithActuals, string modifierUserId); // Takes full CropDto
 		
-		Task DeleteCrop(CropDto cropDto);
+		Task DeleteCrop(int id);
 
 	
 		Task<IReadOnlyList<CropDto>> GetAllDeletedCropsAsync();

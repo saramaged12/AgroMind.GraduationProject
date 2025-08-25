@@ -2,6 +2,7 @@
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Exceptions;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -24,31 +25,16 @@ namespace AgroMind.GP.Service.Services
 
 		    public async Task<CategoryDTO> AddCategoryAsync(CategoryDTO categoryDto)
 			{
-				if (categoryDto == null)
-					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
-
-			var categoryEntity = _mapper.Map<Category>(categoryDto);
-			var repo = _unitOfWork.GetRepositories<Category, int>();
+				
+			    var categoryEntity = _mapper.Map<Category>(categoryDto);
+		    	var repo = _unitOfWork.GetRepositories<Category, int>();
 			
 				await repo.AddAsync(categoryEntity);
 				await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CategoryDTO>(categoryEntity);
+		    	return _mapper.Map<CategoryDTO>(categoryEntity);
 			}
 
-			public async Task DeleteCategories(CategoryDTO categoryDto)
-			{
-				if (categoryDto == null)
-					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
-
-				var repo = _unitOfWork.GetRepositories<Category, int>();
-				var existingCategory = await repo.GetByIdAsync(categoryDto.Id);
-
-				if (existingCategory == null)
-					throw new KeyNotFoundException($"Category with ID {categoryDto.Id} not found.");
-
-				repo.SoftDelete(existingCategory);
-				await _unitOfWork.SaveChangesAsync();
-			}
+			
 
 			public async Task<IReadOnlyList<CategoryDTO>> GetAllCategoriesAsync()
 			{
@@ -63,40 +49,43 @@ namespace AgroMind.GP.Service.Services
 				var category = await repo.GetByIdAsync(id);
 
 				if (category == null)
-					throw new KeyNotFoundException($"Category with ID {id} not found.");
+					throw new NotFoundException(nameof(Category),id);
 
 				return _mapper.Map<Category, CategoryDTO>(category);
 			}
 
 			public async Task UpdateCategories(CategoryDTO categoryDto)
 			{
-				if (categoryDto == null)
-					throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
-
+				
 				var repo = _unitOfWork.GetRepositories<Category, int>();
 				var existingCategory = await repo.GetByIdAsync(categoryDto.Id);
 
-				if (existingCategory == null)
-					throw new KeyNotFoundException($"Category with ID {categoryDto.Id} not found.");
-
-				
-
-		       	// Map the updated properties to the existing entity
+		       	
 			      _mapper.Map(categoryDto, existingCategory);
-
-		
-			   // Update the existing entity
+			  
 			       repo.Update(existingCategory);
 			       await _unitOfWork.SaveChangesAsync();
 
 		    }
 
+		    public async Task DeleteCategories(int id)
+		    {
+			  
+		      	var repo = _unitOfWork.GetRepositories<Category, int>();
+		       	var existingCategory = await repo.GetByIdAsync(id);
+			     
+			    if (existingCategory == null)
+				throw new NotFoundException(nameof(Category), id);
+
+			    repo.SoftDelete(existingCategory);
+			    await _unitOfWork.SaveChangesAsync();
+		    }
 
 		    public async Task<IReadOnlyList<CategoryDTO>> GetAllDeletedCategoriesAsync()
 		    {
-			var repo = _unitOfWork.GetRepositories<Category, int>();
-			var deletedcategories = await repo.GetAllDeletedAsync();
-			return _mapper.Map<IReadOnlyList<CategoryDTO>>(deletedcategories);
+		     	var repo = _unitOfWork.GetRepositories<Category, int>();
+			    var deletedcategories = await repo.GetAllDeletedAsync();
+		    	return _mapper.Map<IReadOnlyList<CategoryDTO>>(deletedcategories);
 		    }
 	}
 	}

@@ -39,33 +39,23 @@ namespace AgroMind.GP.APIs.Controllers
 				return Ok(product);
 			}
 
-		// Add Product
-		[HttpPost("AddProduct")]
-		public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductDTO productDto)
-		{
-			if (productDto == null)
-				return BadRequest("Product data is required.");
+		    
+		    [HttpPost("AddProduct")]
+		    public async Task<ActionResult<ProductDTO>> AddProduct([FromBody] ProductDTO productDto)
+		    {
+			   
+			    var createdProduct = await _serviceManager.ProductService.AddAsync(productDto);
 
-			// Call the service to add the product and return the created product
-			var createdProduct = await _serviceManager.ProductService.AddAsync(productDto);
 
-			if (createdProduct == null)
-				return BadRequest("Failed to create the product.");
+		       	return Ok(createdProduct);
+		    }
 
-			return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
-
-		}
-
-		// Update Product
-		[HttpPut("UpdateProduct/{id}")]
+		    
+		    [HttpPut("UpdateProduct/{id}")]
 			public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productDto)
 			{
 				if (id != productDto.Id)
 					return BadRequest("Product ID mismatch.");
-
-				var existingProduct = await _serviceManager.ProductService.GetProductByIdAsync(id);
-				if (existingProduct == null)
-					return NotFound($"Product with ID {id} not found.");
 
 				await _serviceManager.ProductService.UpdateProducs(productDto);
 				return NoContent();
@@ -75,11 +65,8 @@ namespace AgroMind.GP.APIs.Controllers
 			[HttpDelete("DeleteProduct/{id}")]
 			public async Task<IActionResult> DeleteProduct(int id)
 			{
-				var product = await _serviceManager.ProductService.GetProductByIdAsync(id);
-				if (product == null)
-					return NotFound($"Product with ID {id} not found.");
-
-				await _serviceManager.ProductService.DeleteProducts(new ProductDTO { Id = id });
+				
+				await _serviceManager.ProductService.DeleteProducts(id);
 				return NoContent();
 			}
 

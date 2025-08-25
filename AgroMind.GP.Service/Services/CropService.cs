@@ -5,6 +5,7 @@ using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Exceptions;
 using AgroMind.GP.Core.Specification;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -32,13 +33,7 @@ namespace AgroMind.GP.Service.Services
 		}
 	
 		
-		public async Task<IReadOnlyList<CropDto>> GetAllCropsAsync()
-		{
-			var Specification= new CropSpecification();
-			var repo = _unitOfWork.GetRepositories<Crop, int>();
-			var crops = await repo.GetAllWithSpecASync(Specification);
-			return _mapper.Map<IReadOnlyList<Crop>, IReadOnlyList<CropDto>>(crops);
-		}
+		
 
 		public async Task<CropDto> GetCropByIdAsync(int id)
 		{
@@ -47,9 +42,16 @@ namespace AgroMind.GP.Service.Services
 			var crop = await repo.GetByIdAWithSpecAsync(spec);
 
 			if (crop == null)
-				throw new KeyNotFoundException($"Crop with ID {id} not found.");
+				throw new NotFoundException(nameof(Crop), id);
 
 			return _mapper.Map<Crop, CropDto>(crop);
+		}
+		public async Task<IReadOnlyList<CropDto>> GetAllCropsAsync()
+		{
+			var Specification = new CropSpecification();
+			var repo = _unitOfWork.GetRepositories<Crop, int>();
+			var crops = await repo.GetAllWithSpecASync(Specification);
+			return _mapper.Map<IReadOnlyList<Crop>, IReadOnlyList<CropDto>>(crops);
 		}
 
 		public async Task<IReadOnlyList<CropDto>> GetRecommendedCropsAsync(RecommendRequestDTO recommendDto)
@@ -65,7 +67,7 @@ namespace AgroMind.GP.Service.Services
 
 			foreach (var crop in allCrops)
 			{
-				//  earliest and latest possible planting dates 
+				// earliest and latest possible planting dates 
 				var earliestStart = crop.StartDate > recommendDto.FromDate ? crop.StartDate : recommendDto.FromDate;
 				// LastStart is the minimum of crop.LastStartDate and Land ToDate - duration
 				var landLastValidStart = recommendDto.ToDate.AddDays(-crop.Duration);
@@ -77,7 +79,7 @@ namespace AgroMind.GP.Service.Services
 					failedReasons.Add($"{crop.CropName}: No valid planting window for this crop in the given date range. (Earliest: {earliestStart:yyyy-MM-dd}, Latest: {latestStart:yyyy-MM-dd})");
 					continue;
 				}
-				// check for Budget
+			
 				if (recommendDto.Budget < crop.TotalEstimatedCost)
 				{
 					failedReasons.Add($"{crop.CropName}: Budget ({recommendDto.Budget}) is less than the total cost of the crop ({crop.TotalEstimatedCost}).");
@@ -110,7 +112,7 @@ namespace AgroMind.GP.Service.Services
 
 			if (crop == null)
 
-				throw new KeyNotFoundException($"Plan (Crop) with ID {cropId} not found.");
+				throw new NotFoundException(nameof(Crop), cropId);
 
 			string creatorRole = "Unknown";
 			if (crop.Creator != null)
@@ -159,7 +161,7 @@ namespace AgroMind.GP.Service.Services
 			}
 			return planInfoList;
 		}
-		// --- NEW: Get My Plans (for farmer's profile "View My Plans") (Now uses Specification) ---
+		
 		public async Task<IReadOnlyList<CropDto>> GetMyPlansAsync(string farmerUserId)
 		{
 			var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
@@ -194,25 +196,10 @@ namespace AgroMind.GP.Service.Services
 					throw new UnauthorizedAccessException("Only Agricultural Experts can create general crop templates without a specific land."); 
 			}
 
-			// Initialize actual cost fields for new definitions to 0 or null
+			// Initialize actual cost fields to 0 or null
 			cropEntity.TotalActualCost = 0;
 
-			//// Set TotalCost for each stage:
-			//if (cropEntity.Stages != null)
-			//{
-			//	foreach (var stage in cropEntity.Stages)
-			//	{
-			//		stage.TotalEstimatedCost = stage.EstimatedCost + (stage.Steps?.Sum(s => s.EstimatedCost) ?? 0);
-			//	}
-			//}
-			////cropEntity.TotalCost=cropEntity.Stages?.Sum(s=>s.TotalCost) ??0; 
-			//// Calculate TotalCost for the crop based on its stages
-			////This not Store Valu in DB (NOT Valid)
-
-			//// Calculate TotalCost for the crop's stages and steps
-			//cropEntity.TotalEstimatedCost = cropEntity.Stages?.Sum(stage =>
-			//	stage.EstimatedCost + (stage.Steps?.Sum(step => step.EstimatedCost) ?? 0)) ?? 0;
-
+		
 
 			if (cropEntity.Stages != null)
 			{
@@ -228,13 +215,13 @@ namespace AgroMind.GP.Service.Services
 							step.CreatorId = creatorUserId;
 							step.ActualCost = null; 
 							step.ActualStartDate = null;
-							//step.PlannedStartDate = null;
+							
 						}
 					}
 				}
 			}
-			RecalculateCropCosts(cropEntity); // Calculates all TotalEstimatedCost
-											  // and ensures TotalActualCost is 0
+			RecalculateCropCosts(cropEntity); 
+											 
 											  
 
 			var repo = _unitOfWork.GetRepositories<Crop, int>();
@@ -245,16 +232,14 @@ namespace AgroMind.GP.Service.Services
 		}
 
 		
-		public async Task DeleteCrop(CropDto cropDto)
+		public async Task DeleteCrop(int id)
 		{
-			if (cropDto == null)
-				throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
-
+			
 			var repo = _unitOfWork.GetRepositories<Crop, int>();
-			var existingCrop = await repo.GetByIdAsync(cropDto.Id);
+			var existingCrop = await repo.GetByIdAsync(id);
 
 			if (existingCrop == null)
-				throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
+				throw new NotFoundException(nameof(Crop), id);	
 
 			repo.SoftDelete(existingCrop);
 			await _unitOfWork.SaveChangesAsync();
@@ -273,17 +258,13 @@ namespace AgroMind.GP.Service.Services
 		public async Task<CropDto> AdoptRecommendedCropAsync(int recommendedCropId, string farmerUserId)
 		{
 			var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
-			// Use specification to load recommended crop with full graph
 			var spec = new CropSpecification(recommendedCropId); // Default spec includes stages/steps
 			var recommendedCrop = await cropRepo.GetByIdAWithSpecAsync(spec);
 
 			if (recommendedCrop == null || recommendedCrop.IsDeleted)
-				throw new KeyNotFoundException($"Recommended Crop with ID {recommendedCropId} not found or is deleted.");
+				throw new  NotFoundException(nameof(Crop), recommendedCropId);
 
-
-			//if (recommendedCrop.PlanType != CropPlanType.ExpertTemplate)
-			//	throw new InvalidOperationException($"Only Expert Templates can be adopted. This crop is of type: {recommendedCrop.PlanType}");
-
+			
 			var farmer = await _userManager.FindByIdAsync(farmerUserId) as Farmer;
 			if (farmer == null || !farmer.Lands.Any())
 
@@ -292,7 +273,7 @@ namespace AgroMind.GP.Service.Services
 			int targetLandId = farmer.Lands.First().Id;
 
 
-			// DEEP COPY: Create a NEW Crop entity for the farmer
+			// DEEP COPY Create a NEW Crop entity for the farmer
 			var farmerCrop = _mapper.Map<Crop>(recommendedCrop); // Map core properties
 			farmerCrop.Id = 0; // Ensure it's a new entity
 			farmerCrop.LandId = targetLandId;
@@ -357,14 +338,14 @@ namespace AgroMind.GP.Service.Services
 				foreach (var stage in crop.Stages)
 				{
 					
-					stage.Crop = crop; // avoids extra DB calls if crop is already loaded
+					stage.Crop = crop; 
 					RecalculateStageCosts(stage);
 				}
 			}
-			// Sum Estimated Costs - always calculated
+			
 			crop.TotalEstimatedCost = crop.Stages?.Sum(s => s.TotalEstimatedCost ?? 0) ?? 0;
 
-			// Sum Actual Costs - ONLY for FarmerPlans
+			
 			if (crop.PlanType == CropPlanType.FarmerPlan)
 			
 				crop.TotalActualCost = crop.Stages?.Sum(s => s.TotalActualCost ?? 0) ?? 0;
@@ -382,21 +363,14 @@ namespace AgroMind.GP.Service.Services
 			
 			var cropRepo = _unitOfWork.GetRepositories<Crop, int>();
 
-			// Load the Existing Crop Plan 
-			// The specification loads the Crop, its Land (for authorization), and ALL nested Stages/Steps.
+		
 			var spec = new CropSpecification(forUpdate: true, cropId);
 			var existingCrop = await cropRepo.GetByIdAWithSpecAsync(spec);
 
 			
 			if (existingCrop == null)
-				throw new KeyNotFoundException($"Crop plan with ID {cropId} not found.");
-
-			// Authorization and Plan Type Check
+				throw new NotFoundException(nameof(Crop), cropId);
 			
-			//if (existingCrop.PlanType != CropPlanType.FarmerPlan)
-			//throw new InvalidOperationException($"Actual costs can only be recorded for Farmer Plans. This plan is of type: {existingCrop.PlanType}.");
-
-			// Authenticate and authorize the user trying to modify
 			var user = await _userManager.FindByIdAsync(modifierUserId);
 			if (user == null)
 				throw new UnauthorizedAccessException("Modifier user not found.");
@@ -422,8 +396,7 @@ namespace AgroMind.GP.Service.Services
 				if (existingStage == null)
 					continue;
 
-				// Update Stage's properties (EstimatedCost, ActualCost)
-				// The CropStageDto -> CropStage mapping is configured to map these.
+				
 				_mapper.Map(dtoStage, existingStage);
 
 				foreach (var dtoStep in dtoStage.Steps)
@@ -433,13 +406,12 @@ namespace AgroMind.GP.Service.Services
 					if (existingStep == null) 
 						continue;
 
-					// Update Step's properties 
-					// The StepDto -> Step mapping is configured for this.
+					
 					_mapper.Map(dtoStep, existingStep);
 				}
 			}
 
-			// Recalculate Aggregated Costs (Estimated & Actual)
+			
 			
 			RecalculateCropCosts(existingCrop);
 
@@ -449,117 +421,21 @@ namespace AgroMind.GP.Service.Services
 		}
 
 
-		//public async Task UpdateCrops(CropDefinitionDto cropDto, string modifierUserId) 
-		//{
-		//	if (cropDto == null) 
-		//		throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
-
-		//	var repo = _unitOfWork.GetRepositories<Crop, int>();
-		//	var spec = new CropSpecification(forUpdate: true ,cropDto.Id);
-		//	var existingCrop = await repo.GetByIdAWithSpecAsync(spec);
-
-		//	if (existingCrop == null)
-		//		throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
-
-		//	_mapper.Map(cropDto, existingCrop);
-
-		//	var currentUserId = modifierUserId; 
-		//	if (string.IsNullOrEmpty(currentUserId)) 
-		//		throw new UnauthorizedAccessException("Modifier user ID is missing."); // More specific error message
-
-		//	// Collection Management for Nested Stages and Steps
-
-
-
-		//	// Step 1: Manage Stages (Add/Update/Remove)
-
-		//	var stagesToKeep = new List<CropStage>();
-
-		//	foreach (var dtoStage in cropDto.Stages)
-		//	{
-		//		var existingStage = existingCrop.Stages.FirstOrDefault(s => s.Id == dtoStage.Id);
-		//		if (existingStage == null || dtoStage.Id == 0) // New stage (not found by ID, or ID is 0)
-		//		{
-		//			existingStage = _mapper.Map<CropStage>(dtoStage); // Maps from CropStageDefinitionDto
-		//			existingStage.CreatorId = currentUserId; // Set CreatorId for new stage
-		//			existingStage.ActualCost = 0;
-		//			existingStage.TotalActualCost = 0;
-		//			existingStage.Id = 0; // Ensure ID is 0 for new entities for EF Core
-		//			existingCrop.Stages.Add(existingStage);
-		//		}
-		//		else // Existing stage, update its properties
-		//			_mapper.Map(dtoStage, existingStage); // Update scalar properties of existing stage
-
-		//		stagesToKeep.Add(existingStage); // Add to a temporary list of stages we will keep
-
-		//		// Step 2: Manage Steps within this (new or existing) stage
-
-		//		var stepsToKeep = new List<Step>();
-		//		foreach (var dtoStep in dtoStage.Steps)
-		//		{
-		//			var existingStep = existingStage.Steps.FirstOrDefault(st => st.Id == dtoStep.Id);
-		//			if (existingStep == null || dtoStep.Id == 0) // New step
-		//			{
-		//				existingStep = _mapper.Map<Step>(dtoStep); // Maps from StepDefinitionDto
-		//				existingStep.CreatorId = currentUserId; // Set CreatorId for new step
-		//				existingStep.ActualCost = null;
-		//				existingStep.ActualStartDate = null;
-		//				existingStep.Id = 0; // Ensure ID is 0 for new entities
-		//				existingStage.Steps.Add(existingStep); // Add to the parent stage's collection
-		//			}
-		//			else // Existing step, update its properties
-		//				_mapper.Map(dtoStep, existingStep);
-
-		//			stepsToKeep.Add(existingStep); // Add to temporary list of steps we will keep
-		//		}
-
-		//		// Mark steps for removal: any step in existingStage.Steps that is NOT in stepsToKeep
-		//		var currentSteps = existingStage.Steps.ToList(); // Take a copy to modify original collection
-		//		foreach (var stepToRemove in currentSteps)
-		//		{
-		//			if (!stepsToKeep.Contains(stepToRemove))
-		//			{
-		//				existingStage.Steps.Remove(stepToRemove);
-		//				_unitOfWork.GetRepositories<Step, int>().SoftDelete(stepToRemove);
-		//			}
-		//		}
-
-		//	}
-		//	// Mark stages for removal: any stage in existingCrop.Stages that is NOT in stagesToKeep
-		//	var currentStages = existingCrop.Stages.ToList();
-		//	foreach (var stageToRemove in currentStages)
-		//	{
-		//		if (!stagesToKeep.Contains(stageToRemove))
-		//		{
-		//			existingCrop.Stages.Remove(stageToRemove);
-		//			_unitOfWork.GetRepositories<CropStage, int>().SoftDelete(stageToRemove); // Mark for soft deletion
-		//		}
-		//	}
-
-		//	RecalculateCropCosts(existingCrop);
-
-		//	repo.Update(existingCrop);
-		//	await _unitOfWork.SaveChangesAsync();
-		//}
-
-
+		
 		public async Task UpdateCrops(CropDefinitionDto cropDto, string modifierUserId)
 		{
-			if (cropDto == null)
-				throw new ArgumentNullException(nameof(cropDto), "Crop data cannot be null.");
-
+			
 			var repo = _unitOfWork.GetRepositories<Crop, int>();
-			// Load the existing entity from the database, including all its children.
+			
 			var spec = new CropSpecification(forUpdate: true, cropDto.Id);
 			var existingCrop = await repo.GetByIdAWithSpecAsync(spec);
 
 			if (existingCrop == null)
-				throw new KeyNotFoundException($"Crop with ID {cropDto.Id} not found.");
-
+				 throw new NotFoundException(nameof(Crop), cropDto.Id);	
 			if (existingCrop.CreatorId != modifierUserId)
 				throw new UnauthorizedAccessException("User is not authorized to update this crop plan.");
 
-			// --- START OF THE NEW, FOOLPROOF LOGIC ---
+			
 
 			// 1. Manually update the primitive properties of the Crop.
 			existingCrop.CropName = cropDto.CropName;
@@ -573,7 +449,7 @@ namespace AgroMind.GP.Service.Services
 			// 2. Synchronize the Stages collection.
 			var stagesInDtoById = cropDto.Stages?.ToDictionary(s => s.Id) ?? new Dictionary<int, StageDefinitionDto>();
 
-			// Remove stages that are no longer present in the DTO.
+			// Remove stages that are no longer present in the DTO
 			foreach (var stageInDb in existingCrop.Stages.ToList())
 			{
 				if (stageInDb.Id != 0 && !stagesInDtoById.ContainsKey(stageInDb.Id))
@@ -591,13 +467,13 @@ namespace AgroMind.GP.Service.Services
 
 					if (existingStage != null)
 					{
-						// --- UPDATE EXISTING STAGE ---
-						// Manually update the properties instead of using AutoMapper.
+						//  UPDATE EXISTING STAGE
+						
 						existingStage.StageName = stageDto.StageName;
 						existingStage.OptionalLink = stageDto.OptionalLink;
 						existingStage.EstimatedCost = stageDto.EstimatedCost;
 
-						// Synchronize the nested Steps for this stage.
+						// the nested Steps for this stage
 						var stepsInDtoById = stageDto.Steps?.ToDictionary(st => st.Id) ?? new Dictionary<int, StepDefinitionDto>();
 						foreach (var stepInDb in existingStage.Steps.ToList())
 						{
@@ -614,7 +490,7 @@ namespace AgroMind.GP.Service.Services
 								var existingStep = existingStage.Steps.FirstOrDefault(st => st.Id == stepDto.Id && st.Id != 0);
 								if (existingStep != null)
 								{
-									// Manually update existing step properties.
+									
 									existingStep.StepName = stepDto.StepName;
 									existingStep.Description = stepDto.Description;
 									existingStep.Tool = stepDto.Tool;
@@ -626,7 +502,7 @@ namespace AgroMind.GP.Service.Services
 								}
 								else
 								{
-									// Add new step (mapping is safe here as it's a new object).
+									// Add new step 
 									var newStep = _mapper.Map<Step>(stepDto);
 									newStep.CreatorId = modifierUserId;
 									existingStage.Steps.Add(newStep);
@@ -636,8 +512,8 @@ namespace AgroMind.GP.Service.Services
 					}
 					else
 					{
-						// --- ADD NEW STAGE ---
-						// Mapping is safe here because it's a completely new entity graph.
+						// ADD NEW STAGE
+						
 						var newStage = _mapper.Map<CropStage>(stageDto);
 						newStage.CreatorId = modifierUserId;
 						if (newStage.Steps != null)
@@ -652,10 +528,10 @@ namespace AgroMind.GP.Service.Services
 				}
 			}
 
-			// 3. Recalculate costs.
+			//3 Recalculate costs
 			RecalculateCropCosts(existingCrop);
 
-			// 4. Save Changes.
+			//4 Save Changes
 			repo.Update(existingCrop);
 			await _unitOfWork.SaveChangesAsync();
 		}

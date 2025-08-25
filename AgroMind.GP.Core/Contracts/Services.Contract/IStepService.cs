@@ -10,7 +10,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 {
 	public interface IStepService
 	{
-		Task<StepDto> AddStepAsync(StepDefinitionDto stepDto , string creatorUserId);
+		Task<StepDto> AddStepAsync(StepDefinitionDto stepDto );
 
 		Task<IReadOnlyList<StepDto>> GetAllStepsAsync();
 
@@ -23,7 +23,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		//Task UpdateStep(StepDto stepDto);
 
 
-		Task DeleteStep(StepDto stepDto);
+		Task DeleteStep(int id);
 
 		Task<IReadOnlyList<StepDto>> GetAllDeletedStepsAsync();
 	}
