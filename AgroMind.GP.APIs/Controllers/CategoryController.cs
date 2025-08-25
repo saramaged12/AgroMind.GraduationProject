@@ -3,10 +3,12 @@ using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Exceptions;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace AgroMind.GP.APIs.Controllers
 {
@@ -34,9 +36,6 @@ namespace AgroMind.GP.APIs.Controllers
 			public async Task<ActionResult<CategoryDTO>> GetCategoryById(int id)
 			{
 				var category = await _serviceManager.CategoryService.GetCategoryByIdAsync(id);
-				if (category == null)
-					return NotFound($"Category with ID {id} not found.");
-
 				return Ok(category);
 			}
 
@@ -44,16 +43,11 @@ namespace AgroMind.GP.APIs.Controllers
 			[HttpPost("AddCategory")]
 			public async Task<ActionResult<CategoryDTO>> AddCategory([FromBody] CategoryDTO categoryDto)
 			{
-				if (categoryDto == null)
-					return BadRequest("Category data is required.");
-
-
+				
 				var CategoryCreated=await _serviceManager.CategoryService.AddCategoryAsync(categoryDto);
 
-			     if (CategoryCreated == null)
-			    	return BadRequest("Failed to create the Category.");
 
-			        return CreatedAtAction(nameof(GetCategoryById), new { id = CategoryCreated.Id }, CategoryCreated);
+			    return CreatedAtAction(nameof(GetCategoryById), new { id = CategoryCreated.Id }, CategoryCreated);
 			}
 
 			// Update Category
@@ -61,12 +55,10 @@ namespace AgroMind.GP.APIs.Controllers
 			public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDto)
 			{
 				if (id != categoryDto.Id)
-					return BadRequest("Category ID mismatch.");
+					throw new BadRequestException("Category ID mismatch.");
 
 				var existingCategory = await _serviceManager.CategoryService.GetCategoryByIdAsync(id);
-				if (existingCategory == null)
-					return NotFound($"Category with ID {id} not found.");
-
+				
 				await _serviceManager.CategoryService.UpdateCategories(categoryDto);
 				return NoContent();
 			}
@@ -75,11 +67,8 @@ namespace AgroMind.GP.APIs.Controllers
 			[HttpDelete("DeleteCategoryById/{id}")]
 			public async Task<IActionResult> DeleteCategory(int id)
 			{
-				var category = await _serviceManager.CategoryService.GetCategoryByIdAsync(id);
-				if (category == null)
-					return NotFound($"Category with ID {id} not found.");
-
-				await _serviceManager.CategoryService.DeleteCategories(new CategoryDTO { Id = id });
+				
+				await _serviceManager.CategoryService.DeleteCategories(id);
 				return NoContent();
 			}
 	     	

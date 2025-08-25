@@ -24,45 +24,30 @@ namespace AgroMind.GP.APIs.Controllers
 		[Authorize]
 		public async Task<ActionResult<CartDto>> GetCart(string id)
 		{
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-			if (string.IsNullOrEmpty(userId)) return Unauthorized("User ID not found.");
 
 			var cart = await _Servicemanager.CartService.GetUserCartAsync(id);
 			return Ok(cart);
 		}
 
-		
-
 
 		 //Add or Update Cart Items
-
-
 		[HttpPost] 
 		[Authorize]
 		public async Task<ActionResult<CartDto>> AddOrUpdateCart(CartDto cartDto)
-		{
-		
-		
+		{ 
 				var updatedCart = await _Servicemanager.CartService.UpdateCartAsync(cartDto);
 				return Ok(updatedCart);
 
 		}
-
-
-
-
-
 		 //--- Clear User's Cart ---
 
 		[HttpDelete]
 		[Authorize]
 		public async Task<IActionResult> ClearCart(string id)
 		{
-			
-
-		     await _Servicemanager.CartService.ClearUserCartAsync(id);
+		
+		    await _Servicemanager.CartService.ClearUserCartAsync(id);
 			return NoContent();
-
 			
 		}
 	}

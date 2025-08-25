@@ -25,7 +25,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		Task UpdateBrands(BrandDTO brandDTO);
 
 		//Delete Categories
-		Task DeleteBrands(BrandDTO brandDTO);
+		Task DeleteBrands(int id);
 
 		Task<IReadOnlyList<BrandDTO>> GetAllDeletedBrandsAsync();
 	}

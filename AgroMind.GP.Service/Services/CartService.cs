@@ -1,6 +1,7 @@
 ﻿using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities;
+using AgroMind.GP.Core.Exceptions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -33,8 +34,8 @@ namespace AgroMind.GP.Service.Services
 		public async Task<CartDto> GetUserCartAsync(string userId)
 		{
 			var Cart= await _cartRepository.GetCartAsync(userId);
-			if(Cart == null)
-				throw new KeyNotFoundException($"Cart for user with ID {userId} not found.");
+			if (Cart == null)
+				throw new NotFoundException(nameof(Cart), userId);
 			var Mappedcart=_mapper.Map<CartDto>(Cart);
 			return Mappedcart;
 		}
@@ -44,9 +45,7 @@ namespace AgroMind.GP.Service.Services
 		  var MappedCart= _mapper.Map<Cart>(cart);
 		  var daysToLive= int.Parse (_configuration.GetSection("RedisSettings")["TimeToLiveInDays"]!);
 		  var UpdatedCart= await _cartRepository.UpdateCartAsync(MappedCart,TimeSpan.FromDays(daysToLive)); 
-		  if(UpdatedCart is null )
-				throw new Exception($"An Error has occured,Can't update your basket. Please Try Again.");
-			return cart;
+		  return cart;
 		}
 
 		public async Task ClearUserCartAsync(string Id)

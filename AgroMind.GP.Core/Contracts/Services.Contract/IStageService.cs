@@ -10,7 +10,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 {
 	public interface IStageService
 	{
-		Task<CropStageDto> AddStageAsync(StageDefinitionDto stageDto, string creatorUserId);
+		Task<CropStageDto> AddStageAsync(StageDefinitionDto stageDto);
 
 		Task<IReadOnlyList<CropStageDto>> GetAllStagesAsync();
 
@@ -23,7 +23,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		//Task UpdateStage(CropStageDto stageDto);
 
 
-		Task DeleteStage(CropStageDto stageDto);
+		Task DeleteStage(int ID);
 
 		Task<IReadOnlyList<CropStageDto>> GetAllDeletedStagesAsync();
 	}

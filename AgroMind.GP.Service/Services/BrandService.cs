@@ -2,6 +2,7 @@
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Exceptions;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,7 @@ namespace AgroMind.GP.Service.Services
 
 			public async Task<BrandDTO> AddBrandAsync(BrandDTO brandDto)
 			{
-				if (brandDto == null)
-					throw new ArgumentNullException(nameof(brandDto), "Brand data cannot be null.");
-
+				
 			    var brandEntity = _mapper.Map<Brand>(brandDto);
 			    var repo = _unitOfWork.GetRepositories<Brand, int>();
 			
@@ -49,43 +48,32 @@ namespace AgroMind.GP.Service.Services
 				var brand = await repo.GetByIdAsync(id);
 
 				if (brand == null)
-					throw new KeyNotFoundException($"Brand with ID {id} not found.");
+					throw new NotFoundException(nameof(Brand), id);
 
 				return _mapper.Map<Brand, BrandDTO>(brand);
 			}
 
 			public async Task UpdateBrands(BrandDTO brandDto)
 			{
-				if (brandDto == null)
-					throw new ArgumentNullException(nameof(brandDto), "Brand data cannot be null.");
 
 				var repo = _unitOfWork.GetRepositories<Brand, int>();
 				var existingBrand = await repo.GetByIdAsync(brandDto.Id);
-
-				if (existingBrand == null)
-					throw new KeyNotFoundException($"Brand with ID {brandDto.Id} not found.");
-
-			    // Map the updated properties to the existing entity
-			       _mapper.Map(brandDto, existingBrand);
-
-
-			    // Update the existing entity
-			       repo.Update(existingBrand);
-			       await _unitOfWork.SaveChangesAsync();
+				
+			    _mapper.Map(brandDto, existingBrand);
+			    repo.Update(existingBrand);
+			    await _unitOfWork.SaveChangesAsync();
 		    }
 
-			public async Task DeleteBrands(BrandDTO brandDto)
+			public async Task DeleteBrands(int id)
 			{
-				if (brandDto == null)
-					throw new ArgumentNullException(nameof(brandDto), "Brand data cannot be null.");
-
+				
 				var repo = _unitOfWork.GetRepositories<Brand, int>();
-				var existingBrand = await repo.GetByIdAsync(brandDto.Id);
+				var existingBrand = await repo.GetByIdAsync(id);
 
-				if (existingBrand == null)
-					throw new KeyNotFoundException($"Brand with ID {brandDto.Id} not found.");
+			    if (existingBrand == null)
+				throw new NotFoundException(nameof(Brand), id);
 
-				repo.SoftDelete(existingBrand);
+			    repo.SoftDelete(existingBrand);
 				await _unitOfWork.SaveChangesAsync();
 			}
 

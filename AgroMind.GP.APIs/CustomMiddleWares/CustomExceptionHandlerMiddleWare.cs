@@ -31,7 +31,7 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			catch (Exception ex)
 			{
 
-				_logger.LogError(ex, "Something Went Wrong");
+				_logger.LogError(ex, "An unhandled exception has occurred: {Message}", ex.Message);
 				await HandleException(httpContext, ex);
 				
 			}
@@ -48,7 +48,9 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			{
 				
 				NotFoundException => StatusCodes.Status404NotFound,
-				
+				BadRequestException => StatusCodes.Status400BadRequest,
+				UnauthorizedAccessException => StatusCodes.Status403Forbidden,
+			
 				_ => StatusCodes.Status500InternalServerError // Default to Internal Server Error
 			};
 

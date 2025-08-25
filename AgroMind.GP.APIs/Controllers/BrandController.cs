@@ -2,6 +2,7 @@
 using AgroMind.GP.Core.Contracts.Repositories.Contract;
 using AgroMind.GP.Core.Contracts.Services.Contract;
 using AgroMind.GP.Core.Entities.ProductModule;
+using AgroMind.GP.Core.Exceptions;
 using AgroMind.GP.Core.Specification;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -34,9 +35,7 @@ namespace AgroMind.GP.APIs.Controllers
 			public async Task<ActionResult<BrandDTO>> GetBrandById(int id)
 			{
 				var brand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
-				if (brand == null)
-					return NotFound($"Brand with ID {id} not found.");
-
+				
 				return Ok(brand);
 			}
 
@@ -44,15 +43,7 @@ namespace AgroMind.GP.APIs.Controllers
 			[HttpPost("AddBrand")]
 			public async Task<ActionResult<BrandDTO>> AddBrand([FromBody] BrandDTO brandDto)
 			{
-				if (brandDto is null)
-					return BadRequest("Brand data is required.");
-
-
 				var Brand= await _serviceManager.BrandService.AddBrandAsync(brandDto);
-
-			       if(Brand == null)
-				     return BadRequest("Failed to create the Brand.");
-
 				return CreatedAtAction(nameof(GetBrandById), new { id = Brand.Id }, Brand);
 			}
 
@@ -62,13 +53,8 @@ namespace AgroMind.GP.APIs.Controllers
 		   [HttpPut("UpdateBrandById/{id}")]
            public async Task<IActionResult> UpdateBrand(int id, [FromBody] BrandDTO brandDto)
 		   {
-				if (id != brandDto.Id)
-					return BadRequest("Brand ID mismatch.");
-
-				var existingBrand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
-				if (existingBrand == null)
-					return NotFound($"Brand with ID {id} not found.");
-
+			if (id != brandDto.Id)
+				throw new BadRequestException("Brand ID mismatch , Brand ID in route must match Brand ID in body.");
 				await _serviceManager.BrandService.UpdateBrands(brandDto);
 				return NoContent();
 		   }
@@ -79,11 +65,7 @@ namespace AgroMind.GP.APIs.Controllers
 		    [HttpDelete("DeleteBrand/{id}")]
 			public async Task<IActionResult> DeleteBrand(int id)
 			{
-				var brand = await _serviceManager.BrandService.GetBrandsByIdAsync(id);
-				if (brand == null)
-					return NotFound($"Brand with ID {id} not found.");
-
-				await _serviceManager.BrandService.DeleteBrands(brand);
+				await _serviceManager.BrandService.DeleteBrands(id);
 				return NoContent();
 			}
 
@@ -96,6 +78,7 @@ namespace AgroMind.GP.APIs.Controllers
 			var deletedBrands = await _serviceManager.BrandService.GetAllDeletedBrandsAsync();
 			return Ok(deletedBrands);
 		    }
+
 	}
 	}
 
