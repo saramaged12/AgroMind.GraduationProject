@@ -1,6 +1,8 @@
 ﻿using AgroMind.GP.Core.Exceptions;
+using Azure;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Shared.ErrorModels;
+using System;
 using System.Net;
 using System.Text.Json;
 
@@ -24,8 +26,8 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			try
 			{
 				await _next.Invoke(httpContext);
-				await HandleNotFoundEndPointAsync(httpContext);
-				await HandleUnauthorized(httpContext);
+				//await HandleNotFoundEndPointAsync(httpContext);
+				//await HandleUnauthorized(httpContext);
 
 			}
 			catch (Exception ex)
@@ -37,20 +39,26 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			}
 		}
 
-		private static async Task HandleException(HttpContext httpContext, Exception ex)
+		private  async Task HandleException(HttpContext httpContext, Exception ex)
 		{
-			//1-Set Status Code for Response
+			if (httpContext.Response.HasStarted)
+			{
 
-			//httpContext.Response.StatusCode= (int)HttpStatusCode.InternalServerError; // 500 Internal Server Error
-			//httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError; // the header of Request it self
+				_logger.LogWarning("The response has already started, the exception handler will not execute.");
+				return;
+			}
+				//1-Set Status Code for Response
 
-			httpContext.Response.StatusCode = ex switch
+				//httpContext.Response.StatusCode= (int)HttpStatusCode.InternalServerError; // 500 Internal Server Error
+				//httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError; // the header of Request it self
+				
+				httpContext.Response.StatusCode = ex switch
 			{
 				
 				NotFoundException => StatusCodes.Status404NotFound,
 				BadRequestException => StatusCodes.Status400BadRequest,
 				UnauthorizedAccessException => StatusCodes.Status403Forbidden,
-			
+				
 				_ => StatusCodes.Status500InternalServerError // Default to Internal Server Error
 			};
 
@@ -65,6 +73,12 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 				ErrorMessage = ex.Message // You can customize the error message as needed
 			};
 
+			// For non-500 errors (like NotFound, BadRequest), it's safe to always show the message.
+			if (httpContext.Response.StatusCode != StatusCodes.Status500InternalServerError)
+			{
+				Response.ErrorMessage = ex.Message;
+			}
+
 
 			//4-Return Object As Json
 
@@ -74,34 +88,34 @@ namespace AgroMind.GP.APIs.CustomMiddleWares
 			await httpContext.Response.WriteAsJsonAsync(Response);//convert the object to JSON and write it to the response body
 		}
 
-		private static async Task HandleNotFoundEndPointAsync(HttpContext httpContext)
-		{
-			if (httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
-			{
-				//Handle Not Found EndPoint
-				var Response = new ErrorToReturn()
-				{
-					StatusCode = StatusCodes.Status404NotFound,
-					ErrorMessage = $"The requested resource {httpContext.Request.Path} is not found."
-				};
+		//private static async Task HandleNotFoundEndPointAsync(HttpContext httpContext)
+		//{
+		//	if (httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
+		//	{
+		//		//Handle Not Found EndPoint
+		//		var Response = new ErrorToReturn()
+		//		{
+		//			StatusCode = StatusCodes.Status404NotFound,
+		//			ErrorMessage = $"The requested resource {httpContext.Request.Path} is not found."
+		//		};
 
-				await httpContext.Response.WriteAsJsonAsync(Response); 
-			}
-		}
+		//		await httpContext.Response.WriteAsJsonAsync(Response); 
+		//	}
+		//}
 
-		private static async Task HandleUnauthorized(HttpContext httpContext)
-		{
-			if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized)
-			{
-				//Handle Not Found EndPoint
-				var Response = new ErrorToReturn()
-				{
-					StatusCode = StatusCodes.Status401Unauthorized,
-					ErrorMessage = "You are not authorized to access this resource."
-				};
+		//private static async Task HandleUnauthorized(HttpContext httpContext)
+		//{
+		//	if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized)
+		//	{
+		//		//Handle Not Found EndPoint
+		//		var Response = new ErrorToReturn()
+		//		{
+		//			StatusCode = StatusCodes.Status401Unauthorized,
+		//			ErrorMessage = "You are not authorized to access this resource."
+		//		};
 
-				await httpContext.Response.WriteAsJsonAsync(Response);
-			}
-		}
+		//		await httpContext.Response.WriteAsJsonAsync(Response);
+		//	}
+		//}
 	}
 }

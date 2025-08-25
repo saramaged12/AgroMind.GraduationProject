@@ -165,10 +165,11 @@ namespace AgroMind.GP.APIs
 			#endregion
 
 
-			//builder.Logging.AddConsole();
-			//builder.Logging.SetMinimumLevel(LogLevel.Debug);
-
+			
+		
 			app.UseMiddleware<CustomExceptionHandlerMiddleWare>(); // Custom Middleware for Exception Handling
+
+			app.UseStatusCodePagesWithReExecute("/errors/{0}"); // {0} is the status code
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
