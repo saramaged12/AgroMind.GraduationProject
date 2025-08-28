@@ -26,7 +26,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public DbSet<Address> Addresss { get; set; }
+		public DbSet<Addresses> Addresses { get; set; }
 		public DbSet<Farmer> Farmers { get; set; }
 
 		public DbSet<AgriculturalExpert> AgriculturalExperts { get; set; }
@@ -129,7 +129,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 			
 			//ConfigureCreatorRelationship(modelBuilder.Entity<RecommendRequest>()); // Add if RecommendRequest inherits BaseEntity
 
-			modelBuilder.Entity<Address>()
+			modelBuilder.Entity<Addresses>()
 			  .HasOne(a => a.Creator)
 			  .WithMany()
 			  .HasForeignKey(a => a.CreatorId)
@@ -172,7 +172,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		private void AddSoftDeleteIndexes(ModelBuilder modelBuilder)
 		{
 			// Add indexes for IsDeleted 
-			modelBuilder.Entity<Address>().HasIndex(a => a.IsDeleted);
+			modelBuilder.Entity<Addresses>().HasIndex(a => a.IsDeleted);
 			modelBuilder.Entity<Product>().HasIndex(p => p.IsDeleted);
 			modelBuilder.Entity<Category>().HasIndex(c => c.IsDeleted);
 			modelBuilder.Entity<Crop>().HasIndex(c => c.IsDeleted);
@@ -191,7 +191,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 			modelBuilder.Entity<Crop>().HasIndex(c => c.CreatorId);
 			modelBuilder.Entity<CropStage>().HasIndex(cs => cs.CreatorId);
 			modelBuilder.Entity<Step>().HasIndex(s => s.CreatorId);
-			modelBuilder.Entity<Address>().HasIndex(a => a.CreatorId);
+			modelBuilder.Entity<Addresses>().HasIndex(a => a.CreatorId);
 		
 		}
 	}
