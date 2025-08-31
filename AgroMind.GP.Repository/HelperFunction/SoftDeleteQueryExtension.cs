@@ -1,4 +1,4 @@
-﻿using AgroMind.GP.Core.Contracts;
+﻿using AgroMind.GP.Core.Contracts.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq.Expressions;

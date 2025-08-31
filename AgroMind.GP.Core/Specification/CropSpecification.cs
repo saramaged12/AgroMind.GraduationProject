@@ -58,7 +58,7 @@ namespace AgroMind.GP.Core.Specification
 		{
 			if (includeCreatorInfo)
 			{
-				AddInclude(c => c.Creator); // Include the AppUser who created the crop
+				AddInclude(c => c.CreatedBy); // Include the AppUser who created the crop
 				AddInclude(c => c.Land);    // Include Land to determine if it's a FarmerPlan and get FarmerId
 			}
 			AddInclude(c => c.Stages);
@@ -72,7 +72,7 @@ namespace AgroMind.GP.Core.Specification
 		{
 			if (includeCreatorAndLandForAll) // Flag to ensure this specific constructor is used
 			{
-				AddInclude(c => c.Creator); // Include the AppUser who created the crop
+				AddInclude(c => c.CreatedBy); // Include the AppUser who created the crop
 				AddInclude(c => c.Land);    // Include Land to determine if it's a FarmerPlan
 				AddInclude(c => c.Stages);
 			    StringIncludes.Add("Stages.Steps");
@@ -122,7 +122,7 @@ namespace AgroMind.GP.Core.Specification
 				AddInclude(c => c.Stages);
 				StringIncludes.Add("Stages.Steps");
 				AddInclude(c => c.Land); // For authorization check (especially in UpdateActuals)
-				AddInclude(c => c.Creator); // Include Creator for AdoptRecommendedCrop audit source
+				AddInclude(c => c.CreatedBy); // Include Creator for AdoptRecommendedCrop audit source
 			}
 		}
 	}

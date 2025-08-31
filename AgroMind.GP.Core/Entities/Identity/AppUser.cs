@@ -1,9 +1,9 @@
-﻿using AgroMind.GP.Core.Contracts;
+﻿using AgroMind.GP.Core.Contracts.Common;
 using Microsoft.AspNetCore.Identity;
 
 namespace AgroMind.GP.Core.Entities.Identity
 {
-	public class AppUser : IdentityUser,ISoftDelete
+    public class AppUser : IdentityUser,ISoftDelete
 	{
 
 		public string FName { get; set; }
