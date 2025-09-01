@@ -114,17 +114,23 @@ namespace AgroMind.GP.Service.Services
 
 				throw new NotFoundException(nameof(Crop), cropId);
 
+			AppUser creatorUser = null;
 			string creatorRole = "Unknown";
-			if (crop.Creator != null)
+		
+			if (!string.IsNullOrEmpty(crop.CreatedBy))
 			{
-				var roles = await _userManager.GetRolesAsync(crop.Creator); //GetRole(User)
-				creatorRole = roles.FirstOrDefault() ?? "No Role";
+				creatorUser = await _userManager.FindByIdAsync(crop.CreatedBy);
+				if (creatorUser != null)
+				{
+					var roles = await _userManager.GetRolesAsync(creatorUser);
+					creatorRole = roles.FirstOrDefault() ?? "No Role";
+				}
 			}
 
 			return new PlanInfoDto
 			{
 				Crop = _mapper.Map<CropDto>(crop), // Map the full Crop entity to its DTO
-				CreatorEmail = crop.Creator?.Email,
+				CreatorEmail = creatorUser?.Email, // Use the fetched creatorUser
 				CreatorRole = creatorRole,
 				PlanType = crop.PlanType?.ToString() ?? "Unknown"
 			};
@@ -144,17 +150,22 @@ namespace AgroMind.GP.Service.Services
 
 			foreach (var crop in allCrops)
 			{
+				AppUser creatorUser = null;
 				string creatorRole = "Unknown";
-				if (crop.Creator != null)
+				if (!string.IsNullOrEmpty(crop.CreatedBy))
 				{
-					var roles = await _userManager.GetRolesAsync(crop.Creator);
-					creatorRole = roles.FirstOrDefault() ?? "No Role";
+					creatorUser = await _userManager.FindByIdAsync(crop.CreatedBy);
+					if (creatorUser != null)
+					{
+						var roles = await _userManager.GetRolesAsync(creatorUser);
+						creatorRole = roles.FirstOrDefault() ?? "No Role";
+					}
 				}
 
 				planInfoList.Add(new PlanInfoDto
 				{
 					Crop = _mapper.Map<CropDto>(crop),
-					CreatorEmail = crop.Creator?.Email,
+					CreatorEmail = creatorUser?.Email,
 					CreatorRole = creatorRole,
 					PlanType = crop.PlanType?.ToString() ?? "Unknown"
 				});
@@ -182,7 +193,7 @@ namespace AgroMind.GP.Service.Services
 
 			var cropEntity = _mapper.Map<Crop>(cropDto);
 
-			cropEntity.CreatorId = creatorUserId;
+			cropEntity.CreatedBy = creatorUserId;
 
 			// Determine PlanType
 			if (cropDto.LandId.HasValue)
@@ -205,14 +216,14 @@ namespace AgroMind.GP.Service.Services
 			{
 				foreach (var stage in cropEntity.Stages)
 				{
-					stage.CreatorId = creatorUserId;
+					stage.CreatedBy = creatorUserId;
 					stage.ActualCost = 0;
 					stage.TotalActualCost = 0;
 					if (stage.Steps != null)
 					{
 						foreach (var step in stage.Steps)
 						{
-							step.CreatorId = creatorUserId;
+							step.CreatedBy = creatorUserId;
 							step.ActualCost = null; 
 							step.ActualStartDate = null;
 							
@@ -278,7 +289,7 @@ namespace AgroMind.GP.Service.Services
 			farmerCrop.Id = 0; // Ensure it's a new entity
 			farmerCrop.LandId = targetLandId;
 			farmerCrop.PlanType = CropPlanType.FarmerPlan;
-			farmerCrop.CreatorId = farmerUserId;
+			farmerCrop.CreatedBy = farmerUserId;
 			farmerCrop.TotalActualCost = 0; // NEW adopted plan starts with 0 actual cost
 
 			if (farmerCrop.Stages != null)
@@ -286,7 +297,7 @@ namespace AgroMind.GP.Service.Services
 				foreach (var stage in farmerCrop.Stages)
 				{
 					stage.Id = 0;
-					stage.CreatorId = farmerUserId;
+					stage.CreatedBy = farmerUserId;
 					stage.ActualCost = 0;
 					stage.TotalActualCost = 0;
 					if (stage.Steps != null)
@@ -294,7 +305,7 @@ namespace AgroMind.GP.Service.Services
 						foreach (var step in stage.Steps)
 						{
 							step.Id = 0; 
-							step.CreatorId = farmerUserId; 
+							step.CreatedBy = farmerUserId; 
 							step.ActualCost = null;
 							step.ActualStartDate = null;
 						}
@@ -432,7 +443,7 @@ namespace AgroMind.GP.Service.Services
 
 			if (existingCrop == null)
 				 throw new NotFoundException(nameof(Crop), cropDto.Id);	
-			if (existingCrop.CreatorId != modifierUserId)
+			if (existingCrop.CreatedBy != modifierUserId)
 				throw new UnauthorizedAccessException("User is not authorized to update this crop plan.");
 
 			
@@ -504,7 +515,7 @@ namespace AgroMind.GP.Service.Services
 								{
 									// Add new step 
 									var newStep = _mapper.Map<Step>(stepDto);
-									newStep.CreatorId = modifierUserId;
+									newStep.CreatedBy = modifierUserId;
 									existingStage.Steps.Add(newStep);
 								}
 							}
@@ -515,12 +526,12 @@ namespace AgroMind.GP.Service.Services
 						// ADD NEW STAGE
 						
 						var newStage = _mapper.Map<CropStage>(stageDto);
-						newStage.CreatorId = modifierUserId;
+						newStage.CreatedBy = modifierUserId;
 						if (newStage.Steps != null)
 						{
 							foreach (var step in newStage.Steps)
 							{
-								step.CreatorId = modifierUserId;
+								step.CreatedBy = modifierUserId;
 							}
 						}
 						existingCrop.Stages.Add(newStage);

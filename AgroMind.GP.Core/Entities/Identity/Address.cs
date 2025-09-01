@@ -1,6 +1,6 @@
 ﻿namespace AgroMind.GP.Core.Entities.Identity
 {
-	public class Address:BaseEntity<string>
+	public class Addresses:BaseEntity<string>
 	{
 		
 		public string? Fname { get; set; } // who will receive order

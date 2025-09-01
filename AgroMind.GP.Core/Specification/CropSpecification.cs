@@ -58,7 +58,7 @@ namespace AgroMind.GP.Core.Specification
 		{
 			if (includeCreatorInfo)
 			{
-				AddInclude(c => c.Creator); // Include the AppUser who created the crop
+				AddInclude(c => c.CreatedBy); // Include the AppUser who created the crop
 				AddInclude(c => c.Land);    // Include Land to determine if it's a FarmerPlan and get FarmerId
 			}
 			AddInclude(c => c.Stages);
@@ -72,7 +72,7 @@ namespace AgroMind.GP.Core.Specification
 		{
 			if (includeCreatorAndLandForAll) // Flag to ensure this specific constructor is used
 			{
-				AddInclude(c => c.Creator); // Include the AppUser who created the crop
+				AddInclude(c => c.CreatedBy); // Include the AppUser who created the crop
 				AddInclude(c => c.Land);    // Include Land to determine if it's a FarmerPlan
 				AddInclude(c => c.Stages);
 			    StringIncludes.Add("Stages.Steps");
@@ -80,20 +80,6 @@ namespace AgroMind.GP.Core.Specification
 				// AddOrderByDescending(c => c.CreatedAt);
 			}
 		}
-
-		//// Specification for GetMyPlansAsync
-		//public CropSpecification(string farmerUserId, bool forMyPlans) : base(c => !c.IsDeleted)
-		//{
-		//	if (forMyPlans) // This boolean flag distinguishes it from other constructors
-		//	{
-		//		Criteria = c => c.PlanType == CropPlanType.FarmerPlan && c.Land != null && c.Land.FarmerId == farmerUserId && !c.IsDeleted;
-		//		AddInclude(c => c.Land); // Include Land to confirm FarmerId
-		//		AddInclude(c => c.Stages);
-		//		StringIncludes.Add("Stages.Steps");
-
-		//	}
-		//	// If forMyPlans is false, it behaves like default constructor or can throw error
-		//}
 
 
 		// Specification for GetMyPlansAsync
@@ -122,7 +108,7 @@ namespace AgroMind.GP.Core.Specification
 				AddInclude(c => c.Stages);
 				StringIncludes.Add("Stages.Steps");
 				AddInclude(c => c.Land); // For authorization check (especially in UpdateActuals)
-				AddInclude(c => c.Creator); // Include Creator for AdoptRecommendedCrop audit source
+				AddInclude(c => c.CreatedBy); // Include Creator for AdoptRecommendedCrop audit source
 			}
 		}
 	}

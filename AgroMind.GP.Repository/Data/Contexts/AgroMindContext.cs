@@ -1,8 +1,9 @@
 ﻿using AgroMind.GP.Core.Contracts;
+using AgroMind.GP.Core.Contracts.Common;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
+using AgroMind.GP.Core.Entities.Orders;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Repository.HelperFunction;
 using Microsoft.AspNetCore.Http; 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 	public class AgroMindContext : IdentityDbContext<AppUser>
 	{
 		private readonly IHttpContextAccessor _httpContextAccessor;
+		private string? _currentUserId; // Cache current user ID for performance
 
 		public AgroMindContext(DbContextOptions<AgroMindContext> options, IHttpContextAccessor httpContextAccessor)
 			: base(options)
@@ -26,7 +28,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public DbSet<Address> Addresss { get; set; }
+		public DbSet<Addresses> Addresses { get; set; }
 		public DbSet<Farmer> Farmers { get; set; }
 
 		public DbSet<AgriculturalExpert> AgriculturalExperts { get; set; }
@@ -48,53 +50,72 @@ namespace AgroMind.GP.Repository.Data.Contexts
 
 		public DbSet<Land> Land { get; set; }
 
+		public DbSet<Order> Orders { get; set; }	
+
+		public DbSet<OrderItems> OrderItems { get; set; }
+
+		public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
 
 
-
-		// --- SaveChanges Overrides for Audit Fields ---
+		// --- SaveChanges Overrides for Audit Fields and Soft Delete ---
 		public override int SaveChanges()
 		{
-			ApplyAuditInformation();
+			ApplyAuditAndSoftDeleteInformation();
 			return base.SaveChanges();
 		}
 
 		public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
-			ApplyAuditInformation();
+			ApplyAuditAndSoftDeleteInformation();
 			return await base.SaveChangesAsync(cancellationToken);
 		}
 
-		private void ApplyAuditInformation()
+		private void ApplyAuditAndSoftDeleteInformation()
 		{
-			var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			// Get current user ID once per SaveChanges call
+			_currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			var currentTime = DateTime.UtcNow;
 
 			foreach (var entry in ChangeTracker.Entries())
 			{
-				if (entry.Entity is BaseEntity<int> auditableEntity)
+				// Handle IAuditableEntity
+				if (entry.Entity is IAuditableEntity auditableEntity)
 				{
 					switch (entry.State)
 					{
 						case EntityState.Added:
-							if (string.IsNullOrEmpty(auditableEntity.CreatorId))
-							{
-								auditableEntity.CreatorId = currentUserId;
-							}
-							//auditableEntity.CreatedAt = DateTime.UtcNow;
-							
+							auditableEntity.CreatedAt = currentTime;
+							auditableEntity.CreatedBy = _currentUserId;
+						
+							auditableEntity.LastModifiedAt = currentTime;
+							auditableEntity.LastModifiedBy = _currentUserId;
 							break;
 
 						case EntityState.Modified:
-							// For existing entities, ensure CreatedAt and CreatorId are NOT overwritten
-							entry.Property(nameof(BaseEntity<int>.CreatorId)).IsModified = false;
-							//entry.Property(nameof(BaseEntity<int>.CreatedAt)).IsModified = false;
-						
+							auditableEntity.LastModifiedAt = currentTime;
+							auditableEntity.LastModifiedBy = _currentUserId;
+							entry.Property(nameof(IAuditableEntity.CreatedAt)).IsModified = false;
+							entry.Property(nameof(IAuditableEntity.CreatedBy)).IsModified = false;
 							break;
+					}
+				}
 
-						case EntityState.Deleted:
-							auditableEntity.IsDeleted = true;
-							auditableEntity.DeletedAt = DateTime.UtcNow;
-							entry.State = EntityState.Modified;
-							break;
+				// Handle ISoftDelete
+				if (entry.Entity is ISoftDelete softDeleteEntity && entry.State == EntityState.Deleted)
+				{
+					softDeleteEntity.IsDeleted = true;
+					softDeleteEntity.DeletedAt = currentTime;
+					// Change state to Modified so it's updated in DB instead of truly deleted
+					entry.State = EntityState.Modified;
+
+					// If it's also auditable, update LastModified fields for soft delete
+					if (entry.Entity is IAuditableEntity auditableSoftDeletedEntity)
+					{
+						auditableSoftDeletedEntity.LastModifiedAt = currentTime;
+						auditableSoftDeletedEntity.LastModifiedBy = _currentUserId;
+						// Ensure CreatedAt and CreatedBy are NOT overwritten
+						entry.Property(nameof(IAuditableEntity.CreatedAt)).IsModified = false;
+						entry.Property(nameof(IAuditableEntity.CreatedBy)).IsModified = false;
 					}
 				}
 			}
@@ -104,59 +125,70 @@ namespace AgroMind.GP.Repository.Data.Contexts
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-			modelBuilder.ApplySoftDeleteQueryFilter();
+
+			// Apply all configurations from the current assembly
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-			// TPT inheritance
+			// Centralized configuration for soft delete query filter
+			ApplyGlobalSoftDeleteFilter(modelBuilder);
+
+			// TPT (Table Per Type) inheritance for identity users
 			modelBuilder.Entity<Farmer>().ToTable(nameof(Farmer));
 			modelBuilder.Entity<AgriculturalExpert>().ToTable(nameof(AgriculturalExpert));
 			modelBuilder.Entity<SystemAdministrator>().ToTable(nameof(SystemAdministrator));
 			modelBuilder.Entity<Supplier>().ToTable(nameof(Supplier));
 
+			// Specific conversions
 			ConfigureTimeSpanConversion(modelBuilder);
-			AddSoftDeleteIndexes(modelBuilder);
 
-
-			// --- Configure Audit Fields (Creator Only) Relationships ---
-			// Pass the builder for each entity that inherits BaseEntity
-			ConfigureCreatorRelationship(modelBuilder.Entity<Product>());
-			ConfigureCreatorRelationship(modelBuilder.Entity<Category>());
-			ConfigureCreatorRelationship(modelBuilder.Entity<Brand>());
-			ConfigureCreatorRelationship(modelBuilder.Entity<Land>());
-			ConfigureCreatorRelationship(modelBuilder.Entity<Crop>());
-			ConfigureCreatorRelationship(modelBuilder.Entity<CropStage>());
-			ConfigureCreatorRelationship(modelBuilder.Entity<Step>());
-			
-			//ConfigureCreatorRelationship(modelBuilder.Entity<RecommendRequest>()); // Add if RecommendRequest inherits BaseEntity
-
-			modelBuilder.Entity<Address>()
-			  .HasOne(a => a.Creator)
-			  .WithMany()
-			  .HasForeignKey(a => a.CreatorId)
-			  .IsRequired(false)
-			  .OnDelete(DeleteBehavior.Restrict);
-
+			// Add indexes for common query fields
+			AddCommonIndexes(modelBuilder);
 		}
 
-		// --- Helper method for Creator relationship ONLY ---
-		private void ConfigureCreatorRelationship<TEntity>(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> builder)
-			where TEntity : BaseEntity<int>
+
+		// Applies a global query filter for soft-deleted entities.
+
+		private void ApplyGlobalSoftDeleteFilter(ModelBuilder modelBuilder)
 		{
-			builder.HasOne(e => e.Creator)
-				   .WithMany()
-				   .HasForeignKey(e => e.CreatorId)
-				   .IsRequired(false) // CreatorId can be null if needed (e.g., system-created data)
-				   .OnDelete(DeleteBehavior.Restrict);
+			// Apply the soft delete filter specifically to the AppUser entity,
+			// as it is the root of  identity inheritance hierarchy.
+			
+			modelBuilder.Entity<AppUser>().HasQueryFilter(e => !e.IsDeleted);
+
+			foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+			{
+				
+				if (typeof(AppUser).IsAssignableFrom(entityType.ClrType) && entityType.ClrType != typeof(AppUser))
+				{
+					continue; 
+				}
+
+				if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+				{
+					
+					if (!typeof(AppUser).IsAssignableFrom(entityType.ClrType))
+					{
+						var parameter = System.Linq.Expressions.Expression.Parameter(entityType.ClrType, "e");
+						var property = System.Linq.Expressions.Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+						var filter = System.Linq.Expressions.Expression.Lambda(
+							System.Linq.Expressions.Expression.Not(property), parameter);
+						entityType.SetQueryFilter(filter);
+					}
+				}
+			}
 		}
 
-		
+
+		// Configures conversion for List<TimeSpan> property.
+
 		private void ConfigureTimeSpanConversion(ModelBuilder modelBuilder)
 		{
+
 			var timeSpanConverter = new ValueConverter<List<TimeSpan>, string>(
-				v => string.Join(',', v.Select(ts => ts.ToString())),
-				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-					  .Select(TimeSpan.Parse)
-					  .ToList());
+	            v => string.Join(',', v.Select(ts => ts.ToString())),
+	            v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+		       .Select(TimeSpan.Parse)
+		       .ToList());
 
 			var timeSpanComparer = new ValueComparer<List<TimeSpan>>(
 				(c1, c2) => c1.SequenceEqual(c2),
@@ -169,30 +201,33 @@ namespace AgroMind.GP.Repository.Data.Contexts
 				.Metadata.SetValueComparer(timeSpanComparer);
 		}
 
-		private void AddSoftDeleteIndexes(ModelBuilder modelBuilder)
-		{
-			// Add indexes for IsDeleted 
-			modelBuilder.Entity<Address>().HasIndex(a => a.IsDeleted);
-			modelBuilder.Entity<Product>().HasIndex(p => p.IsDeleted);
-			modelBuilder.Entity<Category>().HasIndex(c => c.IsDeleted);
-			modelBuilder.Entity<Crop>().HasIndex(c => c.IsDeleted);
-			modelBuilder.Entity<Land>().HasIndex(l => l.IsDeleted);
-			modelBuilder.Entity<Brand>().HasIndex(b => b.IsDeleted);
-			modelBuilder.Entity<CropStage>().HasIndex(cs => cs.IsDeleted);
-			modelBuilder.Entity<Step>().HasIndex(s => s.IsDeleted);
-			
-			modelBuilder.Entity<AppUser>().HasIndex(u => u.IsDeleted);
-
-			// Add indexes for CreatorId 
-			modelBuilder.Entity<Product>().HasIndex(p => p.CreatorId);
-			modelBuilder.Entity<Category>().HasIndex(c => c.CreatorId);
-			modelBuilder.Entity<Brand>().HasIndex(b => b.CreatorId);
-			modelBuilder.Entity<Land>().HasIndex(l => l.CreatorId);
-			modelBuilder.Entity<Crop>().HasIndex(c => c.CreatorId);
-			modelBuilder.Entity<CropStage>().HasIndex(cs => cs.CreatorId);
-			modelBuilder.Entity<Step>().HasIndex(s => s.CreatorId);
-			modelBuilder.Entity<Address>().HasIndex(a => a.CreatorId);
+	
+		// Adds common indexes for performance.
 		
+		private void AddCommonIndexes(ModelBuilder modelBuilder)
+		{
+			foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+			{
+				// Index for IsDeleted
+				if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+				{
+					modelBuilder.Entity(entityType.ClrType).HasIndex(nameof(ISoftDelete.IsDeleted));
+				}
+
+				// Index for CreatedBy
+				if (typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType))
+				{
+					modelBuilder.Entity(entityType.ClrType).HasIndex(nameof(IAuditableEntity.CreatedBy));
+				}
+				// Index for LastModifiedBy
+				if (typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType))
+				{
+					modelBuilder.Entity(entityType.ClrType).HasIndex(nameof(IAuditableEntity.LastModifiedBy));
+				}
+			}
+			// Explicit index for AppUser's IsDeleted, as AppUser might not implement ISoftDelete directly
+			modelBuilder.Entity<AppUser>().HasIndex(u => u.IsDeleted);
 		}
+
 	}
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace AgroMind.GP.Repository.Data.Configurations
 {
-	public class AddressConfiguration : IEntityTypeConfiguration<Address>
+	public class AddressConfiguration : IEntityTypeConfiguration<Addresses>
 	{
-		public void Configure(EntityTypeBuilder<Address> builder)
+		public void Configure(EntityTypeBuilder<Addresses> builder)
 		{
 			
 			builder.HasKey(a => a.Id);
@@ -19,8 +19,8 @@ namespace AgroMind.GP.Repository.Data.Configurations
 			
 
 			builder.HasOne(a => a.AppUser)
-				.WithOne(u => u.Address)
-				.HasForeignKey<Address>(a => a.Id)
+				.WithOne(u => u.Addresses)
+				.HasForeignKey<Addresses>(a => a.Id)
 				.OnDelete(DeleteBehavior.Cascade); // If User is deleted, delete Addresses
 		}
 

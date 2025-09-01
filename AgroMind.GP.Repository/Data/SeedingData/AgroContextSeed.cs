@@ -1,4 +1,5 @@
 ﻿using AgroMind.GP.Core.Entities;
+using AgroMind.GP.Core.Entities.Orders;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Repository.Data.Contexts;
 using System.Text.Json;
@@ -63,22 +64,37 @@ namespace AgroMind.GP.Repository.Data.SeedingData
 				}
 			}
 
-			////Crops
-			//if (!dbcontext.Crop.Any())
-			//{
-			//	var CropsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/Crops.json");
-			//	var crops = JsonSerializer.Deserialize<List<Crop>>(CropsData);
-			//	if (crops?.Count > 0)
-			//	{
-			//		foreach (var crop in crops)
-			//		{
-			//			await dbcontext.Set<Crop>().AddAsync(crop);
-			//		}
-			//		await dbcontext.SaveChangesAsync();
-			//	}
+			//Crops
+			if (!dbcontext.Crop.Any())
+			{
+				var CropsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/Crops.json");
+				var crops = JsonSerializer.Deserialize<List<Crop>>(CropsData);
+				if (crops?.Count > 0)
+				{
+					foreach (var crop in crops)
+					{
+						await dbcontext.Set<Crop>().AddAsync(crop);
+					}
+					await dbcontext.SaveChangesAsync();
+				}
 
 
-			//}
+			}
+			//DeliveryMethods
+
+			if (!dbcontext.DeliveryMethods.Any())
+			{
+
+			var deliveryMethodsData = File.ReadAllText("../AgroMind.GP.Repository/Data/DataSeed/delivery (1).json");
+				var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryMethodsData);
+				if (deliveryMethods?.Count > 0)
+				{
+					foreach (var dm in deliveryMethods)
+					{
+						await dbcontext.Set<DeliveryMethod>().AddAsync(dm);
+					}
+					await dbcontext.SaveChangesAsync();
+				}}
 
 
 		}
