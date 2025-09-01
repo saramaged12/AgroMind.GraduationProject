@@ -40,8 +40,8 @@ namespace AgroMind.GP.APIs.Helpers
 			CreateMap<CropDefinitionDto, Crop>()
 				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
 				.ForMember(dest => dest.Land, opt => opt.Ignore());
 				
 
@@ -49,15 +49,15 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+			
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
 				.ForMember(dest => dest.Crop, opt => opt.Ignore());
 
 			CreateMap<StepDefinitionDto, Step>()
 				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
 				.ForMember(dest => dest.ActualStartDate, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
 				.ForMember(dest => dest.Stage, opt => opt.Ignore());
 
 
@@ -67,19 +67,19 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(dest => dest.Id, opt => opt.Ignore()) // Id is from route
 				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore()) // Calculated
 				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore()) // Calculated
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore()) // Set by DbContext
-				.ForMember(dest => dest.Creator, opt => opt.Ignore()) // Navigation
-				.ForMember(dest => dest.Land, opt => opt.Ignore()) // Navigation
+			
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) 
+				.ForMember(dest => dest.Land, opt => opt.Ignore()) 
 				.ForMember(dest => dest.PlanType, opt => opt.Ignore()) 
-				.ForMember(dest => dest.LandId, opt => opt.Ignore()) // Not updated via this path
+				.ForMember(dest => dest.LandId, opt => opt.Ignore()) 
 				.ForMember(dest => dest.Stages, opt => opt.Ignore()); // Collections managed manually in service
 
 			CreateMap<CropStageDto, CropStage>()
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore()) // Calculated
 				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore()) // Calculated
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore()) //Audit
-				.ForMember(dest => dest.Creator, opt => opt.Ignore()) // Navigation
+			
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) // Navigation
 				.ForMember(dest => dest.CropId, opt => opt.Ignore())
 				.ForMember(dest => dest.Crop, opt => opt.Ignore())
 				.ForMember(dest => dest.Steps, opt => opt.Ignore()); // Collections managed manually in service
@@ -87,8 +87,8 @@ namespace AgroMind.GP.APIs.Helpers
 			CreateMap<StepDto, Step>()
 				 // ActualCost, ActualStartDate, EstimatedCost, PlannedStartDate Are Inputs
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
 				.ForMember(dest => dest.Stage, opt => opt.Ignore()); // Navigation Property
 
 
@@ -99,8 +99,8 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(dest => dest.LandId, opt => opt.Ignore())
 				.ForMember(dest => dest.Land, opt => opt.Ignore())
 				.ForMember(dest => dest.PlanType, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
 				.ForMember(dest => dest.Stages, opt => opt.MapFrom(src => src.Stages));
 
@@ -108,8 +108,8 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
 				.ForMember(dest => dest.CropId, opt => opt.Ignore())
 				.ForMember(dest => dest.Crop, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())		
+				
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())		
 				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalEstimatedCost, opt => opt.Ignore())
 				.ForMember(dest => dest.TotalActualCost, opt => opt.Ignore())
@@ -119,8 +119,8 @@ namespace AgroMind.GP.APIs.Helpers
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
 				.ForMember(dest => dest.StageId, opt => opt.Ignore())
 				.ForMember(dest => dest.Stage, opt => opt.Ignore())
-				.ForMember(dest => dest.CreatorId, opt => opt.Ignore())
-				.ForMember(dest => dest.Creator, opt => opt.Ignore())
+				
+				.ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
 				
 				.ForMember(dest => dest.ActualCost, opt => opt.Ignore())
 				.ForMember(dest => dest.ActualStartDate, opt => opt.Ignore())
@@ -130,7 +130,7 @@ namespace AgroMind.GP.APIs.Helpers
 			
 			CreateMap<Crop, PlanInfoDto>()
 				.ForMember(dest => dest.Crop, opt => opt.MapFrom(src => src))
-				.ForMember(dest => dest.CreatorEmail, opt => opt.MapFrom(src => src.Creator.Email))
+				.ForMember(dest => dest.CreatorEmail, opt => opt.MapFrom(src => src.CreatedBy))
 				.ForMember(dest => dest.CreatorRole, opt => opt.Ignore())
 				.ForMember(dest => dest.PlanType, opt => opt.MapFrom(src => src.PlanType.ToString()));
 

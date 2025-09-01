@@ -2,8 +2,8 @@
 using AgroMind.GP.Core.Contracts.Common;
 using AgroMind.GP.Core.Entities;
 using AgroMind.GP.Core.Entities.Identity;
+using AgroMind.GP.Core.Entities.Orders;
 using AgroMind.GP.Core.Entities.ProductModule;
-using AgroMind.GP.Repository.HelperFunction;
 using Microsoft.AspNetCore.Http; 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +50,12 @@ namespace AgroMind.GP.Repository.Data.Contexts
 
 		public DbSet<Land> Land { get; set; }
 
+		public DbSet<Order> Orders { get; set; }	
+
+		public DbSet<OrderItems> OrderItems { get; set; }
+
+		public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+
 
 		// --- SaveChanges Overrides for Audit Fields and Soft Delete ---
 		public override int SaveChanges()
@@ -80,7 +86,7 @@ namespace AgroMind.GP.Repository.Data.Contexts
 						case EntityState.Added:
 							auditableEntity.CreatedAt = currentTime;
 							auditableEntity.CreatedBy = _currentUserId;
-							// LastModified fields are also set for new entities
+						
 							auditableEntity.LastModifiedAt = currentTime;
 							auditableEntity.LastModifiedBy = _currentUserId;
 							break;
@@ -88,7 +94,6 @@ namespace AgroMind.GP.Repository.Data.Contexts
 						case EntityState.Modified:
 							auditableEntity.LastModifiedAt = currentTime;
 							auditableEntity.LastModifiedBy = _currentUserId;
-							// Ensure CreatedAt and CreatedBy are NOT overwritten on modification
 							entry.Property(nameof(IAuditableEntity.CreatedAt)).IsModified = false;
 							entry.Property(nameof(IAuditableEntity.CreatedBy)).IsModified = false;
 							break;
@@ -140,28 +145,42 @@ namespace AgroMind.GP.Repository.Data.Contexts
 			AddCommonIndexes(modelBuilder);
 		}
 
-		/// <summary>
-		/// Applies a global query filter for soft-deleted entities.
-		/// </summary>
+
+		// Applies a global query filter for soft-deleted entities.
+
 		private void ApplyGlobalSoftDeleteFilter(ModelBuilder modelBuilder)
 		{
+			// Apply the soft delete filter specifically to the AppUser entity,
+			// as it is the root of  identity inheritance hierarchy.
+			
+			modelBuilder.Entity<AppUser>().HasQueryFilter(e => !e.IsDeleted);
+
 			foreach (var entityType in modelBuilder.Model.GetEntityTypes())
 			{
+				
+				if (typeof(AppUser).IsAssignableFrom(entityType.ClrType) && entityType.ClrType != typeof(AppUser))
+				{
+					continue; 
+				}
+
 				if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
 				{
-					// Using Expression.Parameter for dynamic filter creation
-					var parameter = System.Linq.Expressions.Expression.Parameter(entityType.ClrType, "e");
-					var property = System.Linq.Expressions.Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
-					var filter = System.Linq.Expressions.Expression.Lambda(
-						System.Linq.Expressions.Expression.Not(property), parameter);
-					entityType.SetQueryFilter(filter);
+					
+					if (!typeof(AppUser).IsAssignableFrom(entityType.ClrType))
+					{
+						var parameter = System.Linq.Expressions.Expression.Parameter(entityType.ClrType, "e");
+						var property = System.Linq.Expressions.Expression.Property(parameter, nameof(ISoftDelete.IsDeleted));
+						var filter = System.Linq.Expressions.Expression.Lambda(
+							System.Linq.Expressions.Expression.Not(property), parameter);
+						entityType.SetQueryFilter(filter);
+					}
 				}
 			}
 		}
 
-		/// <summary>
-		/// Configures conversion for List<TimeSpan> property.
-		/// </summary>
+
+		// Configures conversion for List<TimeSpan> property.
+
 		private void ConfigureTimeSpanConversion(ModelBuilder modelBuilder)
 		{
 
@@ -182,9 +201,9 @@ namespace AgroMind.GP.Repository.Data.Contexts
 				.Metadata.SetValueComparer(timeSpanComparer);
 		}
 
-		/// <summary>
-		/// Adds common indexes for performance.
-		/// </summary>
+	
+		// Adds common indexes for performance.
+		
 		private void AddCommonIndexes(ModelBuilder modelBuilder)
 		{
 			foreach (var entityType in modelBuilder.Model.GetEntityTypes())

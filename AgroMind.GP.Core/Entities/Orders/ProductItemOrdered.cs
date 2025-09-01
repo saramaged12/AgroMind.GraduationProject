@@ -14,5 +14,6 @@ namespace AgroMind.GP.Core.Entities.Orders
 		public required string ProductName { get; set; }
 
 		public required string PictureUrl { get; set; }
+
 	}
 }
