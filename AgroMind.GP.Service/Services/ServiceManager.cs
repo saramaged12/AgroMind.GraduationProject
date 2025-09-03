@@ -14,7 +14,7 @@ using static StackExchange.Redis.Role;
 
 namespace AgroMind.GP.Service.Services
 {
-	public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper,UserManager<AppUser>userManager,Func<ICartService> cartServiceFactory ) : IServiceManager
+	public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper,UserManager<AppUser>userManager,Func<IOrderService> OrderServiceFactory, Func<ICartService> cartServiceFactory ) : IServiceManager
 	{
 		
 		//Using Lazy Implementation
@@ -36,9 +36,9 @@ namespace AgroMind.GP.Service.Services
 
 		private readonly Lazy<IStepService> _LazyStepService = new Lazy<IStepService>(() => new StepService(unitOfWork, mapper,userManager));
 
-		private readonly Lazy<ICartService> _LazyCartService = new Lazy<ICartService>(cartServiceFactory);
+		private readonly Lazy<ICartService> _LazyCartService = new Lazy<ICartService>(cartServiceFactory,LazyThreadSafetyMode.ExecutionAndPublication);
 
-
+		private readonly Lazy<IOrderService> _LazyOrderService = new Lazy<IOrderService> (OrderServiceFactory,LazyThreadSafetyMode.ExecutionAndPublication);
 
 
 		//Create object From Service when u need it (Call Productservice)  accesss it (access el value)and create object of ProductService
@@ -59,6 +59,8 @@ namespace AgroMind.GP.Service.Services
 		public IStageService StageService => _LazyStageService.Value;
 
 		public IStepService StepService => _LazyStepService.Value;
+
+		public IOrderService OrderService => _LazyOrderService.Value;
 
 
 

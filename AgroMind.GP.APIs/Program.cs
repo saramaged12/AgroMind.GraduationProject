@@ -83,12 +83,26 @@ namespace AgroMind.GP.APIs
 
 			//builder.Services.AddScoped<IBrandService, BrandService>();
 			
+			//builder.Services.AddScoped(typeof(Func<ICartService>), (serviceProvider) =>
+			//{
+			//	var mapper = serviceProvider.GetRequiredService<IMapper>();
+			//	var CartRepo = serviceProvider.GetRequiredService<ICartRepository>();
+			//	var Config = serviceProvider.GetRequiredService<IConfiguration>();
+			//	return () => new CartService(CartRepo,mapper,Config);
+			//});
+
+			//Register the Factory for Func<ICartService>
 			builder.Services.AddScoped(typeof(Func<ICartService>), (serviceProvider) =>
 			{
-				var mapper = serviceProvider.GetRequiredService<IMapper>();
-				var CartRepo = serviceProvider.GetRequiredService<ICartRepository>();
-				var Config = serviceProvider.GetRequiredService<IConfiguration>();
-				return () => new CartService(CartRepo,mapper,Config);
+
+				return () => serviceProvider.GetRequiredService<ICartService>();
+			});
+
+			//Register the Factory for Func<IOrderService>
+			builder.Services.AddScoped(typeof(Func<IOrderService>), (serviceProvider) =>
+			{
+
+				return () => serviceProvider.GetRequiredService<IOrderService>();
 			});
 
 			builder.Services.AddScoped<ITokenService, TokenService>(); //  to register TokenService

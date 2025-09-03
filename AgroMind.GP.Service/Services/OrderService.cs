@@ -4,6 +4,7 @@ using AgroMind.GP.Core.Contracts.UnitOfWork.Contract;
 using AgroMind.GP.Core.Entities.Orders;
 using AgroMind.GP.Core.Entities.ProductModule;
 using AgroMind.GP.Core.Exceptions;
+using AgroMind.GP.Core.Specification;
 using AgroMind.GP.Repository.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -87,19 +88,31 @@ namespace AgroMind.GP.Service.Services
 
 		}
 
-		public Task<IReadOnlyList<DeliveryMethodDto>> GetDeliveryMethodsAsync()
+		public async Task<IReadOnlyList<OrderToReturnDto>> GetOrdersForUserAsync(string buyerEmail)
 		{
-			throw new NotImplementedException();
+			var OrderSpecs = new OrderSpecification(buyerEmail);
+			var orders= await unitOfWork.GetRepositories<Order,int>().GetAllWithSpecASync(OrderSpecs);
+			return mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders);
 		}
 
-		public Task<OrderToReturnDto> GetOrderByIdAsync(string buyerEmail, int OrderId)
+		public  async Task<OrderToReturnDto> GetOrderByIdAsync(string buyerEmail, int OrderId)
 		{
-			throw new NotImplementedException();
+			var OrderSpec= new OrderSpecification(buyerEmail,OrderId);
+			var Order= await unitOfWork.GetRepositories<Order, int>().GetByIdAWithSpecAsync(OrderSpec);
+			
+			if (Order is null)
+				throw new NotFoundException(nameof(Order),OrderId);
+			return mapper.Map<OrderToReturnDto>(Order);
 		}
 
-		public Task<IReadOnlyList<OrderToReturnDto>> GetOrdersForUserAsync(string buyerEmail)
+		public async Task<IReadOnlyList<DeliveryMethodDto>> GetDeliveryMethodsAsync()
 		{
-			throw new NotImplementedException();
+			var DeliveryMethods = await unitOfWork.GetRepositories<DeliveryMethod, int>().GetAllAsync();
+			return mapper.Map<IReadOnlyList<DeliveryMethodDto>>(DeliveryMethods);
 		}
+
+	
+
+		
 	}
 }
