@@ -25,5 +25,7 @@ namespace AgroMind.GP.Core.Contracts.Services.Contract
 		public IStageService StageService { get; }
 
 		public ICropService CropService { get; }
+
+		public IOrderService OrderService { get; }
 	}
 }
