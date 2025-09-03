@@ -5,7 +5,7 @@ namespace AgroMind.GP.Core.Entities.ProductModule
 	public class Product : BaseEntity<int>
 	{
 
-		public string? Name { get; set; }
+		public required string Name { get; set; }
 
 		public string? Description { get; set; }
 

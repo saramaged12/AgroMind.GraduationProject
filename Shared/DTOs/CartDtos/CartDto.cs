@@ -9,7 +9,7 @@ namespace Shared.DTOs.CartDtos
     public class CartDto
     {
         public required string Id { get; set; }  // will be the Redis Key ( Farmer.Id or a GUID for anonymous)
-        public required IEnumerable<CartItemDto> Items { get; set; }
+        public required IEnumerable<CartItemDto> Items { get; set; }=new List<CartItemDto>(); // Object Return Zero
 
     }
 }
