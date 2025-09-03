@@ -67,7 +67,10 @@ namespace AgroMind.GP.Service.Services
 
 			var MappedAddress = mapper.Map<Address>(order.ShipToAddress);
 
-			// 5- Create Order
+			// 5. Get Delivery Method
+			var DeliveryMethod = await unitOfWork.GetRepositories<DeliveryMethod, int>().GetByIdAsync(order.DeliveryMethodId);
+
+			// 6- Create Order
 			
 			var OrderToCreate= new Order
 			{
@@ -75,12 +78,12 @@ namespace AgroMind.GP.Service.Services
 				OrderItems = OrderItems,
 				ShippingAddress = MappedAddress,
 				Subtotal = SubTotal,
-				DeliveryMethodId = order.DeliveryMethodId
+				DeliveryMethod=DeliveryMethod
 			};
 
 			await unitOfWork.GetRepositories<Order, int>().AddAsync(OrderToCreate);
 
-			// 6- Save to DB
+			// 7- Save to DB
 			var Created = await unitOfWork.SaveChangesAsync() > 0 ; // return 2 OrderIems + 1 Order = 3
 			if (!Created)
 				throw new BadRequestException("an error Has Occured during Creating the Order");

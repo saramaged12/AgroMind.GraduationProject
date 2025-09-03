@@ -151,7 +151,7 @@ namespace AgroMind.GP.APIs.Mapping
                 .ForMember(d => d.ProductName, o => o.MapFrom(s => s.Product.ProductName))
 				.ForMember(d => d.PictureUrl, options => options.MapFrom<OrderItemPictureURLResolver>());
 
-            CreateMap<Address, AddressDto>();
+            CreateMap<Address,AddressDto>().ReverseMap();
 
             CreateMap<DeliveryMethod, DeliveryMethodDto>();
 
