@@ -22,5 +22,30 @@ namespace AgroMind.GP.APIs.Controllers
 			return Ok(result);
 		}
 
+		[HttpGet]
+		public async Task<ActionResult<IReadOnlyList<OrderToReturnDto>>> GetOrdersForUser()
+		{
+			var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
+
+			var Orders = await serviceManager.OrderService.GetOrdersForUserAsync(BuyerEmail!);
+			return Ok(Orders);
+			
+		}
+		[HttpGet("{id}")] //Get api/Order/3
+		public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdForUser(int id)
+		{
+			var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
+
+			var result = await serviceManager.OrderService.GetOrderByIdAsync( BuyerEmail!,id);
+			
+			return Ok(result);
+		}
+		[HttpGet("deliveryMethods")]
+		public async Task<ActionResult<IReadOnlyList<DeliveryMethodDto>>> GetDeliveryMethods()
+		{
+			var result = await serviceManager.OrderService.GetDeliveryMethodsAsync();
+			return Ok(result);
+		}
+
 	}
 }
